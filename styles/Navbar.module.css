@@ -1,0 +1,14 @@
+.navbar{
+    display:block;
+    flex-direction:row;
+    font-size:1.2em;
+    width:100%;
+}
+.navitem{
+    padding: 5px 10px;
+    color:gray;
+}
+.navitem:hover{
+    color:black;
+    text-decoration: none;
+}
