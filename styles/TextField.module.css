@@ -1,0 +1,14 @@
+.layout{
+    margin-bottom: 10px;
+}
+.label{
+    font-size: 0.9em;
+}
+.error{
+    color:var(--danger);
+    font-size: 0.9em;
+    margin:3px;
+}
+.input{
+    font-size: 1em;
+}

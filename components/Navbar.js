@@ -9,15 +9,16 @@ import {
 	Nav,
 	NavItem,
 } from "reactstrap";
+import {isMobile} from './Const'
 
 export default function MyNavbar() {
 	const [isOpen, toggle] = React.useState(false);
 	return (
 		<div className={styles.navbar}>
 			<Navbar color="light" light expand="md">
-				<NavbarBrand href="/">Wanxa</NavbarBrand>
+				<NavbarBrand href="/">Home</NavbarBrand>
 				<NavbarToggler onClick={() => toggle(!isOpen)} />
-				<Collapse isOpen={isOpen} navbar>
+				<Collapse onClick={() => isMobile() && toggle(!isOpen)} isOpen={isOpen} navbar>
 					<Nav className="mr-auto" navbar>
 						<Link href="/about">
 							<a className={styles.navitem}>About</a>

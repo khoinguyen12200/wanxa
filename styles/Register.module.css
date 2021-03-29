@@ -1,0 +1,41 @@
+.register{
+    display:flex;
+    flex-direction:row;
+    margin:30px 0;
+    padding:20px;
+}
+.banner{
+    flex:1;
+}
+.profile{
+    width:70%;
+}
+.edit{
+    width:35px;
+}
+.content{
+    flex:1;
+    box-sizing: border-box;
+    margin: auto;
+    font-size: 1.2em;
+}
+.title{
+    text-align: center;
+    margin-bottom: 30px;
+}
+.form{
+    width:80%;
+    margin: auto;
+}
+.buttonSpace{
+    font-size: 1.2em;
+    margin-top: 20px;
+}
+
+@media (max-width: 768px){
+
+    .form{
+        width:90%;
+        margin: auto;
+    }
+}

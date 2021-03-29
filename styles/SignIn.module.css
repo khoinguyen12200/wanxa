@@ -1,0 +1,53 @@
+
+
+.main{
+    display:flex;
+    flex-direction:row;
+    padding:30px;
+    margin: 30px auto;
+  
+}
+.form{
+    flex:1;
+    padding:20px;
+}
+.banner{
+    flex:1;
+    padding:10px;
+    display:flex;
+    flex-direction:row;
+    justify-content:center;
+}
+.store{
+    width:50%;
+}
+.team{
+    margin:20px;
+    width:120px;
+}
+.formContainer{
+    width:70%;
+}
+.formTitle{
+    text-align:center;
+    margin-bottom: 20px;
+}
+.buttonSpace{
+    display:flex;
+    flex-direction:row;
+    justify-content:flex-end;
+}
+
+@media (max-width: 768px){
+    .main{
+        font-size: 1.2em;
+        padding:20px;
+    }
+    .form{
+        padding:0;
+    }
+    .formContainer{
+        margin: auto;
+        width:90%;
+    }
+}
