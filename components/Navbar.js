@@ -9,28 +9,57 @@ import {
 	Nav,
 	NavItem,
 } from "reactstrap";
-import {isMobile} from './Const'
+import { isMobile,SignInDir,AboutDir,AccountDir } from "./Const";
+import { StoreContext } from "./StoreContext";
 
 export default function MyNavbar() {
 	const [isOpen, toggle] = React.useState(false);
+	const [state, dispatch] = React.useContext(StoreContext);
+	const { user } = state;
 	return (
 		<div className={styles.navbar}>
 			<Navbar color="light" light expand="md">
-				<NavbarBrand href="/">Home</NavbarBrand>
+				<Link href="/">
+					<a>Home</a>
+				</Link>
 				<NavbarToggler onClick={() => toggle(!isOpen)} />
-				<Collapse onClick={() => isMobile() && toggle(!isOpen)} isOpen={isOpen} navbar>
+				<Collapse
+					onClick={() => isMobile() && toggle(!isOpen)}
+					isOpen={isOpen}
+					navbar
+				>
 					<Nav className="mr-auto" navbar>
-						<Link href="/about">
+						<Link href={AboutDir}>
 							<a className={styles.navitem}>About</a>
 						</Link>
 					</Nav>
 					<Nav>
-						<Link href="/signin">
-							<a className={styles.navitem}>Sign In</a>
-						</Link>
+						<UserSpace user={user} />
 					</Nav>
 				</Collapse>
 			</Navbar>
 		</div>
 	);
+}
+
+function UserSpace(props) {
+	const { user } = props;
+	if (user == null) {
+		return (
+			<Link href={SignInDir}>
+				<a className={styles.navitem}>Sign In</a>
+			</Link>
+		);
+	}else{
+		return (
+			<Link href={AccountDir}>
+				<a className={styles.navitem}>
+					<div className={styles.userSpace}>
+						<span>{user.name}</span>
+						<img src={user.avatar} alt="avatar"/>
+					</div>
+				</a>
+			</Link>
+		);
+	}
 }

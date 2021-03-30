@@ -1,14 +1,19 @@
 import React from "react";
 import { motion } from "framer-motion";
-import TextField from "../components/TextField";
+import axios from 'axios';
+import { toast } from "react-toastify";
 import { Formik, Form } from "formik";
 import Link from "next/link";
-import { signInValidate } from "../components/Validations";
-import { isMobile } from "../components/Const";
-import Image from "next/image";
-import styles from "../styles/SignIn.module.css";
+import { useRouter } from "next/router";
+
+import { signInValidate } from "../../components/Validations";
+import { isMobile,AccountDir,RegisterDir } from "../../components/Const";
+import styles from "../../styles/SignIn.module.css";
+import TextField from "../../components/TextField";
+import {StoreContext,actions} from '../../components/StoreContext'
 
 export default function SignIn({}) {
+	
 	return (
 		<div className={styles.main}>
 			<div className={styles.form}>
@@ -40,6 +45,27 @@ export default function SignIn({}) {
 }
 
 function MyForm() {
+	const router = useRouter();
+	const [state,dispatch] = React.useContext(StoreContext);
+	function handleSubmit(values,{ setSubmitting}){
+		axios.post('/api/user/signin', values)
+			.then(res => {
+				if (res.status === 200) {
+					const {message,token,user} = res.data;
+					toast.success(message);
+					const payload = {user:user,token:token,save:values.save};
+					dispatch({type:actions.signIn,payload:payload});
+					router.push(AccountDir);
+					
+				}else{
+					toast.error(res.data.message);
+				}
+				setSubmitting(false)
+		
+			})
+			.catch(error => toast.error(error));
+		
+	}
 	return (
 		<Formik
 			initialValues={{
@@ -48,7 +74,7 @@ function MyForm() {
 				save: false,
 			}}
 			validationSchema={signInValidate}
-			onSubmit={(values) => console.log(values)}
+			onSubmit={handleSubmit}
 		>
 			{(formik) => (
 				<div className={styles.formContainer}>
@@ -64,10 +90,10 @@ function MyForm() {
 							type="password"
 							name="password"
 						/>
-						<div class="form-check mt-3 mb-4">
+						<div className="form-check mt-3 mb-4">
 							<input
 								name="save"
-								class="form-check-input"
+								className="form-check-input"
 								type="checkbox"
 								id="autoSizingCheck"
 								onChange={formik.handleChange}
@@ -75,14 +101,14 @@ function MyForm() {
 								value={formik.values.save}
 							/>
 							<label
-								class="form-check-label"
+								className="form-check-label"
 								htmlFor="autoSizingCheck"
 							>
 								Lưu mật khẩu
 							</label>
 						</div>
 						<div className={styles.buttonSpace}>
-							<Link href="/register">
+							<Link href={RegisterDir}>
 								<a className="btn btn-secondary m-2">Đăng ký</a>
 							</Link>
 							<button
@@ -98,9 +124,3 @@ function MyForm() {
 		</Formik>
 	);
 }
-// export function MyForm({}) {
-// 	return (
-
-//         // <div className="abc">asdf</div>
-// 	);
-// }

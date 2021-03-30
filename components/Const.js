@@ -16,3 +16,9 @@ export function isMobile() {
 
 	return check;
 }
+
+
+export const SignInDir = "/account/signin";
+export const RegisterDir = "/account/register"
+export const AccountDir ="/account"
+export const AboutDir = "/about"

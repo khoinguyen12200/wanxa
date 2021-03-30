@@ -22,9 +22,9 @@ export function FileField({ label, ...props }) {
         <div className={styles.layout}>
             <label htmlFor={field.name} className={styles.label}>{label}</label>
             <div className="input-group">
-                <div class="custom-file">
-                    <input class="custom-file-input" type='file' name='avatar' {...props}  />
-                    <label class="custom-file-label" htmlFor="inputGroupFile01">{field.value && field.value.name}</label>
+                <div className="custom-file">
+                    <input className="custom-file-input" type='file' name='avatar' {...props}  />
+                    <label className="custom-file-label" htmlFor="inputGroupFile01">{field.value && field.value.name}</label>
                 </div>
             </div>
 

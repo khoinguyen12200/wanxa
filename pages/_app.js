@@ -1,17 +1,24 @@
 import "../styles/globals.css";
-import 'bootstrap/dist/css/bootstrap.min.css';
+import "bootstrap/dist/css/bootstrap.min.css";
 import Head from "next/head";
-import Navbar from '../components/Navbar'
+import Navbar from "../components/Navbar";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import StoreProvider from "../components/StoreContext";
+
 function MyApp({ Component, pageProps }) {
 	return (
 		<div>
-			<Head>
-				<title>Wanxa</title>
-				<link rel="icon" href="/favicon.ico" />
-			</Head>
-      <Navbar/>
+			<StoreProvider>
+				<Head>
+					<title>Wanxa</title>
+					<link rel="icon" href="/favicon.ico" />
+				</Head>
 
-			<Component {...pageProps} />
+				<ToastContainer />
+				<Navbar />
+				<Component {...pageProps} />
+			</StoreProvider>
 		</div>
 	);
 }

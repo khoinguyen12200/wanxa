@@ -1,0 +1,13 @@
+.accountMain{
+    
+}
+.notFound{
+    background-color: var(--danger);
+    color:white;
+    padding:20px;
+    margin:40px;
+    width:fit-content;
+    margin:auto;
+    border-radius: 3px;
+    box-shadow: 0 0 10px 3px rgba(255, 50, 50, 0.295);
+}
