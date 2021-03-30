@@ -12,14 +12,23 @@ import {
 	accountValidator,
 	nameValidator,
 } from "../../components/Validations";
-import { isMobile,SignInDir } from "../../components/Const";
+import { isMobile, SignInDir } from "../../components/Const";
 import styles from "../../styles/Register.module.css";
-
 
 export default function Register({}) {
 	const router = useRouter();
 
 	function handleSubmit(values, { setSubmitting }) {
+		const { avatar } = values;
+		const fileE = getExtension(avatar.name);
+
+		if(avatar.name != null && (fileE != "jpg" || fileE != "png")){
+			toast.warning("Ảnh phải có định dạng jpg hoặc png");
+			setSubmitting(false);
+			return;
+		}
+
+		
 		var formData = new FormData();
 		formData.append("account", values.account);
 		formData.append("password", values.password);
@@ -52,7 +61,6 @@ export default function Register({}) {
 						alt=""
 						className={styles.profile}
 					/>
-				
 				</div>
 			)}
 
@@ -72,7 +80,6 @@ export default function Register({}) {
 						[Yup.ref("password"), null],
 						"Nhập lại chưa chính xác"
 					),
-					avatar: Yup.string().required("Bắt buộc phải có"),
 				})}
 				onSubmit={handleSubmit}
 			>
@@ -98,6 +105,7 @@ export default function Register({}) {
 							/>
 							<FileField
 								label="Hình đại diện"
+								hint="Không yêu cầu"
 								name="avatar"
 								onChange={(event) => {
 									setFieldValue(
@@ -127,4 +135,10 @@ export default function Register({}) {
 			</Formik>
 		</div>
 	);
+}
+
+export function getExtension(filename) {
+	var name = filename || "";
+	var arr = name.split(".");
+	return arr[arr.length - 1];
 }

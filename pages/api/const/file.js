@@ -40,7 +40,7 @@ export async function upLoadAvatar(file,path,name){
   return cleanPath(pathWithExtension);
 }
 
-function getExtension(filename) {
+export function getExtension(filename) {
 
   var name = filename || '';
   var arr = name.split('.');

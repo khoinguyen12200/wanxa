@@ -1,5 +1,6 @@
 import "../styles/globals.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+// import bootstrap from 'bootstrap'
 import Head from "next/head";
 import Navbar from "../components/Navbar";
 import { ToastContainer } from "react-toastify";

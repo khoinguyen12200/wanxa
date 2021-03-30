@@ -1,6 +1,7 @@
 import React from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import {DefaultAvatar} from './Const'
 export const StoreContext = React.createContext(null);
 
 export const actions = {
@@ -12,12 +13,11 @@ const reducer = (state, action) => {
 	switch (action.type) {
 		case actions.signIn:
 			var { user, token, save } = action.payload;
-			const availableTo = 1000 * 60 * 60 * 24 * 1 + new Date().getTime();
-			if (save) {
-				localStorage.setItem("token", token);
-				localStorage.setItem("expires_at", JSON.stringify(availableTo));
-			}
-
+			const saveTime = save ? 30 : 1;
+			const availableTo = 1000 * 60 * 60 * 24 * saveTime + new Date().getTime();
+			localStorage.setItem("token", token);
+			localStorage.setItem("expires_at", JSON.stringify(availableTo));
+			user.avatar = user.avatar == "" ? DefaultAvatar : user.avatar;
 			return { ...state, user: user, token: token };
 
 		case actions.signOut:
@@ -28,6 +28,7 @@ const reducer = (state, action) => {
 			console.log(state);
 		case actions.signInWithToken:
 			var { user, token } = action.payload;
+			user.avatar = user.avatar == "" ? DefaultAvatar : user.avatar;
 			return { ...state, user: user, token: token };
 		default:
 			return state;
@@ -51,7 +52,6 @@ export default function StoreProvider({ children }) {
 				.then((res) => {
 					if (res.status === 200) {
 						const { message, user } = res.data;
-						toast.success(message,{autoClose:2000});
 						const payload = { user: user, token: savedToken };
 						dispatch({
 							type: actions.signInWithToken,

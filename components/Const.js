@@ -16,9 +16,26 @@ export function isMobile() {
 
 	return check;
 }
+export var onImageChange =  (event) => {
+	return new Promise((resolve, reject) => {
+		if (event.target.files && event.target.files[0]) {
+			var file = event.target.files[0];
+			var filesize = (file.size / 1024 / 1024).toFixed(4);
+			let reader = new FileReader();
+				reader.onload = (e) => {
+					resolve({src:e.target.result, file:file,size:filesize});
+				};
+				reader.readAsDataURL(file);
+		}
+	})
+	
+};
 
+export const CreateStore = "/account/create-store";
+export const SignInDir = "/account/sign-in";
+export const RegisterDir = "/account/register";
+export const AccountDir = "/account";
+export const AboutDir = "/about";
 
-export const SignInDir = "/account/signin";
-export const RegisterDir = "/account/register"
-export const AccountDir ="/account"
-export const AboutDir = "/about"
+export const DefaultAvatar = "/user/avatar/default-avatar.png";
+export const DefaultStore = "/user/store/default.png";

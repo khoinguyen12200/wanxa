@@ -16,7 +16,7 @@ export default function TextField({ label, ...props }) {
     )
 }
 
-export function FileField({ label, ...props }) {
+export function FileField({ label,hint, ...props }) {
     const [field, meta] = useField(props);
     return (
         <div className={styles.layout}>
@@ -24,7 +24,7 @@ export function FileField({ label, ...props }) {
             <div className="input-group">
                 <div className="custom-file">
                     <input className="custom-file-input" type='file' name='avatar' {...props}  />
-                    <label className="custom-file-label" htmlFor="inputGroupFile01">{field.value && field.value.name}</label>
+                    <label className="custom-file-label" style={{color:"#aaa"}} htmlFor="inputGroupFile01">{field.value ? field.value.name : hint }</label>
                 </div>
             </div>
 

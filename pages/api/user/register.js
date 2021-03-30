@@ -12,9 +12,10 @@ export const config = {
 
 export default async function (req, res) {
 
-    const {name,account,password,files:{avatar}} = await formParse(req);
+    const {name,account,password,files} = await formParse(req);
+    var avatar = files != null ? files.avatar : "";
 
-    const uploadDir = await upLoadAvatar(avatar,userAvatarDir)
+    const uploadDir = avatar ? await upLoadAvatar(avatar,userAvatarDir) : "";
     const isExisting = await query("SELECT `id` FROM USER where account = ?", account);
     if(isExisting.length > 0) {
         res.status(202).json({message:"User existed"});
