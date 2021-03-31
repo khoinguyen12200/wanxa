@@ -2,7 +2,7 @@ import React from "react";
 import { AiOutlineAppstoreAdd } from "react-icons/ai";
 import Link from "next/link";
 
-import { CreateStore } from "../../components/Const";
+import { CreateStore, DefaultStore, StoreDir } from "../../components/Const";
 import { StoreContext } from "../../components/StoreContext";
 import styles from "../../styles/account.module.css";
 
@@ -58,27 +58,42 @@ function Stores({ user }) {
 	var { stores } = user;
 	return (
 		<div className={styles.stores}>
-			{stores.length == 0 && (
-				<NoStore/>
-			)}
+			{stores.length == 0 && <NoStore />}
+			{stores.map((store, index) => {
+				return <Store key={index} store={store} />;
+			})}
 		</div>
 	);
 }
-
-function NoStore(){
-	return <div className={styles.noStore}>
-	<div className={styles.NShint}>
-		<h3 className={styles.NSmessage}>
-			Bạn chưa tham gia vào doanh nghiệp nào
-		</h3>
-		<Link href={CreateStore}>
-			<a className={styles.NSlink}>
-				<AiOutlineAppstoreAdd
-					className={styles.NSicon}
-				/>
-				<h4>Tạo một doanh nghiệp mới</h4>
+function Store({ store }) {
+	const { storeid, name, logo, description } = store;
+	return (
+		<Link href={StoreDir+"/"+storeid} >
+			<a className={styles.storeCard}>
+				<img src={logo || DefaultStore} className={styles.storeLogo} />
+				<div className={styles.storeInfo}>
+					<h4 className={styles.storeName}>{name}</h4>
+					<p className={styles.storeDescription}>{description}</p>
+				</div>
 			</a>
 		</Link>
-	</div>
-</div>
+	);
+}
+
+function NoStore() {
+	return (
+		<div className={styles.noStore}>
+			<div className={styles.NShint}>
+				<h3 className={styles.NSmessage}>
+					Bạn chưa tham gia vào doanh nghiệp nào
+				</h3>
+				<Link href={CreateStore}>
+					<a className={styles.NSlink}>
+						<AiOutlineAppstoreAdd className={styles.NSicon} />
+						<h4>Tạo một doanh nghiệp mới</h4>
+					</a>
+				</Link>
+			</div>
+		</div>
+	);
 }

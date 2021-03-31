@@ -1,6 +1,5 @@
 import React from "react";
 import { Formik, Form } from "formik";
-import { motion } from "framer-motion";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";

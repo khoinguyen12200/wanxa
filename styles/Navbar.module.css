@@ -25,3 +25,19 @@
     margin-left: 10px;
     border-radius: 50%;
 }
+.mobile .navitem{
+    width:100%;
+}
+
+.mobile .userSpace{
+    display:flex;
+    flex-direction:row;
+    margin-top: 5px;
+
+}
+.mobile .userSpace>span{
+    order:2;
+}
+.mobile .userSpace>img{
+    margin: 0 10px 0 0;
+}

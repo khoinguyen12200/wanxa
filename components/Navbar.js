@@ -9,15 +9,18 @@ import {
 	Nav,
 	NavItem,
 } from "reactstrap";
-import { isMobile,SignInDir,AboutDir,AccountDir } from "./Const";
+import { isMobile, SignInDir, AboutDir, AccountDir, StoreDir } from "./Const";
 import { StoreContext } from "./StoreContext";
 
 export default function MyNavbar() {
 	const [isOpen, toggle] = React.useState(false);
 	const [state, dispatch] = React.useContext(StoreContext);
 	const { user } = state;
+	const stores = user ? user.stores : [];
+
+	const mobile = isMobile() ? styles.mobile : "";
 	return (
-		<div className={styles.navbar}>
+		<div className={styles.navbar +" "+mobile}>
 			<Navbar color="light" light expand="md">
 				<Link href="/">
 					<a>Home</a>
@@ -32,6 +35,15 @@ export default function MyNavbar() {
 						<Link href={AboutDir}>
 							<a className={styles.navitem}>About</a>
 						</Link>
+						{stores.map((store, index) => {
+							return (
+								<Link href={StoreDir + "/" + store.storeid}>
+									<a className={styles.navitem}>
+										{store.name}
+									</a>
+								</Link>
+							);
+						})}
 					</Nav>
 					<Nav>
 						<UserSpace user={user} />
@@ -50,13 +62,15 @@ function UserSpace(props) {
 				<a className={styles.navitem}>Sign In</a>
 			</Link>
 		);
-	}else{
+	} else {
+		
 		return (
 			<Link href={AccountDir}>
 				<a className={styles.navitem}>
 					<div className={styles.userSpace}>
 						<span>{user.name}</span>
-						<img src={user.avatar} alt="avatar"/>
+						<img src={user.avatar} alt="avatar" />
+						
 					</div>
 				</a>
 			</Link>

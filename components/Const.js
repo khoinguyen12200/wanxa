@@ -31,6 +31,45 @@ export var onImageChange =  (event) => {
 	
 };
 
+var PRIVILE = {
+	OWNER:0,
+	HRM:1,
+	STATISTICS:2,
+	STAFF:3,
+	BARTISTA:4,
+
+	length:5,
+}
+PRIVILE.getUserRights = (userRights) => {
+	var arr = [];
+	var temp = userRights;
+	var i = PRIVILE.length - 1;
+	while(temp != 0 && i >= 0){
+		if(temp >=i){
+			temp = temp - i;
+			arr.push(i);
+			i--;
+		}	
+	}
+	return arr;
+}
+PRIVILE.isUserHas = (userRights,right) => {
+	const arr = getUserRights(userRights);
+	return (arr.includes(right))	
+}
+PRIVILE.getRightsValue = (arr) => {
+	var value = 0;
+	if(arr.length > 0){	
+		for(let i in arr){
+			value = value + 2**i;
+		}
+	}
+	return value;
+}
+export var PRIVILE;
+
+export const StoreDir = "/store";
+
 export const CreateStore = "/account/create-store";
 export const SignInDir = "/account/sign-in";
 export const RegisterDir = "/account/register";
@@ -39,3 +78,4 @@ export const AboutDir = "/about";
 
 export const DefaultAvatar = "/user/avatar/default-avatar.png";
 export const DefaultStore = "/user/store/default.png";
+

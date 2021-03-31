@@ -4,6 +4,7 @@ var fs = require("fs");
 export const publicDir = "./public/";
 export const userDir = "/user/";
 export const userAvatarDir = "/user/avatar";
+export const userStoreDir = "/user/store";
 
 export function fileExists(dir) {
 	return new Promise((resolve, reject) => {
