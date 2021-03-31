@@ -14,7 +14,7 @@ import { StoreContext } from "./StoreContext";
 
 export default function MyNavbar() {
 	const [isOpen, toggle] = React.useState(false);
-	const [state, dispatch] = React.useContext(StoreContext);
+	const {state, dispatch} = React.useContext(StoreContext);
 	const { user } = state;
 	const stores = user ? user.stores : [];
 
@@ -37,7 +37,7 @@ export default function MyNavbar() {
 						</Link>
 						{stores.map((store, index) => {
 							return (
-								<Link href={StoreDir + "/" + store.storeid}>
+								<Link href={StoreDir + "/" + store.storeid} key={index}>
 									<a className={styles.navitem}>
 										{store.name}
 									</a>

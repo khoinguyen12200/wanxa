@@ -108,6 +108,12 @@
 .storeDescription{
     color:#aaa;
 }
+.addNew{
+    display:flex;
+    flex-direction:row;
+    align-items:center;
+    justify-content: center;
+}
 @media (max-width: 768px){
 
     .NSmessage{

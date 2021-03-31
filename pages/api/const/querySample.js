@@ -14,3 +14,13 @@ export async function getUserById(id) {
         return null;
     }
 }
+
+export async function getUserIdByToken(token) {
+    const users = await query("select `userid` from `user-token` where token = ?",[token])
+    return users.length > 0 ? users[0].userid : null;
+}
+export async function getPrivileges(userid,storeid){
+    const privileges = await query("SELECT * FROM `privileges` WHERE userid=? and storeid=?",[userid,storeid]);
+    return privileges.map(privileges => privileges.value);
+}
+

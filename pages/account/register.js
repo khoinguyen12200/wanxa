@@ -21,7 +21,7 @@ export default function Register({}) {
 		const { avatar } = values;
 		const fileE = getExtension(avatar.name);
 
-		if(avatar.name != null && (fileE != "jpg" || fileE != "png")){
+		if(avatar.name != null && (fileE != "jpg" && fileE != "png")){
 			toast.warning("Ảnh phải có định dạng jpg hoặc png");
 			setSubmitting(false);
 			return;

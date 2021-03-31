@@ -12,9 +12,6 @@ export const config = {
 export default async function (req, res) {
 
     const {userid,name,des,files} = await formParse(req);
-
-    console.log("this is log file")
-    console.log(files)
     var logo = files != null ? files.logo : "";
     const uploadDir = logo ? await upLoadAvatar(logo,userStoreDir) : "";
 
@@ -25,6 +22,10 @@ export default async function (req, res) {
         return;
     }
     const storeId = storeRes.insertId;
+
+    const addSql = "INSERT INTO `store-table-group`(`storeid`, `name`) VALUES (?,?)";
+    const addRes = await query(addSql,[storeId,"Trung tâm"])
+
 
     var priSql = "INSERT INTO `privileges`(`storeid`, `userid`, `value`) VALUES (?,?,?)";
     const priValue = PRIVILE.getRightsValue([PRIVILE.OWNER]);

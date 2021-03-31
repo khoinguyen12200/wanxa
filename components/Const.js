@@ -34,22 +34,24 @@ export var onImageChange =  (event) => {
 var PRIVILE = {
 	OWNER:0,
 	HRM:1,
-	STATISTICS:2,
-	STAFF:3,
-	BARTISTA:4,
+	FACILITY:2,
+	STATISTICS:3,
+	STAFF:4,
+	BARTISTA:5,
 
-	length:5,
+	length:6,
 }
 PRIVILE.getUserRights = (userRights) => {
 	var arr = [];
 	var temp = userRights;
 	var i = PRIVILE.length - 1;
-	while(temp != 0 && i >= 0){
-		if(temp >=i){
-			temp = temp - i;
+	for(i;i>=0;i--){
+		const somu = 2**i;
+		if(temp >= somu){
+			temp = temp - somu;
 			arr.push(i);
-			i--;
-		}	
+		}
+		if(temp == 0) break;
 	}
 	return arr;
 }

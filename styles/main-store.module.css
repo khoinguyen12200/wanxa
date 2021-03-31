@@ -24,3 +24,37 @@
     color:#fff;
     box-shadow: 0 0 10px 1px rgba(0,0,0,0.4);
 }
+
+.storeGroup{
+    padding:30px 10px;
+}
+
+.groupTable{
+    background-color: rgba(0, 0, 0, 0.041);
+    border-radius: 5px;
+    padding:10px;
+}
+.groupTableTitle{
+    padding:10px;
+    border-bottom: 1px solid #ccc;
+}
+.groupTableContent{
+    min-height:100px;
+    display:flex;
+    flex-direction:row;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.tableItem{
+    margin:10px;
+    padding:20px;
+    min-width: 150px;
+    min-height: 70px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    display:flex;
+    flex-direction:row;
+    align-items:center;
+    justify-content: center;
+}

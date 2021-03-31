@@ -6,10 +6,10 @@ import { useRouter } from "next/router";
 import { AccountDir,DefaultStore } from "../../components/Const";
 import styles from "../../styles/create-store.module.css";
 import { onImageChange } from "../../components/Const";
-import {StoreContext} from '../../components/StoreContext';
+import {StoreContext,actions} from '../../components/StoreContext';
 export default function createStores() {
 	
-	const [state,dispatch] = React.useContext(StoreContext);
+	const {state,dispatch,reloadToken} = React.useContext(StoreContext);
 
 
 	const router = useRouter();
@@ -34,7 +34,8 @@ export default function createStores() {
 		}
 
 		var data = new FormData();
-		data.append("logo",file.file);
+		const logo = file != null ? file.file : null;
+		data.append("logo",logo);
 		data.append("name",name);
 		data.append("des",des);
 		data.append("userid",user.id)
@@ -43,8 +44,10 @@ export default function createStores() {
 				console.log(res.data);
 
 				if (res.status === 200) {
-					toast.success(res.data.message)
-					router.push(AccountDir)
+					reloadToken();
+					router.push(AccountDir);
+					toast.success(res.data.message);
+					
 				}else{
 					toast.error(res.data.message)
 				}

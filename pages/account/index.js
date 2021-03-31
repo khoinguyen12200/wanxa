@@ -7,7 +7,7 @@ import { StoreContext } from "../../components/StoreContext";
 import styles from "../../styles/account.module.css";
 
 export default function index() {
-	const [state, dispatch] = React.useContext(StoreContext);
+	const {state, dispatch} = React.useContext(StoreContext);
 	const { user } = state;
 	if (user != null) {
 		return <AccountCenter user={user} />;
@@ -62,6 +62,16 @@ function Stores({ user }) {
 			{stores.map((store, index) => {
 				return <Store key={index} store={store} />;
 			})}
+			
+			{
+				stores.length != 0 &&
+				<Link href={CreateStore}>
+					<a className={styles.storeCard +" "+styles.addNew}>
+						<AiOutlineAppstoreAdd className={styles.NSicon} />
+						<h4>Tạo một doanh nghiệp mới</h4>
+					</a>
+				</Link>
+			}
 		</div>
 	);
 }

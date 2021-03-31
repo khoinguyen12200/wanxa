@@ -46,7 +46,7 @@ export default function SignIn({}) {
 
 function MyForm() {
 	const router = useRouter();
-	const [state,dispatch] = React.useContext(StoreContext);
+	const {state,dispatch} = React.useContext(StoreContext);
 	function handleSubmit(values,{ setSubmitting}){
 		axios.post('/api/user/signin', values)
 			.then(res => {
