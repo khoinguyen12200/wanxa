@@ -1,3 +1,4 @@
+import React from 'react';
 export function isMobile() {
 	let check = false;
 	if (typeof window !== "undefined") {
@@ -55,9 +56,9 @@ PRIVILE.getUserRights = (userRights) => {
 	}
 	return arr;
 }
-PRIVILE.isUserHas = (userRights,right) => {
-	const arr = getUserRights(userRights);
-	return (arr.includes(right))	
+PRIVILE.isUserHasPrivileges = (userRights,targetRight) => {
+	var arr = PRIVILE.getUserRights(userRights);
+	return (arr.includes(targetRight))	
 }
 PRIVILE.getRightsValue = (arr) => {
 	var value = 0;
@@ -69,6 +70,14 @@ PRIVILE.getRightsValue = (arr) => {
 	return value;
 }
 export var PRIVILE;
+
+
+export function useConstructor(callBack = () => {}) {
+	const [hasBeenCalled, setHasBeenCalled] = React.useState(false);
+	if (hasBeenCalled) return;
+	callBack();
+	setHasBeenCalled(true);
+  }
 
 export const StoreDir = "/store";
 

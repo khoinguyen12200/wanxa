@@ -30,14 +30,32 @@
 }
 
 .groupTable{
+    margin: 10px 0;
     background-color: rgba(0, 0, 0, 0.041);
     border-radius: 5px;
     padding:10px;
 }
 .groupTableTitle{
-    padding:10px;
-    border-bottom: 1px solid #ccc;
+    display:flex;
+    flex-direction:row;    
 }
+.groupTableTitle>input{
+    transition:all 0.3s;
+    width: 100%;
+    padding:10px;
+    margin-right: 5px;
+    background-color: transparent;
+    border:none;
+    border-bottom:2px solid #ccc;
+    border-radius: 3px;
+    outline:0;
+}
+.groupTableTitle>input:focus{
+    transition:all 0.3s;
+    background-color: rgb(255, 255, 255);
+    border-bottom-color:rgba(0, 140, 255, 0.658);
+}
+
 .groupTableContent{
     min-height:100px;
     display:flex;

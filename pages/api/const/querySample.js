@@ -1,4 +1,5 @@
 import query from "../const/connection";
+import { PRIVILE } from "../../../components/Const";
 
 export async function getUserById(id) {
 	const users = await query(
@@ -21,6 +22,24 @@ export async function getUserIdByToken(token) {
 }
 export async function getPrivileges(userid,storeid){
     const privileges = await query("SELECT * FROM `privileges` WHERE userid=? and storeid=?",[userid,storeid]);
-    return privileges.map(privileges => privileges.value);
+    if(privileges.length > 0){
+        return privileges[0].value;
+    }else{
+        return null;
+    }
 }
 
+export async function isUserHasPrivileges(token,storeid,arrOfPrivileges){
+    const priValue = await getPrivileges(token,storeid);
+
+    for(let i in arrOfPrivileges) {
+        const targetRight = arrOfPrivileges[i];
+        console.log("target ",targetRight);
+        if(PRIVILE.isUserHasPrivileges(priValue,targetRight)){
+            return true;
+        }
+    }
+    return false;
+}
+
+export const PRIVILEAPI = PRIVILE;
