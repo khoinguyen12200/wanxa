@@ -29,8 +29,14 @@ export var onImageChange =  (event) => {
 				reader.readAsDataURL(file);
 		}
 	})
-	
 };
+
+export function getExtension(filename) {
+	var name = filename || "";
+	var arr = name.split(".");
+	return arr[arr.length - 1];
+}
+
 
 var PRIVILE = {
 	OWNER:0,

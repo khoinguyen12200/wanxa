@@ -11,7 +11,7 @@ import {
 	accountValidator,
 	nameValidator,
 } from "../../components/Validations";
-import { isMobile, SignInDir } from "../../components/Const";
+import { isMobile, SignInDir,getExtension } from "../../components/Const";
 import styles from "../../styles/Register.module.css";
 
 export default function Register({}) {
@@ -136,8 +136,3 @@ export default function Register({}) {
 	);
 }
 
-export function getExtension(filename) {
-	var name = filename || "";
-	var arr = name.split(".");
-	return arr[arr.length - 1];
-}

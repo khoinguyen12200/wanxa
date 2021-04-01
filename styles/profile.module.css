@@ -1,0 +1,53 @@
+
+.profilePage{
+    
+    width:100%;
+    
+    
+}
+.mainForm{
+    transition: all 0.3s;
+    width:500px;
+    max-width:90%;
+    display:flex;
+    flex-direction:column;
+    margin:auto;
+    padding:20px;
+    margin:20px auto;
+    border-radius: 10px;
+    background-color: #eee;
+}
+.avatarSpace{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    position: relative;
+}
+.title{
+    text-align:center;
+    padding:5px;
+    margin-bottom: 15px;
+}
+
+.userAvatar{
+    width:150px;
+    height:150px;
+    border-radius: 50%;
+    border:5px solid rgba(0, 110, 253, 0.479);
+    object-fit:cover;
+    
+}
+
+.avatarButtons{
+    margin-top: 5px;
+}
+.description{
+    transition:all 0.3s;
+    border:1px solid #ccc;
+    outline:0;
+    border-radius: 3px;
+}
+.description:focus{
+    transition:all 0.3s;
+    box-shadow: 0 0 0 3px rgba(0, 140, 255, 0.39);
+}

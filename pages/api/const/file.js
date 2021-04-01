@@ -6,6 +6,18 @@ export const userDir = "/user/";
 export const userAvatarDir = "/user/avatar";
 export const userStoreDir = "/user/store";
 
+
+export function deleteFile(path){
+  return new Promise((resolve, reject) => {
+    fs.unlink(getPublic(path), (err) => {
+      if (err) {
+       resolve(err);
+      }
+      resolve(true)
+    })
+  })
+  
+}
 export function fileExists(dir) {
 	return new Promise((resolve, reject) => {
 		fs.stat(dir, (err, stat) => {
@@ -36,7 +48,6 @@ export async function upLoadAvatar(file,path,name){
     }
   }
   const pathWithExtension = newPath+"."+getExtension(file.name)
-  console.log(pathWithExtension);
   moveFile(file.path,getPublic(pathWithExtension))
   return cleanPath(pathWithExtension);
 }

@@ -23,7 +23,7 @@ export default function MyNavbar() {
 		<div className={styles.navbar +" "+mobile}>
 			<Navbar color="light" light expand="md">
 				<Link href="/">
-					<a>Home</a>
+					<a className={styles.navitem}>Home</a>
 				</Link>
 				<NavbarToggler onClick={() => toggle(!isOpen)} />
 				<Collapse
@@ -32,9 +32,9 @@ export default function MyNavbar() {
 					navbar
 				>
 					<Nav className="mr-auto" navbar>
-						<Link href={AboutDir}>
+						{/* <Link href={AboutDir}>
 							<a className={styles.navitem}>About</a>
-						</Link>
+						</Link> */}
 						{stores.map((store, index) => {
 							return (
 								<Link href={StoreDir + "/" + store.storeid} key={index}>

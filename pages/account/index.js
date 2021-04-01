@@ -1,11 +1,25 @@
 import React from "react";
 import { AiOutlineAppstoreAdd } from "react-icons/ai";
+import { BiSend } from "react-icons/bi";
 import Link from "next/link";
+import axios from "axios";
+import { toast } from "react-toastify";
+import TextField, { FileField } from "../../components/TextField";
+import { Formik, Form } from "formik";
+import * as Yup from "yup";
 
-import { CreateStore, DefaultStore, StoreDir } from "../../components/Const";
+import {
+	CreateStore,
+	DefaultStore,
+	StoreDir,
+	onImageChange,
+} from "../../components/Const";
 import { StoreContext } from "../../components/StoreContext";
 import Selector from "../../components/Selector";
 import styles from "../../styles/account.module.css";
+import { nameValidator } from "../../components/Validations";
+
+import proStyles from "../../styles/profile.module.css";
 
 export default function index() {
 	const { state, dispatch } = React.useContext(StoreContext);
@@ -29,13 +43,8 @@ function NotFound() {
 }
 
 function AccountCenter({ user }) {
-	const [tab, setTab] = React.useState(0);
+	const [tab, setTab] = React.useState(1);
 
-	const getTabName = (num) => {
-		return tab == num
-			? styles.dirItem + " " + styles.dirActive
-			: styles.dirItem;
-	};
 	return (
 		<div className={styles.accountMain}>
 			<div className={styles.layout}>
@@ -53,6 +62,7 @@ function AccountCenter({ user }) {
 
 				<div className={styles.accountContent}>
 					{tab == 0 && <Stores user={user} />}
+					{tab == 1 && <Profile />}
 				</div>
 			</div>
 		</div>
@@ -89,5 +99,160 @@ function Store({ store }) {
 				</div>
 			</a>
 		</Link>
+	);
+}
+
+function Profile() {
+	const { state, reloadToken, getSavedToken } = React.useContext(
+		StoreContext
+	);
+	const { user } = state;
+
+	const [description, setDescription] = React.useState(user.description);
+
+	function submitChangeDes() {
+		var data = new FormData();
+		data.append("token", getSavedToken());
+		data.append("description", description);
+
+		axios
+			.post("/api/user/api-change-description", data)
+			.then((res) => {
+				const { message } = res.data;
+				if (res.status === 200) {
+					reloadToken();
+					toast.success(message);
+				}
+			})
+			.catch((error) => console.log(error));
+	}
+
+	function submitChangeName(values, { setSubmitting }) {
+		const { name } = values;
+		var data = new FormData();
+		data.append("token", getSavedToken());
+		data.append("name", name);
+		axios
+			.post("/api/user/api-change-name", data)
+			.then((res) => {
+				const { message } = res.data;
+				if (res.status === 200) {
+					toast.success(message);
+					reloadToken();
+					var x = document.activeElement;
+					x.blur();
+					return;
+				}
+				toast.error(message);
+			})
+			.catch((error) => console.log(error));
+	}
+
+	return (
+		<div className={proStyles.profilePage}>
+			<div className={proStyles.mainForm}>
+				<h3 className={proStyles.title}>Thông tin cá nhân</h3>
+				<AvatarInput defaultAvatar={user.avatar} />
+				<Formik
+					initialValues={{ name: user.name }}
+					validationSchema={Yup.object({
+						name: nameValidator,
+					})}
+					onSubmit={submitChangeName}
+				>
+					<Form>
+						<TextField
+							tooltip="Enter để lưu thay đổi"
+							label="Họ tên"
+							type="text"
+							name="name"
+						/>
+					</Form>
+				</Formik>
+				<label className="mt-1" style={{ fontSize: "0.9em" }}>
+					Mô tả thêm
+				</label>
+				<textarea
+					className={proStyles.description + " p-2"}
+					onChange={(e) => {
+						setDescription(e.target.value);
+					}}
+					defaultValue={description}
+				/>
+				{description != user.description && (
+					<button
+						onClick={submitChangeDes}
+						className="btn btn-sm btn-outline-primary mt-2 mb-1"
+					>
+						<BiSend />
+					</button>
+				)}
+			</div>
+		</div>
+	);
+}
+
+function AvatarInput({ defaultAvatar }) {
+	const { reloadToken, getSavedToken } = React.useContext(StoreContext);
+
+	React.useEffect(() => {
+		setFileObject(null);
+	}, [defaultAvatar]);
+
+	const avatarRef = React.useRef(null);
+	const [fileObject, setFileObject] = React.useState(null);
+	function onFileChange(e) {
+		onImageChange(e).then((object) => {
+			setFileObject(object);
+			avatarRef.current.value = null;
+		});
+	}
+	function saveAvatarChange() {
+		var data = new FormData();
+		data.append("token", getSavedToken());
+		data.append("avatar", fileObject.file);
+		axios
+			.post("/api/user/api-change-avatar", data)
+			.then((res) => {
+				const { message } = res.data;
+				if (res.status === 200) {
+					toast.success(message);
+					reloadToken();
+				} else {
+					toast.error(message);
+				}
+			})
+			.catch((error) => console.log(error));
+	}
+	return (
+		<div className={proStyles.avatarSpace}>
+			<img
+				src={fileObject ? fileObject.src : defaultAvatar}
+				className={proStyles.userAvatar}
+			/>
+			<div className={proStyles.avatarButtons}>
+				<button
+					onClick={() => avatarRef.current.click()}
+					className="btn btn-info btn-sm"
+				>
+					Thay đổi
+				</button>
+				{fileObject != null && (
+					<button
+						onClick={saveAvatarChange}
+						className="btn btn-warning btn-sm ml-2"
+					>
+						Lưu
+					</button>
+				)}
+
+				<input
+					onChange={onFileChange}
+					type="file"
+					ref={avatarRef}
+					style={{ display: "none" }}
+				/>
+			</div>
+		</div>
 	);
 }

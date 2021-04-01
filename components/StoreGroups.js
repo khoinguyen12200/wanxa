@@ -123,11 +123,8 @@ function Group({ group, onUpdate }) {
 	);
 }
 function GroupNameInput({ onUpdate, group }) {
-	const [viewId, setId] = React.useState(null);
+	const [viewId, setId] = React.useState("myid" + uuidv4());
 	const { getSavedToken } = React.useContext(StoreContext);
-	React.useEffect(() => {
-		setId("id" + uuidv4());
-	}, []);
 
 	const { name, id } = group;
 

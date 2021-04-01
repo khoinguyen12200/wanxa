@@ -3,7 +3,7 @@ import { PRIVILE } from "../../../components/Const";
 
 export async function getUserById(id) {
 	const users = await query(
-		"SELECT `id`, `account`,  `name`, `avatar` from user WHERE id = ?",
+		"SELECT `id`, `account`, `description`, `name`, `avatar` from user WHERE id = ?",
 		id
 	);
     if(users.length > 0) {
