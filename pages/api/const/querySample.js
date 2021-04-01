@@ -34,7 +34,6 @@ export async function isUserHasPrivileges(token,storeid,arrOfPrivileges){
 
     for(let i in arrOfPrivileges) {
         const targetRight = arrOfPrivileges[i];
-        console.log("target ",targetRight);
         if(PRIVILE.isUserHasPrivileges(priValue,targetRight)){
             return true;
         }

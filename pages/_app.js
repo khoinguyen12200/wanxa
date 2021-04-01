@@ -5,7 +5,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 // import bootstrap from 'bootstrap'
 import Head from "next/head";
 import Navbar from "../components/Navbar";
-import { ToastContainer } from "react-toastify";
+import { ToastContainer,toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import StoreProvider from "../components/StoreContext";
 import {PopupContainer} from "../components/Popup";
@@ -19,7 +19,7 @@ function MyApp({ Component, pageProps }) {
 					<link rel="icon" href="/favicon.ico" />
 				</Head>
 				<PopupContainer position={"top center"}/>
-				<ToastContainer />
+				<ToastContainer autoClose={2500} postion={toast.POSITION.TOP_CENTER}/>
 				<Navbar />
 				<Component {...pageProps} />
 			</StoreProvider>

@@ -4,10 +4,11 @@ import Link from "next/link";
 
 import { CreateStore, DefaultStore, StoreDir } from "../../components/Const";
 import { StoreContext } from "../../components/StoreContext";
+import Selector from "../../components/Selector";
 import styles from "../../styles/account.module.css";
 
 export default function index() {
-	const {state, dispatch} = React.useContext(StoreContext);
+	const { state, dispatch } = React.useContext(StoreContext);
 	const { user } = state;
 	if (user != null) {
 		return <AccountCenter user={user} />;
@@ -28,7 +29,7 @@ function NotFound() {
 }
 
 function AccountCenter({ user }) {
-	const [tab, meta] = React.useState(1);
+	const [tab, setTab] = React.useState(0);
 
 	const getTabName = (num) => {
 		return tab == num
@@ -39,15 +40,19 @@ function AccountCenter({ user }) {
 		<div className={styles.accountMain}>
 			<div className={styles.layout}>
 				<div className={styles.directionTable}>
-					<button onClick={() => meta(1)} className={getTabName(1)}>
-						Doanh nghiệp
-					</button>
-					<button onClick={() => meta(2)} className={getTabName(2)}>
-						Thông tin cá nhân
-					</button>
+					<Selector
+						backColor="#ccc"
+						options={[
+							{ title: "Doanh nghiệp", value: 0 },
+							{ title: "Cá nhân", value: 1 },
+						]}
+						defaultValue={tab}
+						onChange={setTab}
+					/>
 				</div>
+
 				<div className={styles.accountContent}>
-					{tab == 1 && <Stores user={user} />}
+					{tab == 0 && <Stores user={user} />}
 				</div>
 			</div>
 		</div>
@@ -62,23 +67,20 @@ function Stores({ user }) {
 			{stores.map((store, index) => {
 				return <Store key={index} store={store} />;
 			})}
-			
-			{
-				stores.length != 0 &&
-				<Link href={CreateStore}>
-					<a className={styles.storeCard +" "+styles.addNew}>
-						<AiOutlineAppstoreAdd className={styles.NSicon} />
-						<h4>Tạo một doanh nghiệp mới</h4>
-					</a>
-				</Link>
-			}
+
+			<Link href={CreateStore}>
+				<a className={styles.storeCard + " " + styles.addNew}>
+					<AiOutlineAppstoreAdd className={styles.NSicon} />
+					<h4>Tạo một doanh nghiệp mới</h4>
+				</a>
+			</Link>
 		</div>
 	);
 }
 function Store({ store }) {
 	const { storeid, name, logo, description } = store;
 	return (
-		<Link href={StoreDir+"/"+storeid} >
+		<Link href={StoreDir + "/" + storeid}>
 			<a className={styles.storeCard}>
 				<img src={logo || DefaultStore} className={styles.storeLogo} />
 				<div className={styles.storeInfo}>
@@ -87,23 +89,5 @@ function Store({ store }) {
 				</div>
 			</a>
 		</Link>
-	);
-}
-
-function NoStore() {
-	return (
-		<div className={styles.noStore}>
-			<div className={styles.NShint}>
-				<h3 className={styles.NSmessage}>
-					Bạn chưa tham gia vào doanh nghiệp nào
-				</h3>
-				<Link href={CreateStore}>
-					<a className={styles.NSlink}>
-						<AiOutlineAppstoreAdd className={styles.NSicon} />
-						<h4>Tạo một doanh nghiệp mới</h4>
-					</a>
-				</Link>
-			</div>
-		</div>
 	);
 }

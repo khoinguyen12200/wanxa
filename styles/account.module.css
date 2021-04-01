@@ -10,6 +10,7 @@
     flex-direction:row;
     border-bottom: 1px solid #ccc;
     justify-content: flex-end;
+    padding:5px;
 }
 .dirItem{
     background-color: transparent;
@@ -51,6 +52,7 @@
 }
 .NSlink{
     margin:20px auto;
+    padding:10px;
     display:flex;
     flex-direction:row;
     align-items:center;
@@ -58,6 +60,7 @@
 }
 .NSicon{
     font-size:50px;
+    margin-right: 10px;
     align-items: center;
 }
 .notFound{
@@ -113,12 +116,19 @@
     flex-direction:row;
     align-items:center;
     justify-content: center;
+    padding:10px;
 }
 @media (max-width: 768px){
-
+    .storeLogo{
+        width:100px;
+        height:100px;
+    }
+    .storeCard{
+        width:300px;
+        max-width:90%;
+        height:100px;
+    }
     .NSmessage{
         font-size:20px !important;
     }
-
-
 }
