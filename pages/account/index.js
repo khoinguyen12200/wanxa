@@ -18,11 +18,12 @@ import { StoreContext } from "../../components/StoreContext";
 import Selector from "../../components/Selector";
 import styles from "../../styles/account.module.css";
 import { nameValidator } from "../../components/Validations";
-
+import {DefaultAvatar} from '../../components/Const';
 import proStyles from "../../styles/profile.module.css";
 
 export default function index() {
 	const { state, dispatch } = React.useContext(StoreContext);
+	console.log(state)
 	const { user } = state;
 	if (user != null) {
 		return <AccountCenter user={user} />;
@@ -152,7 +153,7 @@ function Profile() {
 		<div className={proStyles.profilePage}>
 			<div className={proStyles.mainForm}>
 				<h3 className={proStyles.title}>Thông tin cá nhân</h3>
-				<AvatarInput defaultAvatar={user.avatar} />
+				<AvatarInput defaultAvatar={user ? user.avatar : DefaultAvatar} />
 				<Formik
 					initialValues={{ name: user.name }}
 					validationSchema={Yup.object({

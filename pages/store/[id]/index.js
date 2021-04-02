@@ -3,8 +3,10 @@ import { useRouter } from "next/router";
 
 import { StoreContext } from "../../../components/StoreContext";
 import styles from "../../../styles/main-store.module.css";
-import StoreGroups from "../../../components/StoreGroups";
 import Selector from "../../../components/Selector";
+
+import Facility from "../../../components/Facility";
+import BasicStoreInfo from "../../../components/BasicStoreInfo";
 
 export default function index() {
 	const router = useRouter();
@@ -21,7 +23,7 @@ export default function index() {
 	}
 }
 function AcceptAccessStore({ storeid }) {
-	const [tab,setTab] = React.useState(0);
+	const [tab,setTab] = React.useState(2);
 	return (
 		<div className={styles.Accept}>
 			<div className={styles.header}>
@@ -30,6 +32,7 @@ function AcceptAccessStore({ storeid }) {
 					options={[
 						{ title: "Thời gian thực", value: 0 },
 						{ title: "Cơ sở vật chất", value: 1 },
+						{ title: "Thông tin cơ bản", value: 2 },
 					]}
 					defaultValue={tab}
 					onChange={setTab}
@@ -37,9 +40,12 @@ function AcceptAccessStore({ storeid }) {
 			</div>
 			{
 				tab == 1 &&
-				<StoreGroups storeid={storeid} />
+				<Facility storeid={storeid} />
 			}
-			
+			{
+				tab == 2 &&
+				<BasicStoreInfo storeid={storeid}/>
+			}
 		</div>
 	);
 }

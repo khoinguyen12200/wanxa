@@ -6,7 +6,6 @@
     
 }
 .mainForm{
-    transition: all 0.3s;
     width:500px;
     max-width:90%;
     display:flex;
@@ -17,6 +16,7 @@
     border-radius: 10px;
     background-color: #eee;
 }
+
 .avatarSpace{
     display:flex;
     flex-direction:column;
