@@ -5,25 +5,30 @@ import { AiOutlineAppstoreAdd, AiOutlineClose } from "react-icons/ai";
 import { v4 as uuidv4 } from "uuid";
 import { UncontrolledTooltip } from "reactstrap";
 import { toast } from "react-toastify";
+import { useRouter } from "next/router";
 
-import { StoreContext } from "./StoreContext";
-import styles from "./styles/store-group.module.css";
-import { confirm } from "./Popup";
+import { StoreContext } from "../../../components/StoreContext";
+import styles from "../../../styles/facility.module.css";
+import { confirm } from "../../../components/Popup";
+import NavBar from "../../../components/StoreNavBar";
 
-export default function StoreGroups({ storeid }) {
+export default function StoreGroups() {
+	const router = useRouter();
+	const { storeId } = router.query;
+
 	const [groups, setGroups] = React.useState([]);
 	const { getSavedToken } = React.useContext(StoreContext);
 
 	React.useEffect(() => {
 		update();
-	}, [storeid]);
+	}, [storeId]);
 
 	function update() {
 		var data = new FormData();
-		data.append("storeid", storeid);
+		data.append("storeid", storeId);
 		data.append("token", getSavedToken());
 		axios
-			.post("/api/store/store-group", data)
+			.post("/api/store/group/store-group", data)
 			.then((res) => {
 				if (res.status === 200) {
 					const groups = res.data.group;
@@ -36,12 +41,12 @@ export default function StoreGroups({ storeid }) {
 	const addGroup = (name) => {
 		var data = new FormData();
 		if (name == null) return;
-		data.append("storeid", storeid);
+		data.append("storeid", storeId);
 		data.append("token", getSavedToken());
 		data.append("name", name);
 
 		axios
-			.post("/api/store/api-add-group", data)
+			.post("/api/store/group/api-add-group", data)
 			.then((res) => {
 				const { message } = res.data;
 				if (res.status === 200) {
@@ -55,19 +60,24 @@ export default function StoreGroups({ storeid }) {
 
 	return (
 		<div className={styles.storeGroup}>
-			{groups.map((group) => {
-				return <Group group={group} key={group.id} onUpdate={update} />;
-			})}
-			<div className={styles.addGroup}>
-				<button
-					className="btn btn-lg btn-secondary m-3"
-					onClick={() => {
-						let name = prompt("Nhập tên nhóm");
-						addGroup(name);
-					}}
-				>
-					<AiOutlineAppstoreAdd /> Thêm nhóm mới
-				</button>
+			<NavBar />
+			<div className={styles.content}>
+				{groups.map((group) => {
+					return (
+						<Group group={group} key={group.id} onUpdate={update} />
+					);
+				})}
+				<div className={styles.addGroup}>
+					<button
+						className="btn btn-lg btn-secondary m-3"
+						onClick={() => {
+							let name = prompt("Nhập tên nhóm");
+							addGroup(name);
+						}}
+					>
+						<AiOutlineAppstoreAdd /> Thêm nhóm mới
+					</button>
+				</div>
 			</div>
 		</div>
 	);
@@ -87,7 +97,7 @@ function Group({ group, onUpdate }) {
 		data.append("token", getSavedToken());
 
 		axios
-			.post("/api/store/addTable", data)
+			.post("/api/store/table/api-add-table", data)
 			.then((res) => {
 				if (res.status === 200) {
 					onUpdate();
@@ -139,7 +149,7 @@ function GroupNameInput({ onUpdate, group }) {
 			data.append("groupid", id);
 			data.append("token", getSavedToken());
 			axios
-				.post("/api/store/api-delete-group", data)
+				.post("/api/store/group/api-delete-group", data)
 				.then((res) => {
 					const { message } = res.data;
 					if (res.status === 200) {
@@ -164,7 +174,7 @@ function GroupNameInput({ onUpdate, group }) {
 			data.append("groupid", id);
 			data.append("token", getSavedToken());
 			axios
-				.post("/api/store/api-change-group-name", data)
+				.post("/api/store/group/api-change-group-name", data)
 				.then((res) => {
 					const { message } = res.data;
 
@@ -224,7 +234,7 @@ function Table({ table, onUpdate }) {
 			data.append("tableid", table.id);
 
 			axios
-				.post("/api/store/api-update-name-table", data)
+				.post("/api/store/table/api-update-name-table", data)
 				.then((res) => {
 					if (res.status === 200) {
 						toast.success(res.data.message);

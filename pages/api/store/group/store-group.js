@@ -1,5 +1,5 @@
-import query from "../const/connection";
-import formParse from '../const/form'
+import query from "../../const/connection";
+import formParse from '../../const/form'
 
 
 export const config = {

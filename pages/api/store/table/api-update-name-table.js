@@ -1,6 +1,6 @@
-import query from "../const/connection";
-import formParse from "../const/form";
-import { isUserHasPrivileges, PRIVILEAPI } from "../const/querySample";
+import query from "../../const/connection";
+import formParse from "../../const/form";
+import { isUserHasPrivileges, PRIVILEAPI } from "../../const/querySample";
 
 export const config = {
 	api: {

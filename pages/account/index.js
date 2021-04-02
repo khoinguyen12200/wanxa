@@ -23,7 +23,6 @@ import proStyles from "../../styles/profile.module.css";
 
 export default function index() {
 	const { state, dispatch } = React.useContext(StoreContext);
-	console.log(state)
 	const { user } = state;
 	if (user != null) {
 		return <AccountCenter user={user} />;
@@ -44,7 +43,7 @@ function NotFound() {
 }
 
 function AccountCenter({ user }) {
-	const [tab, setTab] = React.useState(1);
+	const [tab, setTab] = React.useState(0);
 
 	return (
 		<div className={styles.accountMain}>

@@ -1,7 +1,7 @@
-import query from "../const/connection";
-import formParse from "../const/form";
-import { getPrivileges, getUserIdByToken } from "../const/querySample";
-import { PRIVILE } from "../../../components/Const";
+import query from "../../const/connection";
+import formParse from "../../const/form";
+import { getPrivileges, getUserIdByToken } from "../../const/querySample";
+import { PRIVILE } from "../../../../components/Const";
 
 export const config = {
 	api: {

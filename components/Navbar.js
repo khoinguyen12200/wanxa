@@ -1,5 +1,8 @@
 import Link from "next/link";
 import React from "react";
+import { useRouter } from "next/router";
+import ReactDom from "react-dom";
+
 import styles from "../styles/Navbar.module.css";
 import {
 	Collapse,
@@ -13,14 +16,17 @@ import { isMobile, SignInDir, AboutDir, AccountDir, StoreDir } from "./Const";
 import { StoreContext } from "./StoreContext";
 
 export default function MyNavbar() {
+
+
 	const [isOpen, toggle] = React.useState(false);
-	const {state, dispatch} = React.useContext(StoreContext);
+	const { state, dispatch } = React.useContext(StoreContext);
 	const { user } = state;
 	const stores = user ? user.stores : [];
 
+
 	const mobile = isMobile() ? styles.mobile : "";
 	return (
-		<div className={styles.navbar +" "+mobile}>
+		<div id="navbar-dynamic" className={styles.navbar + " " + mobile}>
 			<Navbar color="light" light expand="md">
 				<Link href="/">
 					<a className={styles.navitem}>Home</a>
@@ -32,18 +38,14 @@ export default function MyNavbar() {
 					navbar
 				>
 					<Nav className="mr-auto" navbar>
-						{/* <Link href={AboutDir}>
-							<a className={styles.navitem}>About</a>
-						</Link> */}
-						{stores.map((store, index) => {
-							return (
-								<Link href={StoreDir + "/" + store.storeid} key={index}>
-									<a className={styles.navitem}>
-										{store.name}
-									</a>
-								</Link>
-							);
-						})}
+						{stores.map((store, index) => (
+							<Link
+								href={StoreDir + "/" + store.storeid}
+								key={store.storeid}
+							>
+								<a className={styles.navitem}>{store.name}</a>
+							</Link>
+						))}
 					</Nav>
 					<Nav>
 						<UserSpace user={user} />
@@ -63,14 +65,12 @@ function UserSpace(props) {
 			</Link>
 		);
 	} else {
-		
 		return (
 			<Link href={AccountDir}>
 				<a className={styles.navitem}>
 					<div className={styles.userSpace}>
 						<span>{user.name}</span>
 						<img src={user.avatar} alt="avatar" />
-						
 					</div>
 				</a>
 			</Link>
