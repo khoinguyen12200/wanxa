@@ -14,11 +14,11 @@ import {
 	StoreDir,
 	onImageChange,
 } from "../../components/Const";
-import { StoreContext } from "../../components/StoreContext";
+import { StoreContext,actions } from "../../components/StoreContext";
 import Selector from "../../components/Selector";
 import styles from "../../styles/account.module.css";
 import { nameValidator } from "../../components/Validations";
-import {DefaultAvatar} from '../../components/Const';
+import { DefaultAvatar } from "../../components/Const";
 import proStyles from "../../styles/profile.module.css";
 
 export default function index() {
@@ -43,7 +43,8 @@ function NotFound() {
 }
 
 function AccountCenter({ user }) {
-	const [tab, setTab] = React.useState(0);
+
+	const [tab, setTab] = React.useState(1);
 
 	return (
 		<div className={styles.accountMain}>
@@ -103,7 +104,9 @@ function Store({ store }) {
 }
 
 function Profile() {
-	const { state, reloadToken, getSavedToken } = React.useContext(
+
+
+	const { state,dispatch, reloadToken, getSavedToken } = React.useContext(
 		StoreContext
 	);
 	const { user } = state;
@@ -152,7 +155,9 @@ function Profile() {
 		<div className={proStyles.profilePage}>
 			<div className={proStyles.mainForm}>
 				<h3 className={proStyles.title}>Thông tin cá nhân</h3>
-				<AvatarInput defaultAvatar={user ? user.avatar : DefaultAvatar} />
+				<AvatarInput
+					defaultAvatar={user ? user.avatar : DefaultAvatar}
+				/>
 				<Formik
 					initialValues={{ name: user.name }}
 					validationSchema={Yup.object({
@@ -188,6 +193,7 @@ function Profile() {
 					</button>
 				)}
 			</div>
+			<button onClick={()=>dispatch({type:actions.signOut})} className="btn btn-danger btn-sm m-auto">Đăng xuất</button>
 		</div>
 	);
 }

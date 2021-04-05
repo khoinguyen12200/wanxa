@@ -8,6 +8,7 @@ export const actions = {
 	signIn: "SIGN_IN",
 	signOut: "SIGN_OUT",
 	signInWithToken: "SIGN_IN_WITH_TOKEN",
+
 };
 const reducer = (state, action) => {
 	switch (action.type) {
@@ -24,9 +25,8 @@ const reducer = (state, action) => {
 		case actions.signOut:
 			localStorage.setItem("token", token);
 			localStorage.setItem("expires_at", "0");
-			state.user = null;
-			state.token = null;
-			console.log(state);
+			toast.warning("Bạn đã đăng xuất khỏi thiết bị này")
+			return {...state,user:null,token:null};
 		case actions.signInWithToken:
 			var { user, token } = action.payload;
 			user.avatar = user.avatar == "" ? DefaultAvatar : user.avatar;

@@ -1,8 +1,9 @@
 import React from "react";
 import { useRouter } from "next/router";
 import { AiFillAppstore } from "react-icons/ai";
-import {RiProfileFill,RiTableAltFill} from "react-icons/ri";
+import {RiProfileFill} from "react-icons/ri";
 import {SiAirtable} from 'react-icons/si';
+import {BsPeopleFill} from 'react-icons/bs';
 import Link from "next/link";
 
 import NavBar from '../../../components/StoreNavBar'
@@ -51,6 +52,14 @@ function AcceptAccessStore({ storeid }) {
 						<RiProfileFill />
 						<div>
 							<p>Thông tin cơ bản</p>
+						</div>
+					</a>
+				</Link>
+				<Link href={`/store/${storeid}/hrm`}>
+					<a className={styles.routeItem} style={{color:"#cc0000"}}>
+						<BsPeopleFill />
+						<div>
+							<p>Quản lý nhân sự</p>
 						</div>
 					</a>
 				</Link>

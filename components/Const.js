@@ -43,10 +43,30 @@ var PRIVILE = {
 	HRM:1,
 	FACILITY:2,
 	STATISTICS:3,
-	STAFF:4,
+	WAITER:4,
 	BARTISTA:5,
 
 	length:6,
+}
+
+PRIVILE.getSumPriority = function (userRights){
+	const arr = PRIVILE.getUserRights(userRights);
+	var sum = 0;
+	for(let i in arr){
+		sum += PRIVILE.getPriority(arr[i]);
+	}
+	return sum;
+}
+PRIVILE.getPriority = function(right){
+	switch (right){
+		case PRIVILE.OWNER : return 100;
+		case PRIVILE.HRM : return 20;
+		case PRIVILE.FACILITY : return 20;
+		case PRIVILE.STATISTICS : return 10;
+		case PRIVILE.WAITER : return 5;
+		case PRIVILE.BARTISTA : return 5;
+	}
+	return 0;
 }
 PRIVILE.getUserRights = (userRights) => {
 	var arr = [];
@@ -61,6 +81,17 @@ PRIVILE.getUserRights = (userRights) => {
 		if(temp == 0) break;
 	}
 	return arr;
+}
+PRIVILE.RightToString = (right) => {
+	switch (right){
+		case PRIVILE.OWNER : return "Chủ sở hữu";
+		case PRIVILE.HRM : return "Quản lý nhân sự";
+		case PRIVILE.FACILITY : return "Quản lý cơ sở vật chất";
+		case PRIVILE.STATISTICS : return "Thống kê";
+		case PRIVILE.WAITER : return "Phục vụ";
+		case PRIVILE.BARTISTA : return "Pha chế";
+	}
+	return "Không rõ";
 }
 PRIVILE.isUserHasPrivileges = (userRights,targetRight) => {
 	var arr = PRIVILE.getUserRights(userRights);
