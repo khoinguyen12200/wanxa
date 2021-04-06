@@ -8,9 +8,64 @@
     margin-bottom: 10px;
 }
 .content{
+    transition:all 0.3s;
     display:flex;
     flex-direction:row;
+    flex-wrap: wrap;
     align-items: center;
     justify-content:center;
     padding:10px;
+
+}
+.addUser{
+    margin:10px;
+}
+.UserCard{
+    border-radius: 3px;
+    border:1px solid #ccc;
+    padding:10px;
+    margin:10px;
+    box-shadow: 4px 4px 10px 1px rgba(0,0,0,0.3);
+    position: relative;
+    max-width: 400px;
+}
+.mainBtnSpace{
+    display:flex;
+    margin:20px 0;
+    align-items:center;
+    flex-direction:column;
+    justify-content:center;
+}
+.saved{
+    background-color: #ddd;
+}
+.FormButtonSpace{
+    display:flex;
+    flex-direction:row;
+    justify-content: space-around;
+    margin-top: 10px;
+}
+.editButtonSpace{
+    position:absolute;
+    right:10px;
+    top:10px;
+}
+
+.FormButtonSpace>button{
+    flex:1;
+    margin:5px;
+}
+.labelPrivileges{
+    margin: 0 5px 5px 0;
+    padding:5px;
+    border:1px solid #ccc;
+    border-radius: 3px;
+}
+.labelPrivileges>input{
+    margin-right: 5px;
+}
+.privilegesContainer{
+    display:flex;
+    flex-direction:row;
+    flex-wrap: wrap;
 }

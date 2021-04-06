@@ -45,8 +45,9 @@ var PRIVILE = {
 	STATISTICS:3,
 	WAITER:4,
 	BARTISTA:5,
+	STAFF:6,
 
-	length:6,
+	length:7,
 }
 
 PRIVILE.getSumPriority = function (userRights){
@@ -65,6 +66,7 @@ PRIVILE.getPriority = function(right){
 		case PRIVILE.STATISTICS : return 10;
 		case PRIVILE.WAITER : return 5;
 		case PRIVILE.BARTISTA : return 5;
+		case PRIVILE.STAFF : return 1;
 	}
 	return 0;
 }
@@ -90,6 +92,7 @@ PRIVILE.RightToString = (right) => {
 		case PRIVILE.STATISTICS : return "Thống kê";
 		case PRIVILE.WAITER : return "Phục vụ";
 		case PRIVILE.BARTISTA : return "Pha chế";
+		case PRIVILE.STAFF : return "Nhân viên";
 	}
 	return "Không rõ";
 }
