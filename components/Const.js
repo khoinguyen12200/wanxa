@@ -64,9 +64,8 @@ var PRIVILE = {
 	STATISTICS: 3,
 	WAITER: 4,
 	BARTISTA: 5,
-	STAFF: 6,
 
-	length: 7,
+	length: 6,
 };
 
 PRIVILE.getSumPriority = function (userRights) {
@@ -91,8 +90,7 @@ PRIVILE.getPriority = function (right) {
 			return 5;
 		case PRIVILE.BARTISTA:
 			return 5;
-		case PRIVILE.STAFF:
-			return 1;
+
 	}
 	return 0;
 };
@@ -124,13 +122,12 @@ PRIVILE.RightToString = (right) => {
 			return "Phục vụ";
 		case PRIVILE.BARTISTA:
 			return "Pha chế";
-		case PRIVILE.STAFF:
-			return "Nhân viên";
+
 	}
 	return "Không rõ";
 };
-PRIVILE.isUserHasPrivileges = (userRights, targetRight) => {
-	var arr = PRIVILE.getUserRights(userRights);
+PRIVILE.isUserHasPrivileges = (value, targetRight) => {
+	var arr = PRIVILE.getUserRights(value);
 	return arr.includes(targetRight);
 };
 PRIVILE.getRightsValue = (arr) => {

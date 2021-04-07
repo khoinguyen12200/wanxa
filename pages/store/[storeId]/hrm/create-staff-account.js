@@ -25,10 +25,12 @@ export default function create_staff_account() {
 	const { state,getSavedToken } = React.useContext(StoreContext);
 
 
-
-
 	const [arr, setArr] = React.useState([]);
 	const [failed, setFailed] = React.useState(null);
+
+	React.useEffect(()=>{
+		newObject();
+	},[])
 
 	function addObject(user) {
 		setArr([...arr, user]);
