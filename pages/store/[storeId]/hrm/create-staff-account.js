@@ -4,10 +4,10 @@ import * as Yup from "yup";
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import { toast } from "react-toastify";
-
+import { useRouter } from "next/router";
 import { confirm as Confirm } from "../../../../components/Popup";
 
-import { PRIVILE, useConstructor } from "../../../../components/Const";
+import { PRIVILE } from "../../../../components/Const";
 import TextField, { FileField } from "../../../../components/TextField";
 import {
 	passwordValidator,
@@ -17,15 +17,23 @@ import {
 import TextFieldStyles from "../../../../styles/TextField.module.css";
 import StoreNavBar from "../../../../components/StoreNavBar";
 import styles from "../../../../styles/create-staff-account.module.css";
+import { StoreContext } from "../../../../components/StoreContext";
 
 export default function create_staff_account() {
+	const router = useRouter();
+	const { storeId } = router.query;
+	const { state,getSavedToken } = React.useContext(StoreContext);
+
+
+
+
 	const [arr, setArr] = React.useState([]);
+	const [failed, setFailed] = React.useState(null);
+
 	function addObject(user) {
 		setArr([...arr, user]);
 	}
-	React.useEffect(() => {
-		console.log(arr);
-	}, [arr]);
+
 	function removeObject(id) {
 		var newA = arr.concat([]);
 		for (let i in newA) {
@@ -55,48 +63,167 @@ export default function create_staff_account() {
 			}
 		}
 	}
-	return (
-		<div className={styles.page}>
-			<StoreNavBar />
-			<h3 className={styles.title}>Tạo tài khoản nhân viên</h3>
-			<div className={styles.content}>
-				{arr.map((object) => (
-					<User
-						object={object}
-						key={object.id}
-						updateObject={updateObject}
-						removeObject={removeObject}
-					/>
-				))}
-			</div>
-			<div className={styles.mainBtnSpace}>
-				<button
-					type="button"
-					onClick={newObject}
-					className={"btn btn-outline-primary " + styles.addUser}
-				>
-					Thêm
-				</button>
-				{arr.length > 0 && (
-					<button className="btn btn-primary mt-2">
-						Xác nhận tạo tài khoản
+	function handleSubmit() {
+		var formdata = new FormData();
+		var userjson = [];
+		for (let i in arr) {
+			const data = arr[i];
+			if (!data.saved) {
+				toast.error("Cần phải lưu tất cả thông tin trước khi gửi đi");
+				return;
+			}
+			const path = data.user.account + "-avatar";
+			const newUser = {
+				account: data.user.account,
+				password: data.user.password,
+				name: data.user.name,
+				privileges: PRIVILE.getRightsValue(data.user.privileges),
+				path: path,
+			};
+
+			userjson.push(newUser);
+
+			formdata.append(path, data.user.avatar);
+		}
+
+		formdata.append("user", JSON.stringify(userjson));
+		formdata.append("storeId", storeId);
+		formdata.append("token", getSavedToken());
+
+		axios
+			.post("/api/store/staff/create-staff-profile", formdata, {
+				headers: {
+					"Content-Type": "multipart/form-data",
+				},
+			})
+			.then((res) => {
+				const { failed, message } = res.data;
+
+				if (res.status === 200) {
+					setFailed(failed);
+					if (failed.length > 0) {
+						toast.error(
+							`Có ${
+								failed.length + 1
+							} tài khoản tạo không thành công`
+						);
+					} else {
+						toast.success("Tạo thành công !");
+					}
+				} else {
+					toast.warning(message);
+				}
+			})
+			.catch((error) => console.log(error));
+	}
+	if (failed == null) {
+		return (
+			<div className={styles.page}>
+				<StoreNavBar />
+				<h3 className={styles.title}>Tạo tài khoản nhân viên</h3>
+				<div className={styles.content}>
+					{arr.map((object) => (
+						<User
+							object={object}
+							key={object.id}
+							updateObject={updateObject}
+							removeObject={removeObject}
+						/>
+					))}
+				</div>
+				<div className={styles.mainBtnSpace}>
+					<button
+						type="button"
+						onClick={newObject}
+						className={"btn btn-outline-primary " + styles.addUser}
+					>
+						Thêm
 					</button>
-				)}
+					{arr.length > 0 && (
+						<button
+							onClick={handleSubmit}
+							className="btn btn-primary mt-2"
+						>
+							Xác nhận tạo tài khoản
+						</button>
+					)}
+				</div>
 			</div>
+		);
+	} else {
+		return <AfterSubmit arr={arr} failed={failed} />;
+	}
+}
+
+function AfterSubmit({ arr, failed }) {
+	var failedArr = failed.map((str) => parseInt(str));
+	return (
+		<div className={styles.AfterSubmit}>
+			<StoreNavBar />
+			<div className="p-5 m-3 bg-danger text-white">
+				Chú ý !!!
+				<br />
+				Đây là (các) tài khoản được tạo tự động, mật khẩu sẽ hiện lên
+				màn hình
+				<br />
+				Hãy yêu cầu các chủ nhân của tài khoản đổi mật khẩu ngay khi
+				đăng nhập.
+				<br />
+			</div>
+			<table className="table">
+				<thead>
+					<tr>
+						<th scope="col">STT</th>
+						<th scope="col">Tên</th>
+						<th scope="col">Tài khoản</th>
+						<th scope="col">Mật khẩu</th>
+						<th scope="col">Trạng thái tạo</th>
+					</tr>
+				</thead>
+				<tbody>
+					{arr.map((item, index) => {
+						const { user } = item;
+						return (
+							<tr key={item.id}>
+								<th scope="row">{index + 1}</th>
+								<td>{user.name}</td>
+								<td>{user.account}</td>
+								<td>{user.password}</td>
+								<td>
+									<div
+										className={
+											failedArr.includes(index)
+												? styles.failed
+												: styles.success
+										}
+									>
+										{failedArr.includes(index)
+											? "Thất bại"
+											: "Thành công"}
+									</div>
+								</td>
+							</tr>
+						);
+					})}
+				</tbody>
+			</table>
 		</div>
 	);
 }
 var arrOfPrivileges = [];
 var len = PRIVILE.length;
 for (let i = 0; i < len; i++) {
-	arrOfPrivileges.push({ value: i, name: PRIVILE.RightToString(i), priority:PRIVILE.getPriority(i) });
+	arrOfPrivileges.push({
+		value: i,
+		name: PRIVILE.RightToString(i),
+		priority: PRIVILE.getPriority(i),
+	});
 }
 
 function User({ object, updateObject, removeObject }) {
 	const { user, saved, id } = object;
 
 	function onSubmit(values, { setSubmitting }) {
-		console.log(values);
 		userIsExist(values.account).then((isExisting) => {
 			if (isExisting) {
 				toast.error("Tài khoản này đã được sử dụng");
@@ -181,20 +308,22 @@ function User({ object, updateObject, removeObject }) {
 							role="group"
 							aria-labelledby="checkbox-group"
 						>
-							{arrOfPrivileges.map(({ name, value, priority }, index) => (
-								<label
-									className={styles.labelPrivileges}
-									key={index}
-								>
-									<Field
-										type="checkbox"
-										name="privileges"
-										value={value + ""}
-										disabled={saved}
-									/>
-									{name}
-								</label>
-							))}
+							{arrOfPrivileges.map(
+								({ name, value, priority }, index) => (
+									<label
+										className={styles.labelPrivileges}
+										key={index}
+									>
+										<Field
+											type="checkbox"
+											name="privileges"
+											value={value + ""}
+											disabled={saved}
+										/>
+										{name}
+									</label>
+								)
+							)}
 						</div>
 						{errors.privileges != null && (
 							<p className={TextFieldStyles.error}>

@@ -3,15 +3,29 @@ import { useRouter } from "next/router";
 import axios from "axios";
 import Link from "next/link";
 
-
+import {
+	DefaultAvatar,
+	quickCheckPrivileges,
+} from "../../../../components/Const";
 import StoreNavBar from "../../../../components/StoreNavBar";
 import styles from "../../../../styles/hrm-index.module.css";
 import { PRIVILE } from "../../../../components/Const";
+import { StoreContext } from "../../../../components/StoreContext";
 
 export default function HRM() {
 	const router = useRouter();
 	const { storeId } = router.query;
 	const [staffs, setStaffs] = React.useState([]);
+	const { state } = React.useContext(StoreContext);
+	const { user } = state;
+
+	const [userPrivileges, setUserPrivileges] = React.useState([]);
+
+	React.useEffect(() => {
+		const usP = quickCheckPrivileges(state, router);
+		setUserPrivileges(usP);
+	}, [state, router]);
+
 	React.useEffect(() => {
 		var data = new FormData();
 		data.append("storeid", storeId);
@@ -56,7 +70,7 @@ export default function HRM() {
 									<th scope="row">{index + 1}</th>
 									<td>
 										<img
-											src={staff.avatar}
+											src={staff.avatar || DefaultAvatar}
 											className={styles.staff_avatar}
 										/>
 									</td>
@@ -83,9 +97,14 @@ export default function HRM() {
 					</tbody>
 				</table>
 			</div>
-			<Link href={`/store/${storeId}/hrm/create-staff-account`}>
-				<a className="btn btn-primary m-auto">Tạo tài khoản nhân viên</a>
-			</Link>
+			{(userPrivileges.includes(PRIVILE.OWNER) ||
+				userPrivileges.includes(PRIVILE.HRM)) && (
+				<Link href={`/store/${storeId}/hrm/create-staff-account`}>
+					<a className="btn btn-primary m-auto">
+						Tạo tài khoản nhân viên
+					</a>
+				</Link>
+			)}
 		</div>
 	);
 }

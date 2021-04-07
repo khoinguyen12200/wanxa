@@ -1,4 +1,24 @@
-import React from 'react';
+import React from "react";
+
+
+export function checkUserPrivilegesInStore(stores,storeId){
+	for (let i in stores) {
+		const store = stores[i];
+		if (store.storeid == storeId && storeId != undefined) {
+			return PRIVILE.getUserRights(store.value);
+		}
+	}
+	return [];
+};
+export function quickCheckPrivileges (state,router) {
+	const user = state ? state.user : null;
+	const stores = user ? user.stores : null;
+
+	const query = router ? router.query : null;
+	const storeId = query ? query.storeId : -1;
+	return checkUserPrivilegesInStore(stores,storeId)
+}
+
 export function isMobile() {
 	let check = false;
 	if (typeof window !== "undefined") {
@@ -17,18 +37,18 @@ export function isMobile() {
 
 	return check;
 }
-export var onImageChange =  (event) => {
+export var onImageChange = (event) => {
 	return new Promise((resolve, reject) => {
 		if (event.target.files && event.target.files[0]) {
 			var file = event.target.files[0];
 			var filesize = (file.size / 1024 / 1024).toFixed(4);
 			let reader = new FileReader();
-				reader.onload = (e) => {
-					resolve({src:e.target.result, file:file,size:filesize});
-				};
-				reader.readAsDataURL(file);
+			reader.onload = (e) => {
+				resolve({ src: e.target.result, file: file, size: filesize });
+			};
+			reader.readAsDataURL(file);
 		}
-	})
+	});
 };
 
 export function getExtension(filename) {
@@ -37,87 +57,100 @@ export function getExtension(filename) {
 	return arr[arr.length - 1];
 }
 
-
 var PRIVILE = {
-	OWNER:0,
-	HRM:1,
-	FACILITY:2,
-	STATISTICS:3,
-	WAITER:4,
-	BARTISTA:5,
-	STAFF:6,
+	OWNER: 0,
+	HRM: 1,
+	FACILITY: 2,
+	STATISTICS: 3,
+	WAITER: 4,
+	BARTISTA: 5,
+	STAFF: 6,
 
-	length:7,
-}
+	length: 7,
+};
 
-PRIVILE.getSumPriority = function (userRights){
+PRIVILE.getSumPriority = function (userRights) {
 	const arr = PRIVILE.getUserRights(userRights);
 	var sum = 0;
-	for(let i in arr){
+	for (let i in arr) {
 		sum += PRIVILE.getPriority(arr[i]);
 	}
 	return sum;
-}
-PRIVILE.getPriority = function(right){
-	switch (right){
-		case PRIVILE.OWNER : return 100;
-		case PRIVILE.HRM : return 20;
-		case PRIVILE.FACILITY : return 20;
-		case PRIVILE.STATISTICS : return 10;
-		case PRIVILE.WAITER : return 5;
-		case PRIVILE.BARTISTA : return 5;
-		case PRIVILE.STAFF : return 1;
+};
+PRIVILE.getPriority = function (right) {
+	switch (right) {
+		case PRIVILE.OWNER:
+			return 100;
+		case PRIVILE.HRM:
+			return 20;
+		case PRIVILE.FACILITY:
+			return 20;
+		case PRIVILE.STATISTICS:
+			return 10;
+		case PRIVILE.WAITER:
+			return 5;
+		case PRIVILE.BARTISTA:
+			return 5;
+		case PRIVILE.STAFF:
+			return 1;
 	}
 	return 0;
-}
+};
 PRIVILE.getUserRights = (userRights) => {
 	var arr = [];
 	var temp = userRights;
 	var i = PRIVILE.length - 1;
-	for(i;i>=0;i--){
-		const somu = 2**i;
-		if(temp >= somu){
+	for (i; i >= 0; i--) {
+		const somu = 2 ** i;
+		if (temp >= somu) {
 			temp = temp - somu;
-			arr.push(i);
+			arr.unshift(i);
 		}
-		if(temp == 0) break;
+		if (temp == 0) break;
 	}
 	return arr;
-}
+};
 PRIVILE.RightToString = (right) => {
-	switch (right){
-		case PRIVILE.OWNER : return "Chủ sở hữu";
-		case PRIVILE.HRM : return "Quản lý nhân sự";
-		case PRIVILE.FACILITY : return "Quản lý cơ sở vật chất";
-		case PRIVILE.STATISTICS : return "Thống kê";
-		case PRIVILE.WAITER : return "Phục vụ";
-		case PRIVILE.BARTISTA : return "Pha chế";
-		case PRIVILE.STAFF : return "Nhân viên";
+	switch (right) {
+		case PRIVILE.OWNER:
+			return "Chủ sở hữu";
+		case PRIVILE.HRM:
+			return "Quản lý nhân sự";
+		case PRIVILE.FACILITY:
+			return "Quản lý cơ sở vật chất";
+		case PRIVILE.STATISTICS:
+			return "Thống kê";
+		case PRIVILE.WAITER:
+			return "Phục vụ";
+		case PRIVILE.BARTISTA:
+			return "Pha chế";
+		case PRIVILE.STAFF:
+			return "Nhân viên";
 	}
 	return "Không rõ";
-}
-PRIVILE.isUserHasPrivileges = (userRights,targetRight) => {
+};
+PRIVILE.isUserHasPrivileges = (userRights, targetRight) => {
 	var arr = PRIVILE.getUserRights(userRights);
-	return (arr.includes(targetRight))	
-}
+	return arr.includes(targetRight);
+};
 PRIVILE.getRightsValue = (arr) => {
 	var value = 0;
-	if(arr.length > 0){	
-		for(let i in arr){
-			value = value + 2**i;
+	if (arr.length > 0) {
+		for (let i in arr) {
+			const right = parseInt(arr[i], 0);
+			value = value + 2 ** right;
 		}
 	}
 	return value;
-}
+};
 export var PRIVILE;
-
 
 export function useConstructor(callBack = () => {}) {
 	const [hasBeenCalled, setHasBeenCalled] = React.useState(false);
 	if (hasBeenCalled) return;
 	callBack();
 	setHasBeenCalled(true);
-  }
+}
 
 export const StoreDir = "/store";
 
@@ -129,4 +162,3 @@ export const AboutDir = "/about";
 
 export const DefaultAvatar = "/user/avatar/default-avatar.png";
 export const DefaultStore = "/user/store/default.png";
-

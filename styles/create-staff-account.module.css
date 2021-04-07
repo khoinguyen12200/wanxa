@@ -69,3 +69,21 @@
     flex-direction:row;
     flex-wrap: wrap;
 }
+
+.AfterSubmit{
+    display:flex;
+    flex-direction:column;
+
+}
+.AfterSubmit>table{
+    margin:20px auto;
+    width:700px;
+    max-width:90%;
+    border:1px solid #ccc;
+}
+.failed{
+    color:red;
+}
+.success{
+    color:rgb(46, 185, 46);
+}
