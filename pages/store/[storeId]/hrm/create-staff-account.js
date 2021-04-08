@@ -5,7 +5,6 @@ import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
-import { confirm as Confirm } from "../../../../components/Popup";
 
 import { PRIVILE } from "../../../../components/Const";
 import TextField, { FileField } from "../../../../components/TextField";
@@ -18,6 +17,7 @@ import TextFieldStyles from "../../../../styles/TextField.module.css";
 import StoreNavBar from "../../../../components/StoreNavBar";
 import styles from "../../../../styles/create-staff-account.module.css";
 import { StoreContext } from "../../../../components/StoreContext";
+import {alertDialog} from '../../../../components/Modal';
 
 export default function create_staff_account() {
 	const router = useRouter();
@@ -235,9 +235,9 @@ function User({ object, updateObject, removeObject }) {
 		});
 	}
 	function rm() {
-		Confirm.danger("Bạn có chắc muốn xóa ?", () => {
+		alertDialog("Bạn có chắc muốn xóa hồ sơ này ?",()=>{
 			removeObject(id);
-		});
+		})
 	}
 	function edit() {
 		updateObject({ ...object, saved: false });
@@ -260,7 +260,6 @@ function User({ object, updateObject, removeObject }) {
 					name: nameValidator,
 					account: accountValidator,
 					password: passwordValidator,
-					privileges: Yup.array().min(1, "Yêu cầu ít nhất 1 quyền"),
 				})}
 				onSubmit={onSubmit}
 			>
@@ -327,11 +326,7 @@ function User({ object, updateObject, removeObject }) {
 								)
 							)}
 						</div>
-						{errors.privileges != null && (
-							<p className={TextFieldStyles.error}>
-								{errors.privileges}
-							</p>
-						)}
+
 
 						<div className={styles.FormButtonSpace}>
 							<button

@@ -159,3 +159,38 @@ export const AboutDir = "/about";
 
 export const DefaultAvatar = "/user/avatar/default-avatar.png";
 export const DefaultStore = "/user/store/default.png";
+
+
+const TIMEBEFORE = [
+    {time:1000,name:"giây"},
+    {time:60,name:"phút"},
+    {time:60,name:"giờ"},
+    {time:24,name:"ngày"},
+    {time:30,name:"tháng"},
+    {time:12,name:"năm"},
+];
+
+export function getTimeBefore(date) {
+    var target = new Date(date);
+    var now = new Date();
+
+    var timeBefore = now.getTime() - target.getTime();
+    
+    var str = "" ;
+    for(let i in TIMEBEFORE){
+        const {time,name} = TIMEBEFORE[i];
+        const temp = timeBefore / time;
+        if(temp >= 1){
+            timeBefore = temp;
+            str = `${temp.toFixed(0)} ${name} trước`;
+            
+        }else{
+            break;
+        }
+    }
+    if(str == ''){
+        str = "Vừa xong";
+    }
+    
+    return str;
+}

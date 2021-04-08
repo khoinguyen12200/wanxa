@@ -23,7 +23,7 @@ export default async function (req, res) {
         const deleteRes = await query("delete from `store-table` WHERE id=?",[tableid]);
 
         if(deleteRes){
-            res.status(200).json({message:"Xóa tên thành công"})
+            res.status(200).json({message:"Xóa bàn thành công"})
         }else{
             res.status(401).json({message:"Lỗi không rõ xảy ra"})
             

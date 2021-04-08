@@ -50,11 +50,14 @@
     justify-content: center;
     position:relative;
 }
-.tableItem>button{
+.btnSpace{
     position:absolute;
     top:5px;
     right:5px;
-
+}
+.btnSpace svg{
+    width:auto;
+    height:auto;
 }
 .tableItem>input{
     transition:all 0.3s;

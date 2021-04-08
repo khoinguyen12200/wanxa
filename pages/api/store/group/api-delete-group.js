@@ -20,7 +20,7 @@ export default async function (req, res) {
         const delRes = await query("DELETE FROM `store-table-group` where id = ?",[groupid]);
         console.log(groupid)
         if(delRes){
-            res.status(200).json({message:"Xóa thành công nhóm"})
+            res.status(200).json({message:"Xóa nhóm bàn thành công"})
         }else{
             res.status(202).json({message:"Lỗi không rõ xảy ra"})
         }

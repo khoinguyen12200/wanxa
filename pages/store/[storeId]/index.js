@@ -11,6 +11,7 @@ import { StoreContext } from "../../../components/StoreContext";
 import styles from "../../../styles/main-store.module.css";
 
 
+
 export default function index() {
 	const router = useRouter();
 	const { storeId } = router.query;
@@ -29,6 +30,7 @@ export default function index() {
 function AcceptAccessStore({ storeid }) {
 	return (
 		<div className={styles.Accept}>
+			
 			<NavBar/>
 			<div className={styles.router}>
 				<Link href={`/store/${storeid}/real-time`} >

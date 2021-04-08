@@ -13,6 +13,7 @@ import styles from "../../../../styles/hrm-index.module.css";
 import { PRIVILE } from "../../../../components/Const";
 import { StoreContext } from "../../../../components/StoreContext";
 import { toast } from "react-toastify";
+import { alertDialog } from "../../../../components/Modal";
 
 export default function HRM() {
 	const router = useRouter();
@@ -138,6 +139,17 @@ export default function HRM() {
 }
 
 const ModalExample = ({ toggle, chosen, onSubmitSuccess }) => {
+	
+	const [user,setUser] = React.useState({});
+	React.useEffect(() => {
+		if(chosen == null){
+			setUser({});
+		}else{
+			setUser(chosen);
+		}
+		
+	},[chosen])
+
 	const router = useRouter();
 	const { storeId } = router.query;
 
@@ -163,6 +175,7 @@ const ModalExample = ({ toggle, chosen, onSubmitSuccess }) => {
 		setValueArray(newArr);
 	}
 	function onSubmit() {
+		
 		var arr = [];
 		for (let i in valueArray) {
 			if (valueArray[i]) {
@@ -171,33 +184,74 @@ const ModalExample = ({ toggle, chosen, onSubmitSuccess }) => {
 		}
 		const value = PRIVILE.getRightsValue(arr);
 
-		const data = {
-			userid: chosen.id,
-			privileges: value,
-			token: getSavedToken(),
-			storeid: storeId,
-		};
+		var str = "";
+		for(let i in arr){
+			str += PRIVILE.RightToString(parseInt(arr[i]));
+			if(i != arr.length - 1) {
+				str += ", ";
+			}
+		}
+		alertDialog(`Cập nhật quyền nhân viên ${user.name} thành \n${str}`,()=>{
+			run();
+		})
+		function run(){
+			const data = {
+				userid: chosen.id,
+				privileges: value,
+				token: getSavedToken(),
+				storeid: storeId,
+			};
+	
+			axios
+				.post("/api/store/staff/change-staff-privileges", data)
+				.then((res) => {
+					const { message } = res.data;
+					if (res.status === 200) {
+						toast.success(message);
+						reloadToken();
+						onSubmitSuccess();
+					} else {
+						toast.error(message);
+					}
+					toggle();
+				})
+				.catch((error) => toast.error(error));
+		}
+	
+	}
+	function onDelete() {
+		alertDialog("Bạn có chắc muốn xóa nhân viên này ?", () => {
+			run();
+		});
 
-		axios
-			.post("/api/store/staff/change-staff-privileges", data)
-			.then((res) => {
-				const { message } = res.data;
-				if (res.status === 200) {
-					toast.success(message);
-					reloadToken();
-					onSubmitSuccess();
-				} else {
-					toast.error(message);
-				}
-				toggle();
-			})
-			.catch((error) => toast.error(error));
+		function run() {
+			const data = {
+				userid: chosen.id,
+				token: getSavedToken(),
+				storeid: storeId,
+			};
+
+			axios
+				.post("/api/store/staff/remove-staff", data)
+				.then((res) => {
+					const { message } = res.data;
+					if (res.status === 200) {
+						toast.success(message);
+						reloadToken();
+						onSubmitSuccess();
+					} else {
+						toast.error(message);
+					}
+					toggle();
+				})
+				.catch((error) => toast.error(error));
+		}
 	}
 	return (
 		<div>
-			<Modal isOpen={chosen != null} toggle={toggle}>
+			<Modal isOpen={chosen != null && chosen != {}} toggle={toggle} centered>
 				<ModalHeader toggle={toggle}>
-					Thay đổi quyền nhân viên
+					Thay đổi quyền nhân viên của {user.name}
 				</ModalHeader>
 				<ModalBody>
 					<div className={styles.modal_frame}>
@@ -234,7 +288,7 @@ const ModalExample = ({ toggle, chosen, onSubmitSuccess }) => {
 					</div>
 				</ModalBody>
 				<ModalFooter>
-					<Button color="danger" onClick={toggle}>
+					<Button color="danger" onClick={onDelete}>
 						Xóa bỏ nhân viên này
 					</Button>
 

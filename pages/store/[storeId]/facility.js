@@ -11,6 +11,7 @@ import { StoreContext } from "../../../components/StoreContext";
 import styles from "../../../styles/facility.module.css";
 import { confirm } from "../../../components/Popup";
 import NavBar from "../../../components/StoreNavBar";
+import { promptDialog, alertDialog } from "../../../components/Modal";
 
 export default function StoreGroups() {
 	const router = useRouter();
@@ -71,8 +72,9 @@ export default function StoreGroups() {
 					<button
 						className="btn btn-lg btn-secondary m-3"
 						onClick={() => {
-							let name = prompt("Nhập tên nhóm");
-							addGroup(name);
+							promptDialog("Nhập tên nhóm mới", (name) => {
+								addGroup(name);
+							});
 						}}
 					>
 						<AiOutlineAppstoreAdd /> Thêm nhóm mới
@@ -121,8 +123,9 @@ function Group({ group, onUpdate }) {
 					<button
 						className="btn btn-outline-secondary m-3"
 						onClick={() => {
-							let name = prompt("Nhập tên bàn (Số bàn)");
-							addTable(name);
+							promptDialog("Nhập tên bàn hoặc số bàn", (name) => {
+								addTable(name);
+							});
 						}}
 					>
 						<RiAddBoxLine /> Thêm bàn
@@ -142,7 +145,8 @@ function GroupNameInput({ onUpdate, group }) {
 	const inputRef = React.useRef(null);
 
 	function onDelete() {
-		confirm.danger("Bạn có chắc muốn xóa", () => del());
+		alertDialog("Bạn có chắc muốn xóa", () => del());
+
 		const del = () => {
 			var data = new FormData();
 			// console.log("groupid",id);
@@ -204,9 +208,15 @@ function GroupNameInput({ onUpdate, group }) {
 					</UncontrolledTooltip>
 				</>
 			)}
-			<button onClick={onDelete} type="button" className="btn btn-danger">
-				Xóa
-			</button>
+			<div>
+				<button
+					onClick={onDelete}
+					type="button"
+					className="btn btn-danger"
+				>
+					Xóa
+				</button>
+			</div>
 		</form>
 	);
 }
@@ -246,8 +256,8 @@ function Table({ table, onUpdate }) {
 		}
 	}
 	function deleteTable() {
-		confirm.danger("Bạn có chắc muốn xóa bàn này ?", () => didIt());
-		function didIt() {
+		alertDialog("Bạn có chắc muốn xóa bàn này ?", () => doIt());
+		function doIt() {
 			var data = new FormData();
 			data.append("token", getSavedToken());
 			data.append("tableid", table.id);
@@ -284,14 +294,15 @@ function Table({ table, onUpdate }) {
 					</UncontrolledTooltip>
 				</>
 			)}
-
-			<button
-				type="button"
-				onClick={deleteTable}
-				className="btn btn-outline-danger btn-sm"
-			>
-				<AiOutlineClose />
-			</button>
+			<div className={styles.btnSpace}>
+				<button
+					type="button"
+					onClick={deleteTable}
+					className="btn btn-outline-danger btn-sm"
+				>
+					<AiOutlineClose />
+				</button>
+			</div>
 		</form>
 	);
 }
