@@ -105,7 +105,7 @@ function UserSpace(props) {
 						onClick={toggle}
 						size="sm"
 						color={colorName}
-						outline
+						
 					>
 						<BsBellFill />
 						<Badge className="ml-1" color={colorName}>
@@ -194,7 +194,7 @@ function NotificationSpace({
 						</Link>
 					</div>
 					<div>
-						<Button color="primary" onClick={seenAll}>
+						<Button color="primary" onClick={seenAll} disabled={unSeenNotifications.length === 0}>
 							Đã đọc tất cả
 						</Button>{" "}
 						<Button color="secondary" onClick={toggle}>

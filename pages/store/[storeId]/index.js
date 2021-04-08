@@ -1,6 +1,9 @@
 import React from "react";
 import { useRouter } from "next/router";
 import { AiFillAppstore } from "react-icons/ai";
+import {IoNotificationsCircleOutline} from 'react-icons/io5';
+
+
 import {RiProfileFill} from "react-icons/ri";
 import {SiAirtable} from 'react-icons/si';
 import {BsPeopleFill} from 'react-icons/bs';
@@ -49,19 +52,29 @@ function AcceptAccessStore({ storeid }) {
 						</div>
 					</a>
 				</Link>
-				<Link href={`/store/${storeid}/basic-info`}>
-					<a className={styles.routeItem} style={{color:"#669900"}}>
-						<RiProfileFill />
+
+				<Link href={`/store/${storeid}/internal-information`}>
+					<a className={styles.routeItem} style={{color:"#006699"}}>
+						<IoNotificationsCircleOutline />
 						<div>
-							<p>Thông tin cơ bản</p>
+							<p>Thông báo nội bộ</p>
 						</div>
 					</a>
 				</Link>
+				
 				<Link href={`/store/${storeid}/hrm`}>
 					<a className={styles.routeItem} style={{color:"#cc0000"}}>
 						<BsPeopleFill />
 						<div>
 							<p>Quản lý nhân sự</p>
+						</div>
+					</a>
+				</Link>
+				<Link href={`/store/${storeid}/basic-info`}>
+					<a className={styles.routeItem} style={{color:"#669900"}}>
+						<RiProfileFill />
+						<div>
+							<p>Thông tin cơ bản</p>
 						</div>
 					</a>
 				</Link>

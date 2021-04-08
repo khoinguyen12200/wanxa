@@ -10,10 +10,12 @@ import {
 } from "reactstrap";
 import { getTimeBefore } from "./Const";
 import styles from "./styles/Notification.module.css";
-import { StoreContext } from "./StoreContext";
-import axios from "axios";
+
+	
+
 const TYPE = {
 	UPDATE_STORE_NAME: "UPDATE_STORE_NAME",
+	INTERNAL_NOTIFICATION: "INTERNAL_NOTIFICATION",
 };
 const CONTENT = {
 	UPDATE_STORE_NAME: {
@@ -26,12 +28,31 @@ const CONTENT = {
 			NewName: "string",
 		},
 	},
+	INTERNAL_NOTIFICATION: {
+		keys: ["ExecutorId", "ExecutorName", "StoreId", "Notification"],
+		defines: {
+			ExecutorId: "number",
+			ExecutorName: "string",
+			StoreId: "number",
+			Notification: "string",
+		},
+	},
 };
+
+function shortNoti(notification) {
+	if(notification.length <= 70) {
+		return notification;
+	}else{
+		return notification.slice(0, 70)+"... ";
+	}
+}
 
 function MESSAGE(content, type) {
 	switch (type) {
 		case TYPE.UPDATE_STORE_NAME:
 			return `${content.ExecutorName} đã chỉnh sửa tên doanh nghiệp ${content.OldName} thành ${content.NewName}`;
+		case TYPE.INTERNAL_NOTIFICATION:
+			return `${content.ExecutorName} thông báo đến mọi người "${shortNoti(content.Notification)}"`;
 	}
 	return "";
 }

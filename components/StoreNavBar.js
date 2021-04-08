@@ -72,6 +72,8 @@ function mapName(name) {
 			return "Quản lý nhân sự";
 		case "create-staff-account":
 			return "Tạo tài khoản nhân viên";
+		case "internal-information":
+			return "Thông báo nội bộ";
 	}
 	return name;
 }
