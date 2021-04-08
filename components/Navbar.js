@@ -1,6 +1,7 @@
 import Link from "next/link";
 import React from "react";
 import axios from "axios";
+import { BsBellFill } from "react-icons/bs";
 
 import {
 	Badge,
@@ -26,44 +27,52 @@ import {
 	getTimeBefore,
 	AccountDir,
 	StoreDir,
+	NotificationDir,
 } from "./Const";
 import { StoreContext } from "./StoreContext";
-import Notification from "./Notification";
+import { NotificationRow } from "./Notification";
 
 export default function MyNavbar() {
 	const [isOpen, toggle] = React.useState(false);
 	const { state, dispatch } = React.useContext(StoreContext);
+	const [mobile,setMobile] = React.useState(false);
+	React.useEffect(() => {
+		setMobile(isMobile());
+	},[])
 	const { user } = state;
 	const stores = user ? user.stores : [];
-	console.log(user);
-
-	const mobile = isMobile() ? styles.mobile : "";
 	return (
-		<div id="navbar-dynamic" className={styles.navbar + " " + mobile}>
-			<Navbar color="light" light expand="md">
-				<Link href="/">
-					<a className={styles.navitem}>Home</a>
-				</Link>
-				<NavbarToggler onClick={() => toggle(!isOpen)} />
+		<div id="navbar-dynamic" className={styles.navbar}>
+			<Navbar
+				color="light"
+				light
+				expand="md"
+				className={mobile ? styles.mobile : ""}
+			>
 				<Collapse
-					onClick={() => isMobile() && toggle(!isOpen)}
+					onClick={() => mobile && toggle(!isOpen)}
 					isOpen={isOpen}
 					navbar
 				>
-					<Nav className="mr-auto" navbar>
-						{stores.map((store, index) => (
-							<Link
-								href={StoreDir + "/" + store.storeid}
-								key={store.storeid}
-							>
-								<a className={styles.navitem}>{store.name}</a>
-							</Link>
-						))}
-					</Nav>
-					<Nav>
-						<UserSpace user={user} />
-					</Nav>
+					<Link href="/">
+						<a className={styles.navitem}>Home</a>
+					</Link>
+
+					{stores.map((store, index) => (
+						<Link
+							href={StoreDir + "/" + store.storeid}
+							key={store.storeid}
+						>
+							<a className={styles.navitem}>{store.name}</a>
+						</Link>
+					))}
 				</Collapse>
+
+				<NavbarToggler onClick={() => toggle(!isOpen)} />
+
+				<Nav>
+					<UserSpace user={user} />
+				</Nav>
 			</Navbar>
 		</div>
 	);
@@ -87,21 +96,19 @@ function UserSpace(props) {
 			(notification) => !notification.seen
 		);
 
+		const hasNewNoti = unSeenNotifications.length > 0;
+		const colorName = hasNewNoti ? "primary" : "secondary";
 		return (
 			<>
 				<div style={{ display: "flex", alignItems: "center" }}>
 					<Button
 						onClick={toggle}
 						size="sm"
-						color={
-							unSeenNotifications.length == 0
-								? "secondary"
-								: "primary"
-						}
+						color={colorName}
 						outline
 					>
-						Thông báo{" "}
-						<Badge color="secondary">
+						<BsBellFill />
+						<Badge className="ml-1" color={colorName}>
 							{unSeenNotifications.length}
 						</Badge>
 					</Button>
@@ -113,11 +120,9 @@ function UserSpace(props) {
 					/>
 				</div>
 				<Link href={AccountDir}>
-					<a className={styles.navitem}>
-						<div className={styles.userSpace}>
-							<span>{user.name}</span>
-							<img src={user.avatar} alt="avatar" />
-						</div>
+					<a className={styles.userSpace}>
+						<span>{user.name}</span>
+						<img src={user.avatar} alt="avatar" />
 					</a>
 				</Link>
 			</>
@@ -135,7 +140,6 @@ function NotificationSpace({
 
 	function setSeen(index) {
 		const notification = notifications[index];
-
 		if (!notification.seen) {
 			const data = {
 				id: notification.id,
@@ -154,7 +158,11 @@ function NotificationSpace({
 		}
 	}
 	return (
-		<Modal isOpen={modal} toggle={toggle}>
+		<Modal
+			isOpen={modal}
+			toggle={toggle}
+			className={styles.NotificationModal}
+		>
 			<ModalHeader toggle={toggle}>
 				{unSeenNotifications.length > 0
 					? `Có ${unSeenNotifications.length} thông báo mới`
@@ -163,52 +171,37 @@ function NotificationSpace({
 			<ModalBody>
 				<div className={styles.listNotification}>
 					{notifications.map((notification, index) => {
-						const {
-							type,
-							content,
-							destination,
-							seen,
-							time,
-						} = notification;
-						var notiObject = new Notification(
-							type,
-							content,
-							destination,
-							seen,
-							time
-						);
 						return (
-							<div
-								key={notification.id}
-								className={
-									seen
-										? styles.notification +
-										  " " +
-										  styles.notiSeen
-										: styles.notification
-								}
-							>
-								<p
-									className={styles.notificationMessage}
-									onClick={() => setSeen(index)}
-								>
-									{notiObject.getMessage() + " "}
-									<Badge color="secondary">
-										{getTimeBefore(time)}
-									</Badge>
-								</p>
-							</div>
+							<NotificationRow
+								onClick={() => setSeen(index)}
+								key={index}
+								notification={notification}
+							/>
 						);
 					})}
 				</div>
 			</ModalBody>
 			<ModalFooter>
-				<Button color="primary" onClick={seenAll}>
-					Đã đọc tất cả
-				</Button>{" "}
-				<Button color="secondary" onClick={toggle}>
-					Đóng
-				</Button>
+				<div className="w-100 d-flex justify-content-between">
+					<div>
+						<Link href={NotificationDir}>
+							<a
+								className="btn btn-outline-secondary"
+								onClick={toggle}
+							>
+								Xem tất cả
+							</a>
+						</Link>
+					</div>
+					<div>
+						<Button color="primary" onClick={seenAll}>
+							Đã đọc tất cả
+						</Button>{" "}
+						<Button color="secondary" onClick={toggle}>
+							Đóng
+						</Button>
+					</div>
+				</div>
 			</ModalFooter>
 		</Modal>
 	);

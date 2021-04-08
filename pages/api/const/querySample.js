@@ -12,7 +12,7 @@ export async function getUserById(id) {
 			"SELECT `storeid`,`logo`,`name`,`value`,`description` FROM `privileges` right join `store` on privileges.storeid = store.id WHERE userid = ?",
 			id
 		);
-        const notifications = await query("SELECT * FROM `notification` WHERE destination = ? order by seen, time desc limit 10",[id]);
+        const notifications = await query("SELECT * FROM `notification` WHERE destination = ? order by  time desc,seen limit 10",[id]);
 		user.stores = [...stores];
         user.notifications = [...notifications];
 		return user;

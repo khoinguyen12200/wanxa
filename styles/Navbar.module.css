@@ -14,11 +14,17 @@
 }
 
 .userSpace{
+    color:black;
+    text-decoration: none;
     display:flex;
     flex-direction:row;
     align-items: center;
-    padding:3px;
+    padding:8px;
     border-radius: 3px;
+}
+.userSpace:hover{
+    text-decoration: none;
+    
 }
 .userSpace>img{
     width:30px;
@@ -27,8 +33,22 @@
     margin-left: 10px;
     border-radius: 50%;
 }
+
+
+
 .mobile .navitem{
-    width:100%;
+    padding:10px;
+    border-bottom: 1px solid #ccc;
+
+}
+.mobile .navitem:last-child{
+    border-bottom: none;
+}
+.mobile>div{
+    width:100% !important;
+    display:flex;
+    flex-direction:column;
+    align-items:unset;
 }
 
 .mobile .userSpace{
@@ -38,26 +58,17 @@
 
 }
 .mobile .userSpace>span{
-    order:2;
+    display:none;
 }
 .mobile .userSpace>img{
     margin: 0 10px 0 0;
 }
-
-.listNotification>.notification{
+.listNotification{
+    overflow-y:scroll; 
+    max-height:400px;
+}
+.listNotification>*{
     border-bottom: 1px solid #ccc;
 }
-.notification:last-child{
-    border:none !important;
-}
-.notification{
-    
-    padding:10px;
-}
-.notiSeen{
-    opacity: 0.5;
-}
-.notificationMessage{
-    cursor: pointer;
-    margin:0;
-}
+
+

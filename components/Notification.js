@@ -8,9 +8,10 @@ import {
 	ModalBody,
 	ModalFooter,
 } from "reactstrap";
-
-
-
+import { getTimeBefore } from "./Const";
+import styles from "./styles/Notification.module.css";
+import { StoreContext } from "./StoreContext";
+import axios from "axios";
 const TYPE = {
 	UPDATE_STORE_NAME: "UPDATE_STORE_NAME",
 };
@@ -27,21 +28,20 @@ const CONTENT = {
 	},
 };
 
-function MESSAGE(content,type){
-
-	switch(type){
+function MESSAGE(content, type) {
+	switch (type) {
 		case TYPE.UPDATE_STORE_NAME:
-		return `${content.ExecutorName} đã chỉnh sửa tên doanh nghiệp ${content.OldName} thành ${content.NewName}`;
+			return `${content.ExecutorName} đã chỉnh sửa tên doanh nghiệp ${content.OldName} thành ${content.NewName}`;
 	}
 	return "";
 }
 
-export default class Notification{
+export default class Notification {
 	static CONTENT = CONTENT;
 	static TYPE = TYPE;
 	static MESSAGE = MESSAGE;
 
-	constructor(type, content, destination, seen,time) {
+	constructor(type, content, destination, seen, time) {
 		this.type = type;
 		if (typeof content === "object") {
 			this.content = content;
@@ -53,25 +53,22 @@ export default class Notification{
 		this.seen = seen || false;
 		this.time = time;
 	}
-	getMessage(){
-		if(this.isValid()){
-			return Notification.MESSAGE(this.content,this.type);
+	getMessage() {
+		if (this.isValid()) {
+			return Notification.MESSAGE(this.content, this.type);
 		}
-	}
-	render(){
-		return <NotificationRender message={this.getMessage()} seen={this.seen} time={this.time}/>
 	}
 
 	getInsertParameter() {
 		if (!this.isValid()) {
-			return [''];
+			return [""];
 		}
 
 		const content = JSON.stringify(this.content);
 
 		return [
 			"INSERT INTO `notification`(`type`, `content`, `destination`) VALUES (?,?,?)",
-			[this.type, content, this.destination]
+			[this.type, content, this.destination],
 		];
 	}
 	isValid() {
@@ -94,12 +91,36 @@ export default class Notification{
 	}
 }
 
-function NotificationRender({message,time,seen}){
-	const date = new Date(time);
+export function NotificationRow({ notification, onClick }) {
+	const { type, content, destination, seen, time } = notification;
+	var notiObject = new Notification(type, content, destination, seen, time);
+
+	function handleClick() {
+		if (onClick) {
+			onClick();
+		}
+	}
+
 	return (
-		<div>
-			{message+" "}
-			<Badge color="secondary">{date.getUTCDate()}</Badge>
+		<div
+			key={notification.id}
+			className={
+				seen
+					? styles.notification + " " + styles.notiSeen
+					: styles.notification
+			}
+		>
+			<p
+				className={styles.notificationMessage}
+				onClick={() => handleClick()}
+			>
+				{notiObject.getMessage()}
+			</p>
+			<div>
+				<Badge className={styles.time} color="secondary">
+					{getTimeBefore(time)}
+				</Badge>
+			</div>
 		</div>
-	)
+	);
 }

@@ -150,7 +150,7 @@ export function useConstructor(callBack = () => {}) {
 }
 
 export const StoreDir = "/store";
-
+export const NotificationDir = "/account/my-notification"
 export const CreateStore = "/account/create-store";
 export const SignInDir = "/account/sign-in";
 export const RegisterDir = "/account/register";

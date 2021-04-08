@@ -1,0 +1,19 @@
+
+.notification:last-child{
+    border:none !important;
+}
+.notification{
+    padding:10px;
+    display:flex;
+    flex-direction:column;
+}
+.notiSeen{
+    opacity: 0.5;
+}
+.notificationMessage{
+    cursor: pointer;
+    margin:0;
+}
+.time{
+    
+}

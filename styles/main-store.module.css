@@ -36,7 +36,7 @@
 .routeItem {
 	transition: all 0.3s;
 	transform: scale(0.9);
-	width:110px;
+	width:130px;
 	border-radius: 5px;
     border:1px solid #ccc;
 	display: flex;
@@ -55,7 +55,7 @@
 }
 .routeItem > svg {
 	flex: 2;
-	width: 100%;
+	width: 80%;
 }
 .routeItem > div {
 	border-top: 1px solid #ccc;
