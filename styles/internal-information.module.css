@@ -6,3 +6,30 @@
     margin:20px;
     text-align:center;
 }
+.createButton{
+    display:flex;
+    flex-direction:row;
+    justify-content:center;
+    padding:20px;
+}
+.listInterNoti{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+}
+.Notification{
+    width:700px;
+    max-width: 100%;
+    border:1px solid #ccc;
+    border-radius: 3px;
+    padding:10px;
+    margin:10px 0;
+}
+.NotiHeader{
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+    display:flex;
+    flex-direction:row;
+    justify-content:space-between;
+    border-bottom: 1px solid #ccc;
+}

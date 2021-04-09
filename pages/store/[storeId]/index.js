@@ -53,7 +53,7 @@ function AcceptAccessStore({ storeid }) {
 					</a>
 				</Link>
 
-				<Link href={`/store/${storeid}/internal-information`}>
+				<Link href={`/store/${storeid}/internal-notification`}>
 					<a className={styles.routeItem} style={{color:"#006699"}}>
 						<IoNotificationsCircleOutline />
 						<div>

@@ -1,7 +1,12 @@
 import React from "react";
 
 
-export function checkUserPrivilegesInStore(stores,storeId){
+var dateFormat = require('dateformat');
+
+
+
+
+export function checkUserPrivilegesInStore(stores, storeId) {
 	for (let i in stores) {
 		const store = stores[i];
 		if (store.storeid == storeId && storeId != undefined) {
@@ -9,14 +14,14 @@ export function checkUserPrivilegesInStore(stores,storeId){
 		}
 	}
 	return [];
-};
-export function quickCheckPrivileges (state,router) {
+}
+export function quickCheckPrivileges(state, router) {
 	const user = state ? state.user : null;
 	const stores = user ? user.stores : null;
 
 	const query = router ? router.query : null;
 	const storeId = query ? query.storeId : -1;
-	return checkUserPrivilegesInStore(stores,storeId)
+	return checkUserPrivilegesInStore(stores, storeId);
 }
 
 export function isMobile() {
@@ -59,13 +64,14 @@ export function getExtension(filename) {
 
 var PRIVILE = {
 	OWNER: 0,
-	HRM: 1,
-	FACILITY: 2,
-	STATISTICS: 3,
-	WAITER: 4,
-	BARTISTA: 5,
+	NOTIFICATION: 1,
+	HRM: 2,
+	FACILITY: 3,
+	STATISTICS: 4,
+	WAITER: 5,
+	BARTISTA: 6,
 
-	length: 6,
+	length: 7,
 };
 
 PRIVILE.getSumPriority = function (userRights) {
@@ -80,6 +86,8 @@ PRIVILE.getPriority = function (right) {
 	switch (right) {
 		case PRIVILE.OWNER:
 			return 100;
+		case PRIVILE.NOTIFICATION:
+			return 25;
 		case PRIVILE.HRM:
 			return 20;
 		case PRIVILE.FACILITY:
@@ -90,7 +98,6 @@ PRIVILE.getPriority = function (right) {
 			return 5;
 		case PRIVILE.BARTISTA:
 			return 5;
-
 	}
 	return 0;
 };
@@ -112,6 +119,8 @@ PRIVILE.RightToString = (right) => {
 	switch (right) {
 		case PRIVILE.OWNER:
 			return "Chủ sở hữu";
+		case PRIVILE.NOTIFICATION:
+			return "Thông báo";
 		case PRIVILE.HRM:
 			return "Quản lý nhân sự";
 		case PRIVILE.FACILITY:
@@ -122,7 +131,6 @@ PRIVILE.RightToString = (right) => {
 			return "Phục vụ";
 		case PRIVILE.BARTISTA:
 			return "Pha chế";
-
 	}
 	return "Không rõ";
 };
@@ -150,7 +158,7 @@ export function useConstructor(callBack = () => {}) {
 }
 
 export const StoreDir = "/store";
-export const NotificationDir = "/account/my-notification"
+export const NotificationDir = "/account/my-notification";
 export const CreateStore = "/account/create-store";
 export const SignInDir = "/account/sign-in";
 export const RegisterDir = "/account/register";
@@ -160,37 +168,46 @@ export const AboutDir = "/about";
 export const DefaultAvatar = "/user/avatar/default-avatar.png";
 export const DefaultStore = "/user/store/default.png";
 
+export const InternalNotification = (storeId) =>
+	`/store/${storeId}/internal-notification`;
+export const CreateInternalNotification = (storeId) =>
+	`/store/${storeId}/internal-notification/create`;
 
 const TIMEBEFORE = [
-    {time:1000,name:"giây"},
-    {time:60,name:"phút"},
-    {time:60,name:"giờ"},
-    {time:24,name:"ngày"},
-    {time:30,name:"tháng"},
-    {time:12,name:"năm"},
+	{ time: 1000, name: "giây" },
+	{ time: 60, name: "phút" },
+	{ time: 60, name: "giờ" },
+	{ time: 24, name: "ngày" },
+	{ time: 30, name: "tháng" },
+	{ time: 12, name: "năm" },
 ];
 
 export function getTimeBefore(date) {
-    var target = new Date(date);
-    var now = new Date();
+	var target = new Date(date);
+	var now = new Date();
 
-    var timeBefore = now.getTime() - target.getTime();
-    
-    var str = "" ;
-    for(let i in TIMEBEFORE){
-        const {time,name} = TIMEBEFORE[i];
-        const temp = timeBefore / time;
-        if(temp >= 1){
-            timeBefore = temp;
-            str = `${temp.toFixed(0)} ${name} trước`;
-            
-        }else{
-            break;
-        }
-    }
-    if(str == ''){
-        str = "Vừa xong";
-    }
-    
-    return str;
+	var timeBefore = now.getTime() - target.getTime();
+
+	var str = "";
+	for (let i in TIMEBEFORE) {
+		const { time, name } = TIMEBEFORE[i];
+		const temp = timeBefore / time;
+		if (temp >= 1) {
+			timeBefore = temp;
+			str = `${temp.toFixed(0)} ${name} trước`;
+		} else {
+			break;
+		}
+	}
+	if (str == "") {
+		str = "Vừa xong";
+	}
+
+	return str;
+
+
+}
+
+export const FormatDateTime = (date) => {
+	return dateFormat(date, "HH:MM-dd/mm/yyyy ");
 }

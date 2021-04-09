@@ -1,0 +1,44 @@
+.editorWrapper{
+
+}
+.editorMain{
+    /* border:1px solid #ccc; */
+    border-radius: 3px;
+    display:flex;
+    flex-direction:column;
+}
+.toolBar{
+    display:flex;
+    flex-direction:row;
+    justify-content: flex-start;
+    align-items:center;
+    padding:5px;
+    margin-bottom: 5px;
+}
+.editor{
+    min-height: 300px;
+}
+.button{
+    margin: 0 3px 0 3px;
+    width:30px;
+    height:30px;
+    font-weight: bold;
+    font-family: 'Times New Roman', Times, serif;
+    display:flex;
+    flex-direction:row;
+    align-items:center;
+    justify-content:center;
+}
+.button>svg{
+    width:100%;
+    height:100%;
+}
+.colorBtn{
+    width:25px !important;
+    height:25px !important;
+    margin:3px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.2);
+}
+.DisplayContent{
+    
+}

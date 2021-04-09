@@ -59,6 +59,11 @@ export async function getPrivileges(userid, storeid) {
 	}
 }
 
+export async function getArrayOfPrivileges(userid, storeid){
+	const privileges = await getPrivileges(userid, storeid);
+	return PRIVILEAPI.getUserRights(privileges);
+}
+
 export async function isUserHasPrivileges(token, storeid, arrOfPrivileges) {
 	const priValue = await getPrivileges(token, storeid);
 
