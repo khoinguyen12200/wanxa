@@ -1,10 +1,6 @@
 import React from "react";
 
-
-var dateFormat = require('dateformat');
-
-
-
+var dateFormat = require("dateformat");
 
 export function checkUserPrivilegesInStore(stores, storeId) {
 	for (let i in stores) {
@@ -168,10 +164,16 @@ export const AboutDir = "/about";
 export const DefaultAvatar = "/user/avatar/default-avatar.png";
 export const DefaultStore = "/user/store/default.png";
 
-export const InternalNotification = (storeId) =>
+export const InternalNotificationDir = (storeId) =>
 	`/store/${storeId}/internal-notification`;
-export const CreateInternalNotification = (storeId) =>
+export const CreateInternalNotificationDir = (storeId) =>
 	`/store/${storeId}/internal-notification/create`;
+
+export const InternalNotificationDetailDir = (storeId, inId) =>
+	`/store/${storeId}/internal-notification/detail/${inId}`;
+
+export const EditInternalNotificationDir = (storeId, inId) =>
+	`/store/${storeId}/internal-notification/detail/${inId}/edit`;
 
 const TIMEBEFORE = [
 	{ time: 1000, name: "giây" },
@@ -204,10 +206,8 @@ export function getTimeBefore(date) {
 	}
 
 	return str;
-
-
 }
 
 export const FormatDateTime = (date) => {
 	return dateFormat(date, "HH:MM-dd/mm/yyyy ");
-}
+};

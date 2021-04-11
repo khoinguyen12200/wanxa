@@ -8,10 +8,10 @@ import {
 	ModalBody,
 	ModalFooter,
 } from "reactstrap";
-import { getTimeBefore } from "./Const";
+import { getTimeBefore,InternalNotificationDetailDir } from "./Const";
 import styles from "./styles/Notification.module.css";
-
-	
+import { useRouter } from "next/router";
+import {decodePost} from './RichTextEditor';
 
 const TYPE = {
 	UPDATE_STORE_NAME: "UPDATE_STORE_NAME",
@@ -29,12 +29,12 @@ const CONTENT = {
 		},
 	},
 	INTERNAL_NOTIFICATION: {
-		keys: ["ExecutorId", "ExecutorName", "StoreId", "Notification"],
+		keys: ["ExecutorId", "ExecutorName", "StoreId", "Message"],
 		defines: {
 			ExecutorId: "number",
 			ExecutorName: "string",
 			StoreId: "number",
-			Notification: "string",
+			Message: "string",
 		},
 	},
 };
@@ -46,24 +46,42 @@ function shortNoti(notification) {
 		return notification.slice(0, 70)+"... ";
 	}
 }
+function stripHtml(str)
+{
+   let tmp = document.createElement("DIV");
+   var html = decodePost(str);
+   tmp.innerHTML = html;
+   return tmp.textContent || tmp.innerText || "";
+}
 
 function MESSAGE(content, type) {
 	switch (type) {
 		case TYPE.UPDATE_STORE_NAME:
 			return `${content.ExecutorName} đã chỉnh sửa tên doanh nghiệp ${content.OldName} thành ${content.NewName}`;
 		case TYPE.INTERNAL_NOTIFICATION:
-			return `${content.ExecutorName} thông báo đến mọi người "${shortNoti(content.Notification)}"`;
+			return `${content.ExecutorName} đã thông báo thông báo  "${shortNoti(stripHtml(content.Message))}"`;
 	}
 	return "";
+}
+
+function ACTION_LINK(type,content){
+	switch(type){
+		case TYPE.INTERNAL_NOTIFICATION: 
+		return InternalNotificationDetailDir(content.StoreId,content.id);
+			
+	}
+	return null
 }
 
 export default class Notification {
 	static CONTENT = CONTENT;
 	static TYPE = TYPE;
 	static MESSAGE = MESSAGE;
+	static ACTION_LINK = ACTION_LINK;
 
-	constructor(type, content, destination, seen, time) {
+	constructor({type, content, destination, seen, time,id}) {
 		this.type = type;
+		this.id = id;
 		if (typeof content === "object") {
 			this.content = content;
 		} else {
@@ -73,6 +91,9 @@ export default class Notification {
 		this.destination = destination || 0;
 		this.seen = seen || false;
 		this.time = time;
+	}
+	getLink () {
+		return Notification.ACTION_LINK(this.type,this.content,this.id);
 	}
 	getMessage() {
 		if (this.isValid()) {
@@ -112,13 +133,20 @@ export default class Notification {
 	}
 }
 
-export function NotificationRow({ notification, onClick }) {
-	const { type, content, destination, seen, time } = notification;
-	var notiObject = new Notification(type, content, destination, seen, time);
+export function NotificationRow({ notification, onClick,toggle }) {
+
+	const router = useRouter();
+	const { type, content, destination, seen, time,id } = notification;
+	var notiObject = new Notification({type, content, destination, seen, time,id});
 
 	function handleClick() {
 		if (onClick) {
 			onClick();
+			if(notiObject.getLink()!=null) {
+				if(toggle) toggle();
+				router.push(notiObject.getLink());
+			}
+			
 		}
 	}
 

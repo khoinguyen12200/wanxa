@@ -176,6 +176,7 @@ function NotificationSpace({
 								onClick={() => setSeen(index)}
 								key={index}
 								notification={notification}
+								toggle={toggle}
 							/>
 						);
 					})}

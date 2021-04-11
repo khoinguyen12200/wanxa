@@ -34,22 +34,22 @@ export default async function (req, res) {
 	if (changeRes) {
 		const executor = await getBasicInforFromToken(token);
 
-		var notification = new Notification(
-			Notification.TYPE.UPDATE_STORE_NAME,
-			{
+		var notification = new Notification({
+			type: Notification.TYPE.UPDATE_STORE_NAME,
+			content: {
 				ExecutorId: executor.id,
 				ExecutorName: executor.name,
 				StoreId: storeid,
 				OldName: oldName,
 				NewName: name,
-			}
-		);
+			},
+		});
 
 		const allStaff = await getAllStaff(storeid);
 		for (let i in allStaff) {
 			const staff = allStaff[i];
 			notification.destination = staff.id;
-            const notiPara = notification.getInsertParameter();
+			const notiPara = notification.getInsertParameter();
 			const notiRes = query(...notiPara);
 		}
 

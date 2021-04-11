@@ -11,7 +11,7 @@ import RichTextEditor, {
 } from "../../../../components/RichTextEditor";
 import styles from "../../../../styles/create-internal.module.css";
 import { StoreContext } from "../../../../components/StoreContext";
-import {InternalNotification} from '../../../../components/Const';
+import {InternalNotificationDir} from '../../../../components/Const';
 
 export default function create() {
 	const router = useRouter();
@@ -37,7 +37,8 @@ export default function create() {
 				const {message} = res.data;
                 if(res.status === 200){
                     toast.success(message);
-                    router.push(InternalNotification(storeId))
+					reloadToken();
+                    router.push(InternalNotificationDir(storeId))
                 }else{
                     toast.error(message);
                 }

@@ -1,0 +1,21 @@
+.page{
+    width: 100%;
+    display:flex;
+    flex-direction:column;
+}
+.title{
+    text-align: center;
+}
+.Notification{
+    margin:auto;
+    width:95%;
+    padding:10px;
+}
+.NotiHeader{
+    display:flex;
+    flex-direction:row;
+    justify-content:space-between;
+    border-bottom:1px solid #ccc;
+    padding:15px;
+    margin-bottom:20px;
+}

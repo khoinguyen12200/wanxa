@@ -6,9 +6,10 @@ import axios from "axios";
 import styles from "../../../../styles/internal-information.module.css";
 import NavBar from "../../../../components/StoreNavBar";
 import {
-	CreateInternalNotification,
+	CreateInternalNotificationDir,
 	getTimeBefore,
 	FormatDateTime,
+	InternalNotificationDetailDir,
 } from "../../../../components/Const";
 import { DisplayContent } from "../../../../components/RichTextEditor";
 
@@ -26,7 +27,6 @@ export default function InternalNotification() {
 		setArr(arrNotifications.concat(arr));
 	}
 	React.useEffect(() => {
-	
 		if (storeId != undefined) {
 			fetchData();
 		}
@@ -44,7 +44,6 @@ export default function InternalNotification() {
 			.post("/api/store/internal-notification/getNotifications", data)
 			.then((res) => {
 				const result = res.data;
-				console.log(result);
 				addArr(result);
 				setPage(page + 1);
 				if (result.length != numberOfItems) {
@@ -60,7 +59,7 @@ export default function InternalNotification() {
 			<NavBar />
 			<h3 className={styles.title}>Thông báo nội bộ</h3>
 			<div className={styles.createButton}>
-				<Link href={CreateInternalNotification(storeId)}>
+				<Link href={CreateInternalNotificationDir(storeId)}>
 					<a className="btn btn-primary">Thêm thông báo mới</a>
 				</Link>
 			</div>
@@ -84,22 +83,23 @@ export default function InternalNotification() {
 }
 
 function Notification({ notification }) {
-	console.log(notification);
 	return (
-		<div className={styles.Notification}>
-			<div className={styles.NotiHeader}>
-				<div>
-					<div className="badge badge-secondary">
-						{getTimeBefore(notification.date)}
+		<Link href={InternalNotificationDetailDir(notification.storeid, notification.id)}>
+			<a className={styles.Notification}>
+				<div className={styles.NotiHeader}>
+					<div>
+						<div className="badge badge-secondary">
+							{getTimeBefore(notification.date)}
+						</div>
+					</div>
+					<div>
+						{notification.username +
+							" - " +
+							FormatDateTime(notification.date)}
 					</div>
 				</div>
-				<div>
-					{notification.username +
-						" - " +
-						FormatDateTime(notification.date)}
-				</div>
-			</div>
-			<DisplayContent content={notification.content} />
-		</div>
+				<DisplayContent content={notification.content} />
+			</a>
+		</Link>
 	);
 }

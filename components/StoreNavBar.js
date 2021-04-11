@@ -17,7 +17,6 @@ export default function StoreNavbar() {
 	const router = useRouter();
 	const { storeId } = router.query;
 	const arr = React.useMemo(() => getAllPath(router), [router]);
-
 	return (
 		<div className="store-nav">
 			<nav aria-label="breadcrumb">
@@ -72,8 +71,10 @@ function mapName(name) {
 			return "Quản lý nhân sự";
 		case "create-staff-account":
 			return "Tạo tài khoản nhân viên";
-		case "internal-information":
+		case "internal-notification":
 			return "Thông báo nội bộ";
+		case "detail":
+			return "Chi tiết thông báo";
 		case "create":
 			return "Tạo thông báo";
 	}
@@ -93,7 +94,8 @@ function getAllPath(router) {
 	for (let i = 0; i < arrSample.length; i++) {
 		current += "/" + arrReal[i];
 		if (arrSample[i].includes("[")) {
-			res[i - 1].path = current;
+			
+			if (res[res.length-1] !== undefined) res[res.length-1].path = current;
 		} else {
 			res.push({ path: current, title: arrSample[i] });
 		}

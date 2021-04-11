@@ -76,8 +76,16 @@ export default class Editor extends Component {
 			this.setHTML(decodePost(defaultHTML));
 		}
 	}
+	componentDidUpdate(prevProps) {
+		if(prevProps.defaultHTML != this.props.defaultHTML) {
+			const { defaultHTML } = this.props;
+			if (defaultHTML != undefined) {
+				this.setHTML(decodePost(defaultHTML));
+			}
+		}
+
+	}
 	render() {
-		const { large, defaultImages, submit } = this.props;
 		return (
 			<div className={styles.editorWrapper}>
 				<div

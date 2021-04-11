@@ -18,12 +18,17 @@
     align-items:center;
 }
 .Notification{
-    width:700px;
+    width:800px;
     max-width: 100%;
     border:1px solid #ccc;
+    color:black;
     border-radius: 3px;
     padding:10px;
     margin:10px 0;
+}
+.Notification:hover{
+    text-decoration: none;
+    color:black;
 }
 .NotiHeader{
     padding-bottom: 5px;
