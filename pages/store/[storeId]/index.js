@@ -9,26 +9,41 @@ import {SiAirtable} from 'react-icons/si';
 import {BsPeopleFill} from 'react-icons/bs';
 import Link from "next/link";
 
-import NavBar from '../../../components/StoreNavBar'
+import {CanNotAccess,Loading} from '../../../components/Pages';
+
+import NavBar from '../../../components/MultiLevelNavbar'
 import { StoreContext } from "../../../components/StoreContext";
 import styles from "../../../styles/main-store.module.css";
 
 
 
 export default function index() {
+	
+
 	const router = useRouter();
 	const { storeId } = router.query;
 
-	const { state, dispatch } = React.useContext(StoreContext);
+	const { state, dispatch ,getStorePrivileges} = React.useContext(StoreContext);
 	const { user } = state;
-	const stores = user ? user.stores : [];
-	const storesIds = stores.map((store) => store.storeid);
 
-	if (storesIds.includes(parseInt(storeId))) {
-		return <AcceptAccessStore storeid={storeId} />;
-	} else {
-		return <RejectAccessStore />;
+	const access = React.useMemo(function(){
+		const privileges = getStorePrivileges(storeId);
+		if(privileges >=0) {
+			return 1;
+		}else{
+			return -1;
+		}
+	},[storeId,state])
+
+
+	if(access == 0){
+		return <Loading/>
 	}
+	if(access == -1){
+		return <CanNotAccess/>
+	}
+
+	return <AcceptAccessStore storeid={storeId} />;
 }
 function AcceptAccessStore({ storeid }) {
 	return (
@@ -78,15 +93,6 @@ function AcceptAccessStore({ storeid }) {
 						</div>
 					</a>
 				</Link>
-			</div>
-		</div>
-	);
-}
-function RejectAccessStore() {
-	return (
-		<div className={styles.rejectPage}>
-			<div className={styles.rejectBanner}>
-				<h3>Bạn không có quyền truy cập vào cửa hàng này</h3>
 			</div>
 		</div>
 	);

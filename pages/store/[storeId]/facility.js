@@ -10,7 +10,7 @@ import { useRouter } from "next/router";
 import { StoreContext } from "../../../components/StoreContext";
 import styles from "../../../styles/facility.module.css";
 import { confirm } from "../../../components/Popup";
-import NavBar from "../../../components/StoreNavBar";
+import NavBar from "../../../components/MultiLevelNavbar";
 import { promptDialog, alertDialog } from "../../../components/Modal";
 
 export default function StoreGroups() {

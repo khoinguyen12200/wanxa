@@ -5,7 +5,7 @@ import axios from "axios";
 import {toast} from 'react-toastify';
 
 
-import NavBar from "../../../../components/StoreNavBar";
+import NavBar from "../../../../components/MultiLevelNavbar";
 import RichTextEditor, {
 	DisplayContent,
 } from "../../../../components/RichTextEditor";

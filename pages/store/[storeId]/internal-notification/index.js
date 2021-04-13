@@ -4,7 +4,7 @@ import Link from "next/link";
 import axios from "axios";
 
 import styles from "../../../../styles/internal-information.module.css";
-import NavBar from "../../../../components/StoreNavBar";
+import NavBar from "../../../../components/MultiLevelNavbar";
 import {
 	CreateInternalNotificationDir,
 	getTimeBefore,

@@ -160,7 +160,8 @@ export const SignInDir = "/account/sign-in";
 export const RegisterDir = "/account/register";
 export const AccountDir = "/account";
 export const AboutDir = "/about";
-
+export const ChangePasswordDir = "/account/change-password";
+export const MyInvitation = (id) => `/account/my-invitation/${id}`;
 export const DefaultAvatar = "/user/avatar/default-avatar.png";
 export const DefaultStore = "/user/store/default.png";
 
@@ -174,6 +175,32 @@ export const InternalNotificationDetailDir = (storeId, inId) =>
 
 export const EditInternalNotificationDir = (storeId, inId) =>
 	`/store/${storeId}/internal-notification/detail/${inId}/edit`;
+
+export class Direction {
+	static Store = (id) => "/store/"+id;
+
+	static Notification = "/account/my-notification";
+	static CreateStore = "/account/create-store";
+	static SignIn = "/account/sign-in";
+	static Register = "/account/register";
+	static Account = "/account";
+	static About = "/about";
+	static ChangePassword = "/account/change-password";
+	static MyInvitation = (id) => `/account/my-invitation/${id}`;
+	static DefaultAvatar = "/user/avatar/default-avatar.png";
+	static DefaultStore = "/user/store/default.png";
+
+	static InternalNotification = (storeId) =>
+		`/store/${storeId}/internal-notification`;
+	static CreateInternalNotification = (storeId) =>
+		`/store/${storeId}/internal-notification/create`;
+
+	static InternalNotificationDetail = (storeId, inId) =>
+		`/store/${storeId}/internal-notification/detail/${inId}`;
+
+	static EditInternalNotification = (storeId, inId) =>
+		`/store/${storeId}/internal-notification/detail/${inId}/edit`;
+}
 
 const TIMEBEFORE = [
 	{ time: 1000, name: "giây" },

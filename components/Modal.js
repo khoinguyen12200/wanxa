@@ -77,6 +77,10 @@ export function PromptModal({ message, parentId, onYes, onNo, options }) {
 		}
 		toggle();
 	}
+	function onSubmit(e){
+		e.preventDefault();
+		handleYes()
+	}
 
 	const [modal, setModal] = useState(true);
 
@@ -100,12 +104,14 @@ export function PromptModal({ message, parentId, onYes, onNo, options }) {
 				<ModalHeader>Thông báo</ModalHeader>
 				<ModalBody>
 					<Label>{message}</Label>
-					<input
-						ref={InputRef}
-						className="form-control"
-						value={value}
-						onChange={(e) => setValue(e.target.value)}
-					/>
+					<form onSubmit={onSubmit}>
+						<input
+							ref={InputRef}
+							className="form-control"
+							value={value}
+							onChange={(e) => setValue(e.target.value)}
+						/>
+					</form>
 				</ModalBody>
 				<ModalFooter>
 					<Button color="primary" onClick={handleYes}>

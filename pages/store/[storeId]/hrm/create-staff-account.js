@@ -14,7 +14,7 @@ import {
 	nameValidator,
 } from "../../../../components/Validations";
 import TextFieldStyles from "../../../../styles/TextField.module.css";
-import StoreNavBar from "../../../../components/StoreNavBar";
+import StoreNavBar from "../../../../components/MultiLevelNavbar";
 import styles from "../../../../styles/create-staff-account.module.css";
 import { StoreContext } from "../../../../components/StoreContext";
 import {alertDialog} from '../../../../components/Modal';
@@ -106,7 +106,7 @@ export default function create_staff_account() {
 					if (failed.length > 0) {
 						toast.error(
 							`Có ${
-								failed.length + 1
+								failed.length
 							} tài khoản tạo không thành công`
 						);
 					} else {

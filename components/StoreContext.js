@@ -67,10 +67,26 @@ export default function StoreProvider({ children }) {
 			return localStorage.getItem("token");
 		}
 	}
+	function getUserId(){
+		const user = state ? state.user : null;
+		return user ? user.id : null;
+	}
+	function getStorePrivileges(storeId){
+		const user = state ? state.user : null;
+		const stores = user ? user.stores : [];
+		for(let i = 0; i < stores.length; i++){
+			const store = stores[i];
+			if(store.storeid == storeId){
+				return store.value;
+			}
+		}
+		return -1;
+
+	}
 	
 
 	return (
-		<StoreContext.Provider value={{state, dispatch,reloadToken,getSavedToken}}>
+		<StoreContext.Provider value={{state, dispatch,reloadToken,getSavedToken,getStorePrivileges,getUserId}}>
 			{children}
 		</StoreContext.Provider>
 	);

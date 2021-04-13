@@ -8,14 +8,21 @@ import {
 	ModalBody,
 	ModalFooter,
 } from "reactstrap";
-import { getTimeBefore,InternalNotificationDetailDir } from "./Const";
+import {
+	getTimeBefore,
+	InternalNotificationDetailDir,
+	ChangePasswordDir,
+	MyInvitation,
+} from "./Const";
 import styles from "./styles/Notification.module.css";
 import { useRouter } from "next/router";
-import {decodePost} from './RichTextEditor';
+import { decodePost } from "./RichTextEditor";
 
 const TYPE = {
 	UPDATE_STORE_NAME: "UPDATE_STORE_NAME",
 	INTERNAL_NOTIFICATION: "INTERNAL_NOTIFICATION",
+	WARNING_AUTO_CREATE: "WARNING_AUTO_CREATE",
+	INVITE_TO_STORE: "INVITE_TO_STORE",
 };
 const CONTENT = {
 	UPDATE_STORE_NAME: {
@@ -37,21 +44,35 @@ const CONTENT = {
 			Message: "string",
 		},
 	},
+	WARNING_AUTO_CREATE: {
+		keys: ["StaffName"],
+		defines: { StaffName: "string" },
+	},
+
+	INVITE_TO_STORE: {
+		keys: ["ExecutorId", "ExecutorName", "StoreId", "StoreName", "id"],
+		defines: {
+			id:"number",
+			ExecutorId: "number",
+			ExecutorName: "string",
+			StoreId: "number",
+			StoreName: "string",
+		},
+	},
 };
 
 function shortNoti(notification) {
-	if(notification.length <= 70) {
+	if (notification.length <= 70) {
 		return notification;
-	}else{
-		return notification.slice(0, 70)+"... ";
+	} else {
+		return notification.slice(0, 70) + "... ";
 	}
 }
-function stripHtml(str)
-{
-   let tmp = document.createElement("DIV");
-   var html = decodePost(str);
-   tmp.innerHTML = html;
-   return tmp.textContent || tmp.innerText || "";
+function stripHtml(str) {
+	let tmp = document.createElement("DIV");
+	var html = decodePost(str);
+	tmp.innerHTML = html;
+	return tmp.textContent || tmp.innerText || "";
 }
 
 function MESSAGE(content, type) {
@@ -59,18 +80,29 @@ function MESSAGE(content, type) {
 		case TYPE.UPDATE_STORE_NAME:
 			return `${content.ExecutorName} đã chỉnh sửa tên doanh nghiệp ${content.OldName} thành ${content.NewName}`;
 		case TYPE.INTERNAL_NOTIFICATION:
-			return `${content.ExecutorName} đã thông báo thông báo  "${shortNoti(stripHtml(content.Message))}"`;
+			return `${
+				content.ExecutorName
+			} đã thông báo thông báo  "${shortNoti(
+				stripHtml(content.Message)
+			)}"`;
+		case TYPE.WARNING_AUTO_CREATE:
+			return `Chào mừng ${content.StaffName} đăng nhập lần đầu, tài khoản này được tạo bởi chủ doanh nghiệp. Yêu cầu đổi mật khẩu ngay khi thấy thông báo này để tránh xảy ra các sự cố đáng tiếc`;
+		case TYPE.INVITE_TO_STORE:
+			return `${content.ExecutorName} đã mời bạn làm thành viên của cửa hàng ${content.StoreName}. Click vào đây để xem lời mời !`;
 	}
 	return "";
 }
 
-function ACTION_LINK(type,content){
-	switch(type){
-		case TYPE.INTERNAL_NOTIFICATION: 
-		return InternalNotificationDetailDir(content.StoreId,content.id);
-			
+function ACTION_LINK(type, content) {
+	switch (type) {
+		case TYPE.INTERNAL_NOTIFICATION:
+			return InternalNotificationDetailDir(content.StoreId, content.id);
+		case TYPE.WARNING_AUTO_CREATE:
+			return ChangePasswordDir;
+			case TYPE.INVITE_TO_STORE:
+			return MyInvitation(content.id);
 	}
-	return null
+	return null;
 }
 
 export default class Notification {
@@ -79,7 +111,7 @@ export default class Notification {
 	static MESSAGE = MESSAGE;
 	static ACTION_LINK = ACTION_LINK;
 
-	constructor({type, content, destination, seen, time,id}) {
+	constructor({ type, content, destination, seen, time, id }) {
 		this.type = type;
 		this.id = id;
 		if (typeof content === "object") {
@@ -88,12 +120,12 @@ export default class Notification {
 			this.content = JSON.parse(content);
 		}
 
-		this.destination = destination || 0;
+		this.destination = destination;
 		this.seen = seen || false;
 		this.time = time;
 	}
-	getLink () {
-		return Notification.ACTION_LINK(this.type,this.content,this.id);
+	getLink() {
+		return Notification.ACTION_LINK(this.type, this.content, this.id);
 	}
 	getMessage() {
 		if (this.isValid()) {
@@ -102,7 +134,7 @@ export default class Notification {
 	}
 
 	getInsertParameter() {
-		if (!this.isValid()) {
+		if (!this.isValid() || this.destination == null) {
 			return [""];
 		}
 
@@ -133,20 +165,25 @@ export default class Notification {
 	}
 }
 
-export function NotificationRow({ notification, onClick,toggle }) {
-
+export function NotificationRow({ notification, onClick, toggle }) {
 	const router = useRouter();
-	const { type, content, destination, seen, time,id } = notification;
-	var notiObject = new Notification({type, content, destination, seen, time,id});
+	const { type, content, destination, seen, time, id } = notification;
+	var notiObject = new Notification({
+		type,
+		content,
+		destination,
+		seen,
+		time,
+		id,
+	});
 
 	function handleClick() {
 		if (onClick) {
 			onClick();
-			if(notiObject.getLink()!=null) {
-				if(toggle) toggle();
+			if (notiObject.getLink() != null) {
+				if (toggle) toggle();
 				router.push(notiObject.getLink());
 			}
-			
 		}
 	}
 

@@ -6,28 +6,43 @@ import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 
 import {
 	DefaultAvatar,
-	quickCheckPrivileges,
 } from "../../../../components/Const";
-import StoreNavBar from "../../../../components/StoreNavBar";
+import StoreNavBar from "../../../../components/MultiLevelNavbar";
 import styles from "../../../../styles/hrm-index.module.css";
 import { PRIVILE } from "../../../../components/Const";
+import Privileges from "../../../../components/Privileges";
 import { StoreContext } from "../../../../components/StoreContext";
 import { toast } from "react-toastify";
-import { alertDialog } from "../../../../components/Modal";
-
+import { alertDialog, promptDialog } from "../../../../components/Modal";
+import { CanNotAccess } from "../../../../components/Pages";
 export default function HRM() {
 	const router = useRouter();
 	const { storeId } = router.query;
 	const [staffs, setStaffs] = React.useState([]);
-	const { state } = React.useContext(StoreContext);
-	const { user } = state;
 
-	const [userPrivileges, setUserPrivileges] = React.useState([]);
+	const { state, getSavedToken, getStorePrivileges } = React.useContext(
+		StoreContext
+	);
 
-	React.useEffect(() => {
-		const usP = quickCheckPrivileges(state, router);
-		setUserPrivileges(usP);
-	}, [state, router]);
+
+	const access = React.useMemo(() => {
+		const privileges = getStorePrivileges(storeId);
+		if (privileges < 0) {
+			return -1;
+		} else {
+			if (
+				Privileges.isValueIncluded(privileges, [
+					Privileges.Content.OWNER,
+					Privileges.Content.HRM,
+				])
+			) {
+				return 2;
+			} else {
+				return 1;
+			}
+		}
+	}, [storeId, state]);
+
 
 	React.useEffect(() => {
 		getAllData();
@@ -57,12 +72,42 @@ export default function HRM() {
 	const clearChosen = () => setChosen(null);
 
 	function openModalForHRM(staff) {
-		if (
-			userPrivileges.includes(PRIVILE.OWNER) ||
-			userPrivileges.includes(PRIVILE.HRM)
-		) {
+		if (access == 2) {
 			setChosen(staff);
 		}
+	}
+	function inviteToStore() {
+		promptDialog("Nhập Id đối tượng được mời", (value) => {
+			const str = value.replace("#", "").trim();
+			const desId = parseInt(str);
+			if (desId == undefined || isNaN(desId)) {
+				toast.warning("Id phải là số");
+				return;
+			}
+			invite(desId);
+		});
+		function invite(id) {
+			const data = {
+				token: getSavedToken(),
+				destination: id,
+				storeid: storeId,
+			};
+			axios
+				.post("/api/store/staff/send-invite", data)
+				.then((res) => {
+					const { message } = res.data;
+					if (res.status === 200) {
+						toast.success(message);
+					} else {
+						toast.error(message);
+					}
+				})
+				.catch((error) => console.log(error));
+		}
+	}
+
+	if (access == -1) {
+		return <CanNotAccess />;
 	}
 
 	return (
@@ -126,29 +171,34 @@ export default function HRM() {
 					</tbody>
 				</table>
 			</div>
-			{(userPrivileges.includes(PRIVILE.OWNER) ||
-				userPrivileges.includes(PRIVILE.HRM)) && (
-				<Link href={`/store/${storeId}/hrm/create-staff-account`}>
-					<a className="btn btn-primary m-auto">
-						Tạo tài khoản nhân viên
-					</a>
-				</Link>
+			{access == 2 && (
+				<>
+					<Link href={`/store/${storeId}/hrm/create-staff-account`}>
+						<a className="btn btn-primary m-auto">
+							Tạo tài khoản nhân viên
+						</a>
+					</Link>
+					<button
+						className="btn btn-outline-primary btn-sm mt-3 ml-auto mr-auto"
+						onClick={inviteToStore}
+					>
+						Mời gia nhập doanh nghiệp
+					</button>
+				</>
 			)}
 		</div>
 	);
 }
 
 const ModalExample = ({ toggle, chosen, onSubmitSuccess }) => {
-	
-	const [user,setUser] = React.useState({});
+	const [user, setUser] = React.useState({});
 	React.useEffect(() => {
-		if(chosen == null){
+		if (chosen == null) {
 			setUser({});
-		}else{
+		} else {
 			setUser(chosen);
 		}
-		
-	},[chosen])
+	}, [chosen]);
 
 	const router = useRouter();
 	const { storeId } = router.query;
@@ -175,7 +225,6 @@ const ModalExample = ({ toggle, chosen, onSubmitSuccess }) => {
 		setValueArray(newArr);
 	}
 	function onSubmit() {
-		
 		var arr = [];
 		for (let i in valueArray) {
 			if (valueArray[i]) {
@@ -185,23 +234,26 @@ const ModalExample = ({ toggle, chosen, onSubmitSuccess }) => {
 		const value = PRIVILE.getRightsValue(arr);
 
 		var str = "";
-		for(let i in arr){
+		for (let i in arr) {
 			str += PRIVILE.RightToString(parseInt(arr[i]));
-			if(i != arr.length - 1) {
+			if (i != arr.length - 1) {
 				str += ", ";
 			}
 		}
-		alertDialog(`Cập nhật quyền nhân viên ${user.name} thành \n${str}`,()=>{
-			run();
-		})
-		function run(){
+		alertDialog(
+			`Cập nhật quyền nhân viên ${user.name} thành \n${str}`,
+			() => {
+				run();
+			}
+		);
+		function run() {
 			const data = {
 				userid: chosen.id,
 				privileges: value,
 				token: getSavedToken(),
 				storeid: storeId,
 			};
-	
+
 			axios
 				.post("/api/store/staff/change-staff-privileges", data)
 				.then((res) => {
@@ -217,7 +269,6 @@ const ModalExample = ({ toggle, chosen, onSubmitSuccess }) => {
 				})
 				.catch((error) => toast.error(error));
 		}
-	
 	}
 	function onDelete() {
 		alertDialog("Bạn có chắc muốn xóa nhân viên này ?", () => {
@@ -249,7 +300,11 @@ const ModalExample = ({ toggle, chosen, onSubmitSuccess }) => {
 	}
 	return (
 		<div>
-			<Modal isOpen={chosen != null && chosen != {}} toggle={toggle} centered>
+			<Modal
+				isOpen={chosen != null && chosen != {}}
+				toggle={toggle}
+				centered
+			>
 				<ModalHeader toggle={toggle}>
 					Thay đổi quyền nhân viên của {user.name}
 				</ModalHeader>

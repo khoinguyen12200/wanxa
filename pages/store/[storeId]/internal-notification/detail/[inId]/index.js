@@ -9,7 +9,7 @@ import {
 	FormatDateTime,
 	EditInternalNotificationDir,
 } from "../../../../../../components/Const";
-import NavBar from "../../../../../../components/StoreNavBar";
+import NavBar from "../../../../../../components/MultiLevelNavbar";
 import { DisplayContent } from "../../../../../../components/RichTextEditor";
 import styles from "../../../../../../styles/inter-noti-item.module.css";
 import { StoreContext } from "../../../../../../components/StoreContext";

@@ -1,7 +1,7 @@
 import query from "../../const/connection";
 import formParse from "../../const/form";
 import { v4 as uuidv4 } from "uuid";
-
+import Notification from "../../../../components/Notification";
 import { upLoadAvatar, userAvatarDir } from "../../const/file";
 
 import {
@@ -63,6 +63,7 @@ export default async function (req, res) {
 				"INSERT INTO `privileges`(`storeid`, `userid`, `value`) VALUES (?,?,?)",
 				[storeId, insertId, newUser.privileges]
 			);
+
 		}
 	}
 	res.status(200).json({ failed:failed });
@@ -88,8 +89,20 @@ async function createUser(user) {
 				" VALUES (?,?,?,?)",
 			[account, md5(password), name, uploadDir]
 		);
-		if(res2)
-		return res2.insertId;
+		if(res2){
+			const userid = res2.insertId;
+			var notification = new Notification({type:Notification.TYPE.WARNING_AUTO_CREATE,content:{
+				StaffName:name
+			},destination:userid});
+			const para = notification.getInsertParameter();
+			if(para.length > 0){
+				const notify = await query (...para);
+				console.log(notify);
+			}
+			
+			return res2.insertId;
+		}
+		
 		return -1;
 	}
 }

@@ -6,7 +6,7 @@ import {toast} from 'react-toastify';
 import {
 	InternalNotificationDir
 } from "../../../../../../components/Const";
-import NavBar from "../../../../../../components/StoreNavBar";
+import NavBar from "../../../../../../components/MultiLevelNavbar";
 import RichTextEditor from "../../../../../../components/RichTextEditor";
 import styles from "../../../../../../styles/edit-inter-noti.module.css";
 import { StoreContext } from "../../../../../../components/StoreContext";

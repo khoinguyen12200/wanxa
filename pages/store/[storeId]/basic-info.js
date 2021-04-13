@@ -7,7 +7,7 @@ import { BiSend } from "react-icons/bi";
 import { StoreContext } from "../../../components/StoreContext";
 import { DefaultStore, onImageChange } from "../../../components/Const";
 import styles from "../../../styles/basic-store-info.module.css";
-import NavBar from "../../../components/StoreNavBar";
+import NavBar from "../../../components/MultiLevelNavbar";
 export default function BasicStoreInfo() {
 	const router = useRouter();
 	const { storeId } = router.query;

@@ -4,7 +4,7 @@ import { BiSend } from "react-icons/bi";
 import Link from "next/link";
 import axios from "axios";
 import { toast } from "react-toastify";
-import TextField, { FileField } from "../../components/TextField";
+import TextField from "../../components/TextField";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 
@@ -13,8 +13,9 @@ import {
 	DefaultStore,
 	StoreDir,
 	onImageChange,
+	ChangePasswordDir,
 } from "../../components/Const";
-import { StoreContext,actions } from "../../components/StoreContext";
+import { StoreContext, actions } from "../../components/StoreContext";
 import Selector from "../../components/Selector";
 import styles from "../../styles/account.module.css";
 import { nameValidator } from "../../components/Validations";
@@ -43,7 +44,6 @@ function NotFound() {
 }
 
 function AccountCenter({ user }) {
-
 	const [tab, setTab] = React.useState(1);
 
 	return (
@@ -104,9 +104,7 @@ function Store({ store }) {
 }
 
 function Profile() {
-
-
-	const { state,dispatch, reloadToken, getSavedToken } = React.useContext(
+	const { state, dispatch, reloadToken, getSavedToken } = React.useContext(
 		StoreContext
 	);
 	const { user } = state;
@@ -158,6 +156,12 @@ function Profile() {
 				<AvatarInput
 					defaultAvatar={user ? user.avatar : DefaultAvatar}
 				/>
+
+				<label className="mt-2" style={{ fontSize: "0.9em" }}>
+					Id người dùng
+				</label>
+				<input type="text" value={"#"+user.id} className="form-control mb-3" readOnly/>
+
 				<Formik
 					initialValues={{ name: user.name }}
 					validationSchema={Yup.object({
@@ -165,16 +169,27 @@ function Profile() {
 					})}
 					onSubmit={submitChangeName}
 				>
-					<Form>
-						<TextField
-							tooltip="Enter để lưu thay đổi"
-							label="Họ tên"
-							type="text"
-							name="name"
-						/>
-					</Form>
+					{({ values }) => {
+						return (
+							<Form>
+								<TextField
+									label="Họ tên"
+									type="text"
+									name="name"
+								/>
+								{values.name != user.name && (
+									<button
+										type="submit"
+										className="btn btn-sm btn-outline-primary mb-1 w-100"
+									>
+										Lưu lại
+									</button>
+								)}
+							</Form>
+						);
+					}}
 				</Formik>
-				<label className="mt-1" style={{ fontSize: "0.9em" }}>
+				<label className="mt-2" style={{ fontSize: "0.9em" }}>
 					Mô tả thêm
 				</label>
 				<textarea
@@ -189,11 +204,20 @@ function Profile() {
 						onClick={submitChangeDes}
 						className="btn btn-sm btn-outline-primary mt-2 mb-1"
 					>
-						<BiSend />
+						Lưu lại
 					</button>
 				)}
+
+				<Link href={ChangePasswordDir}>
+					<a className="btn btn-sm btn-info mt-4">Đổi mật khẩu</a>
+				</Link>
 			</div>
-			<button onClick={()=>dispatch({type:actions.signOut})} className="btn btn-danger btn-sm m-auto">Đăng xuất</button>
+			<button
+				onClick={() => dispatch({ type: actions.signOut })}
+				className="btn btn-danger btn-sm m-auto"
+			>
+				Đăng xuất
+			</button>
 		</div>
 	);
 }
