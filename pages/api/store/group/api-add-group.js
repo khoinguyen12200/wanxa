@@ -1,7 +1,7 @@
 import query from "../../const/connection";
 import formParse from "../../const/form";
-import { isUserHasPrivileges, getUserIdByToken,PRIVILEAPI } from "../../const/querySample";
-
+import { getUserIdByToken,getPrivileges } from "../../const/querySample";
+import Privileges from '../../../../components/Privileges';
 export const config = {
 	api: {
 		bodyParser: false,
@@ -11,7 +11,10 @@ export const config = {
 export default async function (req, res) {
     const {name,token,storeid} = await formParse(req);
     
-    const accepted = await isUserHasPrivileges(token,storeid,[PRIVILEAPI.OWNER,PRIVILEAPI.FACILITY]);
+    const userid = await getUserIdByToken(token);
+    const priValue = await getPrivileges(userid,storeid);
+    
+    const accepted = Privileges.isValueIncluded(priValue,[Privileges.Content.OWNER,Privileges.Content.FACILITY])
     
     if(accepted) {
         const addRes = await query("INSERT INTO `store-table-group`(`storeid`, `name`) VALUES (?,?)",[storeid,name]);

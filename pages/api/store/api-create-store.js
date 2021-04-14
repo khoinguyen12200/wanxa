@@ -1,5 +1,5 @@
 import query from "../const/connection";
-import {PRIVILE} from '../../../components/Const'
+import Privileges from '../../../components/Privileges'
 import formParse from '../const/form'
 import {upLoadAvatar,userStoreDir} from '../const/file'
 
@@ -28,7 +28,7 @@ export default async function (req, res) {
 
 
     var priSql = "INSERT INTO `privileges`(`storeid`, `userid`, `value`) VALUES (?,?,?)";
-    const priValue = PRIVILE.getRightsValue([PRIVILE.OWNER]);
+    const priValue = Privileges.arrToValue([Privileges.OWNER])
 
     var priRes = await query(priSql,[storeId,userid,priValue])
     if(!priRes) {

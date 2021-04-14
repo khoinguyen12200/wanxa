@@ -3,10 +3,11 @@ import formParse from "../const/form";
 import {
 	getAllStaff,
 	getBasicInforFromToken,
-	isUserHasPrivileges,
-	PRIVILEAPI,
+	getUserIdByToken,
+	getPrivileges
 } from "../const/querySample";
 
+import Privileges from "../../../components/Privileges";
 import Notification from "../../../components/Notification";
 
 export const config = {
@@ -19,7 +20,10 @@ export default async function (req, res) {
 	var { token, name, storeid } = await formParse(req);
 	storeid = parseInt(storeid);
 
-	const check = await isUserHasPrivileges(token, storeid, [PRIVILEAPI.OWNER]);
+	const userid = await getUserIdByToken(token);
+	const priValue = await getPrivileges(userid, storeid);
+
+	const check = Privileges.isValueIncluded(priValue,[Privileges.Content.OWNER])
 	if (!check) {
 		res.status(202).json({ message: "Yêu cầu quyền chủ sở hữu" });
 		return;
@@ -49,8 +53,8 @@ export default async function (req, res) {
 		for (let i in allStaff) {
 			const staff = allStaff[i];
 			notification.destination = staff.id;
-			const notiPara = notification.getInsertParameter();
-			const notiRes = query(...notiPara);
+			const para = notification.getInsertParameter();
+			await query(...para)
 		}
 
 		res.status(200).json({ message: "Thay đổi thành công" });

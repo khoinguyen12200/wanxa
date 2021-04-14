@@ -1,20 +1,21 @@
 import query from "../../const/connection";
 import {
 	getUserIdByToken,
-	getArrayOfPrivileges,
-	PRIVILEAPI,
+	getPrivileges
 } from "../../const/querySample";
 
+
+import Privileges from "../../../../components/Privileges";
 import Notification from "../../../../components/Notification";
 export default async function (req, res) {
 	const { value, token, storeid } = req.body;
 
 	const userId = await getUserIdByToken(token);
+	const priValue = await getPrivileges(userId,storeid);
 
-	const arrOfPrivileges = await getArrayOfPrivileges(userId, storeid);
-	const hasNotiRights =
-		arrOfPrivileges.includes(PRIVILEAPI.OWNER) ||
-		arrOfPrivileges.includes(PRIVILEAPI.NOTIFICATION);
+	const hasNotiRights = Privileges.isValueIncluded(priValue,[Privileges.Content.OWNER,Privileges.Content.Notification]);
+
+	
 	if (hasNotiRights) {
 		const insertRes = await query(
 			"INSERT INTO `internal-notification`(`executor`, `content`,`storeid`) VALUES (?,?,?)",

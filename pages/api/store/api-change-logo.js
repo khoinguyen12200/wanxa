@@ -1,8 +1,9 @@
 import query from "../const/connection";
 import formParse from '../const/form'
 import {upLoadAvatar,userStoreDir,deleteFile} from '../const/file'
-import {getUserIdByToken,isUserHasPrivileges,PRIVILEAPI} from '../const/querySample'
+import {getUserIdByToken,getPrivileges} from '../const/querySample'
 
+import Privileges from '../../../components/Privileges';
 
 export const config = {
     api: {
@@ -15,7 +16,9 @@ export default async function (req, res) {
     const {token,files,storeid} = await formParse(req);
     var logo = files != null ? files.logo : "";
 
-    const check = await isUserHasPrivileges(token,storeid,[PRIVILEAPI.OWNER,PRIVILEAPI.FACILITY]);
+    const userid = await getUserIdByToken(token);
+    const pri = await getPrivileges(userid, storeid);
+    const check = Privileges.isValueIncluded(pri,[Privileges.Content.OWNER,Privileges.Content.FACILITY]);
     if(!check){
         res.status(202).json({message:"Yêu cầu quyền cơ sở vật chất hoặc cao hơn"});
         return;

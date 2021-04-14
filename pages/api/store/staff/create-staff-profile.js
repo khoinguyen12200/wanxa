@@ -5,10 +5,11 @@ import Notification from "../../../../components/Notification";
 import { upLoadAvatar, userAvatarDir } from "../../const/file";
 
 import {
-	getUserById,
-	isUserHasPrivileges,
-	PRIVILEAPI,
+	getUserIdByToken,
+	getPrivileges
 } from "../../const/querySample";
+import Privileges from '../../../../components/Privileges';
+
 var md5 = require("md5");
 
 export const config = {
@@ -23,12 +24,11 @@ export default async function (req, res) {
 	var { user, storeId, token, files } = await formParse(req);
 	const userS = JSON.parse(user);
 
-	const privilegesOwner = await isUserHasPrivileges(token, storeId, [
-		PRIVILEAPI.OWNER,
-	]);
-	const privilegesHRM = await isUserHasPrivileges(token, storeId, [
-		PRIVILEAPI.HRM,
-	]);
+	const userid = await getUserIdByToken(token);
+	const priValue = await getPrivileges(userid,storeId);
+
+	const privilegesOwner = Privileges.isValueIncluded(priValue,[Privileges.Content.OWNER])
+	const privilegesHRM =  Privileges.isValueIncluded(priValue,[Privileges.Content.HRM])
 
 	if (!privilegesOwner && !privilegesHRM) {
 		res.status(202).json({
@@ -39,8 +39,9 @@ export default async function (req, res) {
 	if(!privilegesOwner){
 		for(let i in userS){
 			const newUser = userS[i];
-			const arrPri = PRIVILEAPI.getUserRights(newUser.privileges);
-			if(arrPri.includes(PRIVILEAPI.OWNER)){
+			const pri = newUser.privileges;
+			const isOwner = Privileges.isValueIncluded(pri,[Privileges.Content.OWNER]);
+			if(isOwner){
 				res.status(202).json({
 					message: "Bạn không có quyền thực hiện yêu cầu này",
 				});

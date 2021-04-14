@@ -1,24 +1,8 @@
 import React from "react";
-
+import { useRouter } from "next/router";
+import { StoreContext } from "./StoreContext";
 var dateFormat = require("dateformat");
 
-export function checkUserPrivilegesInStore(stores, storeId) {
-	for (let i in stores) {
-		const store = stores[i];
-		if (store.storeid == storeId && storeId != undefined) {
-			return PRIVILE.getUserRights(store.value);
-		}
-	}
-	return [];
-}
-export function quickCheckPrivileges(state, router) {
-	const user = state ? state.user : null;
-	const stores = user ? user.stores : null;
-
-	const query = router ? router.query : null;
-	const storeId = query ? query.storeId : -1;
-	return checkUserPrivilegesInStore(stores, storeId);
-}
 
 export function isMobile() {
 	let check = false;
@@ -58,93 +42,6 @@ export function getExtension(filename) {
 	return arr[arr.length - 1];
 }
 
-var PRIVILE = {
-	OWNER: 0,
-	NOTIFICATION: 1,
-	HRM: 2,
-	FACILITY: 3,
-	STATISTICS: 4,
-	WAITER: 5,
-	BARTISTA: 6,
-
-	length: 7,
-};
-
-PRIVILE.getSumPriority = function (userRights) {
-	const arr = PRIVILE.getUserRights(userRights);
-	var sum = 0;
-	for (let i in arr) {
-		sum += PRIVILE.getPriority(arr[i]);
-	}
-	return sum;
-};
-PRIVILE.getPriority = function (right) {
-	switch (right) {
-		case PRIVILE.OWNER:
-			return 100;
-		case PRIVILE.NOTIFICATION:
-			return 25;
-		case PRIVILE.HRM:
-			return 20;
-		case PRIVILE.FACILITY:
-			return 20;
-		case PRIVILE.STATISTICS:
-			return 10;
-		case PRIVILE.WAITER:
-			return 5;
-		case PRIVILE.BARTISTA:
-			return 5;
-	}
-	return 0;
-};
-PRIVILE.getUserRights = (userRights) => {
-	var arr = [];
-	var temp = userRights;
-	var i = PRIVILE.length - 1;
-	for (i; i >= 0; i--) {
-		const somu = 2 ** i;
-		if (temp >= somu) {
-			temp = temp - somu;
-			arr.unshift(i);
-		}
-		if (temp == 0) break;
-	}
-	return arr;
-};
-PRIVILE.RightToString = (right) => {
-	switch (right) {
-		case PRIVILE.OWNER:
-			return "Chủ sở hữu";
-		case PRIVILE.NOTIFICATION:
-			return "Thông báo";
-		case PRIVILE.HRM:
-			return "Quản lý nhân sự";
-		case PRIVILE.FACILITY:
-			return "Quản lý cơ sở vật chất";
-		case PRIVILE.STATISTICS:
-			return "Thống kê";
-		case PRIVILE.WAITER:
-			return "Phục vụ";
-		case PRIVILE.BARTISTA:
-			return "Pha chế";
-	}
-	return "Không rõ";
-};
-PRIVILE.isUserHasPrivileges = (value, targetRight) => {
-	var arr = PRIVILE.getUserRights(value);
-	return arr.includes(targetRight);
-};
-PRIVILE.getRightsValue = (arr) => {
-	var value = 0;
-	if (arr.length > 0) {
-		for (let i in arr) {
-			const right = parseInt(arr[i], 0);
-			value = value + 2 ** right;
-		}
-	}
-	return value;
-};
-export var PRIVILE;
 
 export function useConstructor(callBack = () => {}) {
 	const [hasBeenCalled, setHasBeenCalled] = React.useState(false);
@@ -177,7 +74,7 @@ export const EditInternalNotificationDir = (storeId, inId) =>
 	`/store/${storeId}/internal-notification/detail/${inId}/edit`;
 
 export class Direction {
-	static Store = (id) => "/store/"+id;
+	static Store = (id) => "/store/" + id;
 
 	static Notification = "/account/my-notification";
 	static CreateStore = "/account/create-store";
@@ -238,3 +135,13 @@ export function getTimeBefore(date) {
 export const FormatDateTime = (date) => {
 	return dateFormat(date, "HH:MM-dd/mm/yyyy ");
 };
+
+export function useStoreStaff(callBack) {
+	const router = useRouter();
+	const { storeId } = router.query;
+	const { state, getStorePrivileges } = React.useContext(StoreContext);
+	React.useEffect(() => {
+		const value = getStorePrivileges(storeId);
+		if (callBack) callBack(value);
+	}, [storeId, state]);
+}

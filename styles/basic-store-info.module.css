@@ -48,8 +48,7 @@
 }
 .input:read-only{
     transition:all 0.3s;
-    background-color: rgb(192, 192, 192);
-    box-shadow:0 0 0 3px rgba(255, 145, 0, 0.747);
+    background-color: rgb(235, 235, 235);
 }
 .input:focus{
     transition:all 0.3s;

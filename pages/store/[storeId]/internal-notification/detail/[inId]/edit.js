@@ -13,11 +13,17 @@ import { StoreContext } from "../../../../../../components/StoreContext";
 import Notification from "../../../../../../components/Notification";
 import {alertDialog} from '../../../../../../components/Modal';
 
+import {useStoreStaff} from '../../../../../../components/Const';
+import {CanNotAccess} from '../../../../../../components/Pages';
 
 export default function edit() {
 	const [notification, setNotification] = React.useState(null);
     const EditorRef = React.useRef(null);
     
+    const [access,setAccess] = React.useState(-1);
+    useStoreStaff((value)=>{
+        setAccess(value);
+    })
 	const router = useRouter();
 	const { storeId, inId } = router.query;
 
@@ -65,6 +71,9 @@ export default function edit() {
         }
     }
 
+    if(access<0){
+        return <CanNotAccess />
+    }
 	return (
 		<div className={styles.page}>
 			<NavBar />

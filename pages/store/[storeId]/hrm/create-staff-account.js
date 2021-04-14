@@ -6,7 +6,6 @@ import { v4 as uuidv4 } from "uuid";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 
-import { PRIVILE } from "../../../../components/Const";
 import TextField, { FileField } from "../../../../components/TextField";
 import {
 	passwordValidator,
@@ -17,20 +16,32 @@ import TextFieldStyles from "../../../../styles/TextField.module.css";
 import StoreNavBar from "../../../../components/MultiLevelNavbar";
 import styles from "../../../../styles/create-staff-account.module.css";
 import { StoreContext } from "../../../../components/StoreContext";
-import {alertDialog} from '../../../../components/Modal';
-
+import { alertDialog } from "../../../../components/Modal";
+import { useStoreStaff } from "../../../../components/Const";
+import Privileges from "../../../../components/Privileges";
+import {CanNotAccess} from "../../../../components/Pages";
 export default function create_staff_account() {
 	const router = useRouter();
 	const { storeId } = router.query;
-	const { state,getSavedToken } = React.useContext(StoreContext);
+	const { state, getSavedToken } = React.useContext(StoreContext);
 
+	const [access, setAccess] = React.useState(0);
+	useStoreStaff((value) => {
+		console.log(value);
+		const hasRights = Privileges.isValueIncluded(value, [
+			Privileges.Content.OWNER,
+			Privileges.Content.HRM,
+		]);
+		const aces = hasRights ? 1 : -1;
+		setAccess(aces);
+	});
 
 	const [arr, setArr] = React.useState([]);
 	const [failed, setFailed] = React.useState(null);
 
-	React.useEffect(()=>{
+	React.useEffect(() => {
 		newObject();
-	},[])
+	}, []);
 
 	function addObject(user) {
 		setArr([...arr, user]);
@@ -79,7 +90,7 @@ export default function create_staff_account() {
 				account: data.user.account,
 				password: data.user.password,
 				name: data.user.name,
-				privileges: PRIVILE.getRightsValue(data.user.privileges),
+				privileges: Privileges.arrToValue(data.user.privileges),
 				path: path,
 			};
 
@@ -105,9 +116,7 @@ export default function create_staff_account() {
 					setFailed(failed);
 					if (failed.length > 0) {
 						toast.error(
-							`Có ${
-								failed.length
-							} tài khoản tạo không thành công`
+							`Có ${failed.length} tài khoản tạo không thành công`
 						);
 					} else {
 						toast.success("Tạo thành công !");
@@ -118,6 +127,16 @@ export default function create_staff_account() {
 			})
 			.catch((error) => console.log(error));
 	}
+
+	if (access == -1) {
+		return (
+			<div>
+				<StoreNavBar />
+				<CanNotAccess />
+			</div>
+		);
+	}
+
 	if (failed == null) {
 		return (
 			<div className={styles.page}>
@@ -213,12 +232,12 @@ function AfterSubmit({ arr, failed }) {
 	);
 }
 var arrOfPrivileges = [];
-var len = PRIVILE.length;
+var len = Privileges.length;
 for (let i = 0; i < len; i++) {
 	arrOfPrivileges.push({
 		value: i,
-		name: PRIVILE.RightToString(i),
-		priority: PRIVILE.getPriority(i),
+		name: Privileges.ValueToString(i),
+		priority: Privileges.getPriority(i),
 	});
 }
 
@@ -235,9 +254,9 @@ function User({ object, updateObject, removeObject }) {
 		});
 	}
 	function rm() {
-		alertDialog("Bạn có chắc muốn xóa hồ sơ này ?",()=>{
+		alertDialog("Bạn có chắc muốn xóa hồ sơ này ?", () => {
 			removeObject(id);
-		})
+		});
 	}
 	function edit() {
 		updateObject({ ...object, saved: false });
@@ -326,7 +345,6 @@ function User({ object, updateObject, removeObject }) {
 								)
 							)}
 						</div>
-
 
 						<div className={styles.FormButtonSpace}>
 							<button

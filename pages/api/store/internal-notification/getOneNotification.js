@@ -1,9 +1,4 @@
 import query from "../../const/connection";
-import {
-	getUserIdByToken,
-	getArrayOfPrivileges,
-	PRIVILEAPI,
-} from "../../const/querySample";
 
 export default async function (req, res) {
 	const { id } = req.body;

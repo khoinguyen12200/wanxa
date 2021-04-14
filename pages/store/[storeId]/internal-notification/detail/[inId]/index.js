@@ -17,12 +17,24 @@ import Notification from "../../../../../../components/Notification";
 import { toast } from "react-toastify";
 import {alertDialog} from '../../../../../../components/Modal';
 
+import {CanNotAccess} from '../../../../../../components/Pages';
+import {useStoreStaff} from '../../../../../../components/Const';
+
 export default function index() {
 	const [notification, setNotification] = React.useState(null);
 	const router = useRouter();
 	const { storeId, inId } = router.query;
 
 	const { state ,getSavedToken } = React.useContext(StoreContext);
+
+	const [access,setAccess]  = React.useState(-1);
+	useStoreStaff((value) => {
+		if(value >=0) {
+			setAccess(1);
+		}else{
+			setAccess(-1);
+		}
+	})
 	const editable = React.useMemo(() => {
 		return isEditable(state, notification);
 	}, [state, notification]);
@@ -74,6 +86,10 @@ export default function index() {
 				})
 				.catch(error => console.log(error));
 		}
+	}
+
+	if(access == -1){
+		return(<CanNotAccess/>)
 	}
 	return (
 		<div className={styles.page}>

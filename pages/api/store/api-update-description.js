@@ -1,8 +1,8 @@
 import query from "../const/connection";
 import formParse from '../const/form'
-import {getUserIdByToken,isUserHasPrivileges,PRIVILEAPI} from '../const/querySample'
+import {getUserIdByToken,getPrivileges} from '../const/querySample'
 
-
+import Privileges from '../../../components/Privileges';
 export const config = {
     api: {
       bodyParser: false,
@@ -13,7 +13,10 @@ export default async function (req, res) {
 
     const {token,description,storeid} = await formParse(req);
 
-    const check = await isUserHasPrivileges(token,storeid,[PRIVILEAPI.OWNER]);
+    const userid = await getUserIdByToken(token);
+    const priValue = await getPrivileges(userid);
+ 
+    const check = Privileges.isValueIncluded(priValue,[Privileges.Content.OWNER]);
     if(!check) {
         res.status(202).json({message:"Yêu cầu quyền chủ sở hữu"});
         return;

@@ -1,6 +1,5 @@
 import query from '../../const/connection';
 import formParse from '../../const/form'
-import {getUserIdByToken,isUserHasPrivileges,PRIVILEAPI} from '../../const/querySample'
 
 
 export const config = {

@@ -1,6 +1,7 @@
 import query from "../../const/connection";
 import formParse from "../../const/form";
-import { isUserHasPrivileges, getUserIdByToken,PRIVILEAPI } from "../../const/querySample";
+import {  getUserIdByToken,getPrivileges } from "../../const/querySample";
+import Privileges from "../../../../components/Privileges";
 
 export const config = {
 	api: {
@@ -14,7 +15,11 @@ export default async function (req, res) {
     const storeRes = await query("SELECT `storeid` from `store-table-group` where id = ?",groupid);
     const storeid = storeRes.length != 0 ? storeRes[0].storeid : -1;
 
-    const accepted = await isUserHasPrivileges(token,storeid,[PRIVILEAPI.OWNER,PRIVILEAPI.FACILITY]);
+    const userid = await getUserIdByToken(token);
+    const priValue = await getPrivileges(userid,storeid);
+
+
+    const accepted =Privileges.isValueIncluded(priValue,[Privileges.Content.OWNER,Privileges.Content.FACILITY])
     
     if(accepted) {
         const delRes = await query("DELETE FROM `store-table-group` where id = ?",[groupid]);

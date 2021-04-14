@@ -1,5 +1,8 @@
 import query from "../const/connection";
-import { PRIVILE } from "../../../components/Const";
+
+
+import Privileges from "../../../components/Privileges";
+
 
 export async function getUserById(id) {
 	const users = await query(
@@ -58,22 +61,3 @@ export async function getPrivileges(userid, storeid) {
 		return null;
 	}
 }
-
-export async function getArrayOfPrivileges(userid, storeid){
-	const privileges = await getPrivileges(userid, storeid);
-	return PRIVILEAPI.getUserRights(privileges);
-}
-
-export async function isUserHasPrivileges(token, storeid, arrOfPrivileges) {
-	const priValue = await getPrivileges(token, storeid);
-
-	for (let i in arrOfPrivileges) {
-		const targetRight = arrOfPrivileges[i];
-		if (PRIVILE.isUserHasPrivileges(priValue, targetRight)) {
-			return true;
-		}
-	}
-	return false;
-}
-
-export const PRIVILEAPI = PRIVILE;

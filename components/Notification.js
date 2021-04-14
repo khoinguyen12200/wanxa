@@ -8,6 +8,8 @@ import {
 	ModalBody,
 	ModalFooter,
 } from "reactstrap";
+import axios from "axios";
+
 import {
 	getTimeBefore,
 	InternalNotificationDetailDir,
@@ -60,6 +62,16 @@ const CONTENT = {
 		},
 	},
 };
+
+const axiosPost = async function (url,param){
+	return new Promise((resolve, reject) => {
+		axios.post(url,param).then((response) => {
+			resolve(response);
+		}).catch((error) => {
+			reject(error);
+		})
+	})
+}
 
 function shortNoti(notification) {
 	if (notification.length <= 70) {
@@ -145,6 +157,8 @@ export default class Notification {
 			[this.type, content, this.destination],
 		];
 	}
+
+
 	isValid() {
 		var check = true;
 

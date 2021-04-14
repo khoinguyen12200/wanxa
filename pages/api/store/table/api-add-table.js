@@ -1,7 +1,7 @@
 import query from "../../const/connection";
 import formParse from "../../const/form";
 import { getPrivileges, getUserIdByToken } from "../../const/querySample";
-import { PRIVILE } from "../../../../components/Const";
+import Privileges from "../../../../components/Privileges";
 
 export const config = {
 	api: {
@@ -22,12 +22,12 @@ export default async function (req, res) {
 		res.status(202).json({ message: "Token đã hết hạn" });
 	} else {
 		const privileges = await getPrivileges(userid, storeid);
-		const userRights = PRIVILE.getUserRights(privileges);
+		const accepted = Privileges.isValueIncluded(privileges, [
+			Privileges.Content.OWNER,
+			Privileges.Content.FACILITY,
+		]);
 
-		if (
-			userRights.includes(PRIVILE.OWNER) ||
-			userRights.includes(PRIVILE.FACILITY)
-		) {
+		if (accepted) {
 			const addRes = await query(
 				"INSERT INTO `store-table`(`groupid`, `name`) VALUES (?,?)",
 				[groupid, name]

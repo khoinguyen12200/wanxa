@@ -8,11 +8,26 @@ import { StoreContext } from "../../../components/StoreContext";
 import { DefaultStore, onImageChange } from "../../../components/Const";
 import styles from "../../../styles/basic-store-info.module.css";
 import NavBar from "../../../components/MultiLevelNavbar";
+import { useStoreStaff } from "../../../components/Const";
+import Privileges from "../../../components/Privileges";
+import { CanNotAccess } from "../../../components/Pages";
 export default function BasicStoreInfo() {
 	const router = useRouter();
 	const { storeId } = router.query;
 
-	const { state,reloadToken,getSavedToken } = React.useContext(StoreContext);
+	const [access, setAccess] = React.useState(-1);
+	useStoreStaff((value) => {
+		const isValid = Privileges.isValueIncluded(value, [
+			Privileges.Content.OWNER,
+		]);
+		if (value < 0) return -1;
+		const res = isValid ? 2 : 1;
+		setAccess(res);
+	});
+
+	const { state, reloadToken, getSavedToken } = React.useContext(
+		StoreContext
+	);
 	const [store, setStore] = React.useState(null);
 	const [name, setName] = React.useState("");
 	const [description, setDescription] = React.useState("");
@@ -72,7 +87,7 @@ export default function BasicStoreInfo() {
 			.then((res) => {
 				RefName.current.readOnly = false;
 				RefName.current.blur();
-				
+
 				const { message } = res.data;
 				if (res.status === 200) {
 					toast.success(message);
@@ -83,13 +98,18 @@ export default function BasicStoreInfo() {
 			})
 			.catch((error) => console.log(error));
 	}
+
+	if (access == -1) {
+		return <CanNotAccess />;
+	}
+
 	return (
 		<div className={styles.StoreInfo}>
 			<NavBar />
 			<div className={styles.content}>
 				{store && (
 					<div className={styles.card}>
-						<AvatarInput store={store} key={store.logo} />
+						<AvatarInput store={store} key={store.logo} access={access} />
 					</div>
 				)}
 				<label className={styles.label}>Tên doanh nghiệp</label>
@@ -99,6 +119,7 @@ export default function BasicStoreInfo() {
 					type="text"
 					value={name}
 					onChange={(e) => setName(e.target.value)}
+					readOnly={access != 2}
 				/>
 				{store != null && name != store.name && (
 					<button
@@ -116,6 +137,7 @@ export default function BasicStoreInfo() {
 						setDescription(e.target.value);
 					}}
 					defaultValue={description}
+					readOnly={access != 2}
 				/>
 				{store != null && description != store.description && (
 					<button
@@ -130,7 +152,7 @@ export default function BasicStoreInfo() {
 	);
 }
 
-function AvatarInput({ store }) {
+function AvatarInput({ store,access }) {
 	const { reloadToken, getSavedToken } = React.useContext(StoreContext);
 	React.useEffect(() => {
 		setFileObject(null);
@@ -168,29 +190,31 @@ function AvatarInput({ store }) {
 				src={fileObject ? fileObject.src : store.logo || DefaultStore}
 				className={styles.userAvatar}
 			/>
-			<div className={styles.avatarButtons}>
-				<button
-					onClick={() => avatarRef.current.click()}
-					className="btn btn-info btn-sm"
-				>
-					Thay đổi Logo
-				</button>
-				{fileObject != null && (
+			{access == 2 && (
+				<div className={styles.avatarButtons}>
 					<button
-						onClick={saveAvatarChange}
-						className="btn btn-warning btn-sm ml-2"
+						onClick={() => avatarRef.current.click()}
+						className="btn btn-info btn-sm"
 					>
-						Lưu
+						Thay đổi Logo
 					</button>
-				)}
+					{fileObject != null && (
+						<button
+							onClick={saveAvatarChange}
+							className="btn btn-warning btn-sm ml-2"
+						>
+							Lưu
+						</button>
+					)}
 
-				<input
-					onChange={onFileChange}
-					type="file"
-					ref={avatarRef}
-					style={{ display: "none" }}
-				/>
-			</div>
+					<input
+						onChange={onFileChange}
+						type="file"
+						ref={avatarRef}
+						style={{ display: "none" }}
+					/>
+				</div>
+			)}
 		</div>
 	);
 }

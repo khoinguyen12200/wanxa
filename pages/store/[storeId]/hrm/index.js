@@ -9,7 +9,7 @@ import {
 } from "../../../../components/Const";
 import StoreNavBar from "../../../../components/MultiLevelNavbar";
 import styles from "../../../../styles/hrm-index.module.css";
-import { PRIVILE } from "../../../../components/Const";
+
 import Privileges from "../../../../components/Privileges";
 import { StoreContext } from "../../../../components/StoreContext";
 import { toast } from "react-toastify";
@@ -58,8 +58,8 @@ export default function HRM() {
 					var staffs = res.data;
 					staffs.sort((a, b) => {
 						return (
-							PRIVILE.getSumPriority(b.privilege) -
-							PRIVILE.getSumPriority(a.privilege)
+							Privileges.getSumPriority(b.privilege) -
+							Privileges.getSumPriority(a.privilege)
 						);
 					});
 					setStaffs(res.data);
@@ -131,9 +131,9 @@ export default function HRM() {
 					</thead>
 					<tbody>
 						{staffs.map((staff, index) => {
-							var arrPiv = PRIVILE.getUserRights(staff.privilege);
+							var arrPiv =Privileges.valueToArray(staff.privilege);
 							arrPiv = arrPiv.map((value) =>
-								PRIVILE.RightToString(value)
+								Privileges.ValueToString(value)
 							);
 							return (
 								<tr
@@ -205,14 +205,14 @@ const ModalExample = ({ toggle, chosen, onSubmitSuccess }) => {
 
 	const { getSavedToken, reloadToken } = React.useContext(StoreContext);
 
-	const privileges = chosen ? chosen.privilege : null;
-	const privilegesArray = PRIVILE.getUserRights(privileges);
+	const value = chosen ? chosen.privilege : null;
+	const privilegesArray = Privileges.valueToArray(value);
 
 	const [valueArray, setValueArray] = React.useState([]);
 
 	React.useEffect(() => {
 		var newArr = [];
-		for (let i = 0; i < PRIVILE.length; i++) {
+		for (let i = 0; i < Privileges.length; i++) {
 			const value = privilegesArray.includes(i);
 			newArr.push(value);
 		}
@@ -231,11 +231,11 @@ const ModalExample = ({ toggle, chosen, onSubmitSuccess }) => {
 				arr.push(i);
 			}
 		}
-		const value = PRIVILE.getRightsValue(arr);
+		const value = Privileges.arrToValue(arr);
 
 		var str = "";
 		for (let i in arr) {
-			str += PRIVILE.RightToString(parseInt(arr[i]));
+			str += Privileges.ValueToString(parseInt(arr[i]));
 			if (i != arr.length - 1) {
 				str += ", ";
 			}
@@ -334,7 +334,7 @@ const ModalExample = ({ toggle, chosen, onSubmitSuccess }) => {
 											className="custom-control-label"
 											htmlFor={`checkboxcustom${index}`}
 										>
-											{PRIVILE.RightToString(index)}
+											{Privileges.ValueToString(index)}
 										</label>
 									</div>
 								</div>

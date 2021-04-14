@@ -1,50 +1,48 @@
 import query from "../../const/connection";
 import formParse from "../../const/form";
-import {
-	getUserIdByToken,
-	isUserHasPrivileges,
-	PRIVILEAPI,
-	getPrivileges,
-} from "../../const/querySample";
+import { getUserIdByToken, getPrivileges } from "../../const/querySample";
+import Privileges from "../../../../components/Privileges";
 
 export default async function index(req, res) {
 	const { userid, privileges, token, storeid } = req.body;
-	const changerId = await getUserIdByToken(token);
-	var changerPrivileges = await getPrivileges(changerId, storeid);
-	changerPrivileges = PRIVILEAPI.getUserRights(changerPrivileges);
+	const executorId = await getUserIdByToken(token);
 
-	const oldPrivileges = await getPrivileges(userid, storeid); // gia tri privileges cu~
-	var ownerIsChanged = false;
-	if (
-		PRIVILEAPI.isUserHasPrivileges(oldPrivileges, PRIVILEAPI.OWNER) !=
-        // kiem tra xem co thay doi chu quyen so huu khong
-		PRIVILEAPI.isUserHasPrivileges(privileges, PRIVILEAPI.OWNER)
-	) {
-		ownerIsChanged = true;
+	const executorPri = await getPrivileges(executorId, storeid);
+
+	const destinationPri = await getPrivileges(userid, storeid);
+	const isPrivilegesOwnerChange =
+		Privileges.isValueIncluded(destinationPri, [
+			Privileges.Content.OWNER,
+		]) !=
+		Privileges.isValueIncluded(privileges, [Privileges.Content.OWNER]);
+
+
+	if(Privileges.isValueIncluded(executorPri, [Privileges.Content.OWNER])){
+		accepted();
+	}else if(Privileges.isValueIncluded(executorPri, [Privileges.Content.FACILITY])){
+		if(!isPrivilegesOwnerChange) {
+			accepted();
+		}else{
+			rejected();
+		}
+	}else{
+		rejected();
+	}
+		
+
+	function accepted() {
+		const changeResult = query(
+			"UPDATE `privileges` SET `value`=? WHERE storeid =? and userid =?",
+			[privileges, storeid, userid]
+		);
+		res.status(200).json({
+			message: "Thay đổi quyền nhân viên hoàn tất",
+		});
+		return;
 	}
 
-    var isValid = false;
-	if (
-		changerPrivileges.includes(PRIVILEAPI.OWNER) ||
-		changerPrivileges.includes(PRIVILEAPI.HRM)
-	) {
-        isValid = true;
-        if(ownerIsChanged && !changerPrivileges.includes(PRIVILEAPI.OWNER)) {
-            isValid = false;
-        }
+	function rejected() {
+		res.status(202).json({ message: "Bạn không đủ quyền để thay đổi" });
+		return;
 	}
-    
-    if(isValid) {
-        const changeResult = query(
-            "UPDATE `privileges` SET `value`=? WHERE storeid =? and userid =?",
-            [privileges, storeid, userid]
-        );
-        res.status(200).json({
-            message: "Thay đổi quyền nhân viên hoàn tất",
-        });
-        return;
-    }
-
-	res.status(202).json({ message: "Bạn không đủ quyền để thay đổi" });
-	return;
 }

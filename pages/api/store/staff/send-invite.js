@@ -2,12 +2,7 @@ import query from "../../const/connection";
 
 import Notification from "../../../../components/Notification";
 
-import {
-	getUserById,
-	isUserHasPrivileges,
-	PRIVILEAPI,
-	getUserIdByToken,
-} from "../../const/querySample";
+import { getUserIdByToken } from "../../const/querySample";
 
 export default async function (req, res) {
 	const { storeid, token, destination } = req.body;
@@ -54,12 +49,12 @@ export default async function (req, res) {
 			StoreName: store[0].name,
 			Message: "string",
 		},
-        destination:destination,
+		destination: destination,
 	});
-    const para = notification.getInsertParameter();
-    if(para.length > 0){
-        const notify = await query(...para);
-    }
+	const para = notification.getInsertParameter();
+	if (para.length > 0) {
+		const notify = await query(...para);
+	}
 
 	res.status(200).json({ message: "Gửi thành công" });
 }

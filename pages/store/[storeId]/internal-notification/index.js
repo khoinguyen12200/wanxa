@@ -11,13 +11,31 @@ import {
 	FormatDateTime,
 	InternalNotificationDetailDir,
 } from "../../../../components/Const";
+
 import { DisplayContent } from "../../../../components/RichTextEditor";
+import { CanNotAccess } from "../../../../components/Pages";
+import Privileges from "../../../../components/Privileges";
+import { StoreContext } from "../../../../components/StoreContext";
 
 export default function InternalNotification() {
 	const numberOfItems = 20;
 
 	const router = useRouter();
 	const { storeId } = router.query;
+	const { state, getStorePrivileges } = React.useContext(StoreContext);
+	const access = React.useMemo(() => {
+		const value = getStorePrivileges(storeId);
+		if (value < 0) {
+			return -1;
+		} else {
+			const notiRights = Privileges.isValueIncluded(value, [
+				Privileges.Content.OWNER,
+				Privileges.Content.NOTIFICATION,
+			]);
+			return notiRights ? 2 : 1;
+		}
+	}, [storeId, state]);
+
 	const [arrNotifications, setArr] = React.useState([]);
 	const [page, setPage] = React.useState(0);
 	function xemThem() {
@@ -54,15 +72,26 @@ export default function InternalNotification() {
 	}
 	const [isEnd, setIsEnd] = React.useState(false);
 
+	if (access == -1) {
+		return (
+			<div>
+				<NavBar />
+				<CanNotAccess />
+			</div>
+		);
+	}
+
 	return (
 		<div className={styles.page}>
 			<NavBar />
 			<h3 className={styles.title}>Thông báo nội bộ</h3>
-			<div className={styles.createButton}>
-				<Link href={CreateInternalNotificationDir(storeId)}>
-					<a className="btn btn-primary">Thêm thông báo mới</a>
-				</Link>
-			</div>
+			{access == 2 && (
+				<div className={styles.createButton}>
+					<Link href={CreateInternalNotificationDir(storeId)}>
+						<a className="btn btn-primary">Thêm thông báo mới</a>
+					</Link>
+				</div>
+			)}
 			<div className={styles.listInterNoti}>
 				{arrNotifications.map((noti) => (
 					<Notification notification={noti} key={noti.id} />
@@ -84,7 +113,12 @@ export default function InternalNotification() {
 
 function Notification({ notification }) {
 	return (
-		<Link href={InternalNotificationDetailDir(notification.storeid, notification.id)}>
+		<Link
+			href={InternalNotificationDetailDir(
+				notification.storeid,
+				notification.id
+			)}
+		>
 			<a className={styles.Notification}>
 				<div className={styles.NotiHeader}>
 					<div>

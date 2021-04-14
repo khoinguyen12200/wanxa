@@ -7,9 +7,10 @@ import { UncontrolledTooltip } from "reactstrap";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 
+import Privileges from "../../../components/Privileges";
+import { CanNotAccess } from "../../../components/Pages";
 import { StoreContext } from "../../../components/StoreContext";
 import styles from "../../../styles/facility.module.css";
-import { confirm } from "../../../components/Popup";
 import NavBar from "../../../components/MultiLevelNavbar";
 import { promptDialog, alertDialog } from "../../../components/Modal";
 
@@ -18,7 +19,20 @@ export default function StoreGroups() {
 	const { storeId } = router.query;
 
 	const [groups, setGroups] = React.useState([]);
-	const { getSavedToken } = React.useContext(StoreContext);
+	const { getSavedToken, getStorePrivileges, state } = React.useContext(
+		StoreContext
+	);
+
+	const access = React.useMemo(() => {
+		const value = getStorePrivileges(storeId);
+		const pri = Privileges.isValueIncluded(value, [
+			Privileges.Content.OWNER,
+			Privileges.Content.FACILITY,
+		]);
+		return pri ? 1 : -1;
+	}, [storeId, state]);
+
+	
 
 	React.useEffect(() => {
 		update();
@@ -58,6 +72,16 @@ export default function StoreGroups() {
 			})
 			.catch((error) => toast.error(error));
 	};
+
+	if (access == -1){
+		return (
+			<div>
+				<NavBar />
+				<CanNotAccess />
+			</div>
+		);
+	}
+		
 
 	return (
 		<div className={styles.storeGroup}>
