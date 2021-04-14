@@ -39,6 +39,39 @@ export default function TextField({ label,tooltip, ...props }) {
 	);
 }
 
+export function TextAreaField({ label,tooltip, ...props }) {
+	const [field, meta] = useField(props);
+	const [viewId, setId] = React.useState("myid" + uuidv4());
+
+	return (
+		<div className={styles.layout}>
+			<label htmlFor={field.name} className={styles.label}>
+				{label}
+			</label>
+			<textarea
+				id={viewId}
+				className={`form-control  ${
+					meta.touched && meta.error && "is-invalid"
+				} ${styles.input}`}
+				{...field}
+				{...props}
+				autoComplete="off"
+			/>
+			<ErrorMessage
+				component="p"
+				name={field.name}
+				className={styles.error}
+			/>
+
+			{viewId != null && tooltip && (
+				<UncontrolledTooltip trigger="focus" target={viewId}>
+					{tooltip}
+				</UncontrolledTooltip>
+			)}
+		</div>
+	);
+}
+
 export function FileField({ label, hint, ...props }) {
 	const [field, meta] = useField(props);
 	return (

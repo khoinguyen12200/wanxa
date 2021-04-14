@@ -23,6 +23,7 @@ export default async function (req, res) {
 	const userid = await getUserIdByToken(token);
 	const priValue = await getPrivileges(userid, storeid);
 
+
 	const check = Privileges.isValueIncluded(priValue,[Privileges.Content.OWNER])
 	if (!check) {
 		res.status(202).json({ message: "Yêu cầu quyền chủ sở hữu" });

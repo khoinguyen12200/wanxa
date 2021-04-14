@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import { StoreContext } from "./StoreContext";
 var dateFormat = require("dateformat");
 
-
 export function isMobile() {
 	let check = false;
 	if (typeof window !== "undefined") {
@@ -41,7 +40,6 @@ export function getExtension(filename) {
 	var arr = name.split(".");
 	return arr[arr.length - 1];
 }
-
 
 export function useConstructor(callBack = () => {}) {
 	const [hasBeenCalled, setHasBeenCalled] = React.useState(false);
@@ -86,6 +84,8 @@ export class Direction {
 	static MyInvitation = (id) => `/account/my-invitation/${id}`;
 	static DefaultAvatar = "/user/avatar/default-avatar.png";
 	static DefaultStore = "/user/store/default.png";
+	static DefaultMenu = "/user/menu/menu-item-default.png"
+	
 
 	static InternalNotification = (storeId) =>
 		`/store/${storeId}/internal-notification`;
@@ -97,6 +97,12 @@ export class Direction {
 
 	static EditInternalNotification = (storeId, inId) =>
 		`/store/${storeId}/internal-notification/detail/${inId}/edit`;
+
+	static Menu = (storeId) => `/store/${storeId}/menu`;
+	static MenuEdit = (storeId) => `/store/${storeId}/menu/edit-menu`;
+
+	static Facility = (storeId) => `/store/${storeId}/facility`;
+	static FacilityEdit = (storeId) => `/store/${storeId}/facility/edit-facility`;
 }
 
 const TIMEBEFORE = [

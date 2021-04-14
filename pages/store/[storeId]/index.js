@@ -7,6 +7,7 @@ import {IoNotificationsCircleOutline} from 'react-icons/io5';
 import {RiProfileFill} from "react-icons/ri";
 import {SiAirtable} from 'react-icons/si';
 import {BsPeopleFill} from 'react-icons/bs';
+import {MdRestaurantMenu} from 'react-icons/md';
 import Link from "next/link";
 
 import {CanNotAccess,Loading} from '../../../components/Pages';
@@ -16,6 +17,7 @@ import { StoreContext } from "../../../components/StoreContext";
 import styles from "../../../styles/main-store.module.css";
 
 
+import {Direction} from '../../../components/Const';
 
 export default function index() {
 	
@@ -68,7 +70,7 @@ function AcceptAccessStore({ storeid }) {
 					</a>
 				</Link>
 
-				<Link href={`/store/${storeid}/internal-notification`}>
+				<Link href={Direction.InternalNotification(storeid)}>
 					<a className={styles.routeItem} style={{color:"#006699"}}>
 						<IoNotificationsCircleOutline />
 						<div>
@@ -90,6 +92,15 @@ function AcceptAccessStore({ storeid }) {
 						<RiProfileFill />
 						<div>
 							<p>Thông tin cơ bản</p>
+						</div>
+					</a>
+				</Link>
+
+				<Link href={Direction.Menu(storeid)}>
+					<a className={styles.routeItem} style={{color:"#cc9900"}}>
+						<MdRestaurantMenu />
+						<div>
+							<p>Thực đơn</p>
 						</div>
 					</a>
 				</Link>

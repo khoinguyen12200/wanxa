@@ -7,12 +7,12 @@ import { UncontrolledTooltip } from "reactstrap";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 
-import Privileges from "../../../components/Privileges";
-import { CanNotAccess } from "../../../components/Pages";
-import { StoreContext } from "../../../components/StoreContext";
-import styles from "../../../styles/facility.module.css";
-import NavBar from "../../../components/MultiLevelNavbar";
-import { promptDialog, alertDialog } from "../../../components/Modal";
+import Privileges from "../../../../components/Privileges";
+import { CanNotAccess } from "../../../../components/Pages";
+import { StoreContext } from "../../../../components/StoreContext";
+import styles from "../../../../styles/edit-facility.module.css";
+import NavBar from "../../../../components/MultiLevelNavbar";
+import { promptDialog, alertDialog } from "../../../../components/Modal";
 
 export default function StoreGroups() {
 	const router = useRouter();

@@ -1,7 +1,7 @@
 import query from "../../const/connection";
 import formParse from "../../const/form";
 import { getUserIdByToken,getPrivileges } from "../../const/querySample";
-
+import Privileges from '../../../../components/Privileges';
 export const config = {
 	api: {
 		bodyParser: false,
@@ -17,7 +17,7 @@ export default async function (req, res) {
     const storeRes = await query("SELECT `storeid` from `store-table-group` where id = ?",groupid);
     const storeid = storeRes.length != 0 ? storeRes[0].storeid : -1;
 
-    const userid = await getUserIdByToken(userid);
+    const userid = await getUserIdByToken(token);
     const priValue = await getPrivileges(userid, storeid);
 
 

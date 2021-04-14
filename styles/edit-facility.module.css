@@ -1,0 +1,73 @@
+.storeGroup{
+    
+}
+
+.groupTable{
+    margin: 10px 0;
+    background-color: rgba(0, 0, 0, 0.041);
+    border-radius: 5px;
+    padding:10px;
+}
+.groupTableTitle{
+    display:flex;
+    flex-direction:row;    
+}
+.groupTableTitle>input{
+    transition:all 0.3s;
+    width: 100%;
+    padding:10px;
+    margin-right: 5px;
+    background-color: transparent;
+    border:none;
+    border-bottom:2px solid #ccc;
+    border-radius: 3px;
+    outline:0;
+}
+.groupTableTitle>input:focus{
+    transition:all 0.3s;
+    background-color: rgb(255, 255, 255);
+    border-bottom-color:rgba(0, 140, 255, 0.658);
+}
+
+.groupTableContent{
+    min-height:100px;
+    display:flex;
+    flex-direction:row;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.tableItem{
+    margin:10px;
+    padding:10px;
+    min-width: 150px;
+    min-height: 70px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    display:flex;
+    flex-direction:row;
+    align-items:center;
+    justify-content: center;
+    position:relative;
+}
+.btnSpace{
+    position:absolute;
+    top:5px;
+    right:5px;
+}
+.btnSpace svg{
+    width:auto;
+    height:auto;
+}
+.tableItem>input{
+    transition:all 0.3s;
+    border:none;
+    outline:0;
+    padding:5px 20px;
+    border-bottom:1px solid #ccc;
+    
+}
+.tableItem>input:focus{
+    background-color: #eee;
+    transition:all 0.3s;
+}

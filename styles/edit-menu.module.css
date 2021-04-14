@@ -1,0 +1,135 @@
+.title{
+    text-align: center;
+}
+.list{
+    display:flex;
+    flex-direction:column;
+    padding:10px;
+    margin:10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+.addGroupSpace{
+    display:flex;
+    flex-direction:row;
+    justify-content:center;
+}
+
+.group{
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-bottom:10px;
+}
+.groupName{
+    padding:5px;
+    background-color:#eee;
+    display:flex;
+    flex-direction:row;
+    align-items:center;
+    
+}
+.groupName>button{
+    white-space: nowrap;
+}
+.itemList{
+    padding:10px;
+    display:flex;
+    flex-direction:row;
+    align-items:center;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+}
+
+.addItemBtnSpace{
+    display:flex;
+    flex-direction:row;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+.item{
+    margin:10px;
+    padding:5px;
+    display:flex;
+    flex-direction:column;
+    position: relative;
+    border-radius: 3px;
+    background-color:#eee;
+    box-shadow: 3px 3px 10px 1px rgba(0,0,0,0.2);
+}
+.itemS1{
+    display:flex;
+    flex-direction:row;
+}
+.itemS1Left{
+    position: relative;
+}
+.itemPicture{
+    width:100px;
+    height:100px;
+    object-fit: cover;
+}
+.imgBtns{
+    display:none;
+    position: absolute;
+    bottom:0;
+}
+.imgBtns>button{
+    white-space: nowrap;
+}
+.itemS1Left:hover>.imgBtns{
+    background-color: rgba(0, 0, 0, 0.253);
+    width:100%;
+    height:100%;
+    display:flex;
+    flex-direction:column;
+    align-items: center;
+    justify-content:center;
+    padding:3px;
+}
+.itemS1Right{
+    display:flex;
+    flex-direction:column;
+    margin-left: 5px;
+}
+.itemName{
+    display:flex;
+    flex-direction:column;
+}
+.itemName>button{
+    margin-left: 5px;
+    white-space: nowrap;
+}
+.itemDes{
+    margin-top:5px;
+    
+}
+.itemDesButton{
+    display:flex;
+    flex-direction:row;
+    justify-content: flex-end;
+    margin-top: 5px;
+}
+.itemPrice{
+    margin-top: 10px;
+    display:flex;
+    flex-direction:column;
+}
+.itemButtons{
+    display:flex;
+    flex-direction:row;
+    margin-top: 5px;
+    justify-content: flex-end;
+}
+.itembtndelete{
+    
+    flex-direction:row;
+    justify-content: flex-start;
+  
+   
+    display:flex;
+}
+.item:hover>.itembtndelete{
+    display:flex;
+}

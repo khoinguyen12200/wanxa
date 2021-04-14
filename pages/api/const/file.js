@@ -6,6 +6,10 @@ export const userDir = "/user/";
 export const userAvatarDir = "/user/avatar";
 export const userStoreDir = "/user/store";
 
+export class UploadDir{
+  static Menu = "/user/menu";
+}
+
 
 export function deleteFile(path){
   return new Promise((resolve, reject) => {
@@ -40,7 +44,7 @@ export async function upLoadAvatar(file,path,name){
   var newPath = path+"/"+name;
   if(name == undefined){
     while(true){
-      newPath = path+"/avatar-"+ uuidv4();
+      newPath = path+"/upload-"+ uuidv4();
       const existed = await fileExists(getPublic(newPath));
       if(!existed){
         break;

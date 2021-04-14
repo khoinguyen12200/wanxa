@@ -1,0 +1,17 @@
+.title{
+    text-align: center;
+    margin:20px;
+}
+.list{
+    margin:10px;
+    padding:10px;
+    border-radius: 5px;
+    border:1px solid #ccc;
+    display:flex;
+    flex-direction:column;
+}
+.editSpace{
+    display:flex;
+    flex-direction:row;
+    justify-content:flex-end;
+}

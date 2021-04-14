@@ -63,6 +63,8 @@ function mapName(name) {
 			return nameStore;
 		case "facility":
 			return "Cơ sở vật chất";
+		case "edit-facility":
+			return "Chỉnh sửa";
 		case "basic-info":
 			return "Thông tin cơ bản";
 		case "real-time":
@@ -77,6 +79,10 @@ function mapName(name) {
 			return "Chi tiết thông báo";
 		case "create":
 			return "Tạo thông báo";
+		case "menu":
+			return "Thực đơn";
+		case "edit-menu":
+			return "Chỉnh sửa";
 	}
 	return name;
 }
@@ -94,8 +100,8 @@ function getAllPath(router) {
 	for (let i = 0; i < arrSample.length; i++) {
 		current += "/" + arrReal[i];
 		if (arrSample[i].includes("[")) {
-			
-			if (res[res.length-1] !== undefined) res[res.length-1].path = current;
+			if (res[res.length - 1] !== undefined)
+				res[res.length - 1].path = current;
 		} else {
 			res.push({ path: current, title: arrSample[i] });
 		}

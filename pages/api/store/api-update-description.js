@@ -14,7 +14,7 @@ export default async function (req, res) {
     const {token,description,storeid} = await formParse(req);
 
     const userid = await getUserIdByToken(token);
-    const priValue = await getPrivileges(userid);
+    const priValue = await getPrivileges(userid,storeid);
  
     const check = Privileges.isValueIncluded(priValue,[Privileges.Content.OWNER]);
     if(!check) {
