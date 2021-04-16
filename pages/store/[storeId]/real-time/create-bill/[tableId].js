@@ -133,6 +133,7 @@ const SubmitModal = ({ menu, selected }) => {
 				const { message } = res.data;
 				if (res.status === 200) {
 					toast.success(message);
+					router.push(Direction.RealTime(storeId))
 					toggle();
 				} else {
 					toast.error(message);

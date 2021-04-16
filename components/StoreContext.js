@@ -133,12 +133,6 @@ export default function StoreProvider({ children }) {
 			dispatch({ type: actions.getBillsRealTime, payload });
 		}
 	}
-	function getBills() {
-		if (state.bills != null) {
-			return state.bills;
-		}
-		return [];
-	}
 
 	function updateMenu() {
 		if (storeId != null) {
@@ -162,6 +156,19 @@ export default function StoreProvider({ children }) {
 		}
 	}
 
+	function getMenuById(id) {
+		for (let i in state.menu) {
+			const group = state.menu[i];
+			for (let j in group.items) {
+				const item = group.items[j];
+				if (item.id == id) {
+					return item;
+				}
+			}
+		}
+		return { name: "" };
+	}
+
 	function updateFacility() {
 		if (storeId != null) {
 			const data = {
@@ -180,6 +187,18 @@ export default function StoreProvider({ children }) {
 			const payload = { facility: [] };
 			dispatch({ type: actions.addFacility, payload });
 		}
+	}
+	function getFacilityById(id){
+		for(let i in state.facility){
+			const group = state.facility[i];
+			for(let j in group.tables){
+				const table = group.tables[j];
+				if(table.id == id){
+					return table;
+				}
+			}
+		}
+		return null;
 	}
 	function updateStaff(){
 		if (storeId != null) {
@@ -200,6 +219,15 @@ export default function StoreProvider({ children }) {
 			dispatch({ type: actions.addStaff, payload });
 		}
 	}
+	function getStaffById(staffId){
+		for(let i in state.staff){
+			const staff = state.staff[i];
+			if(staff.id == staffId){
+				return staff;
+			}
+		}
+		return null;
+	}
 
 	return (
 		<StoreContext.Provider
@@ -211,7 +239,9 @@ export default function StoreProvider({ children }) {
 				getStorePrivileges,
 				getUserId,
 				updateBillsRealTimes,
-				getBills,
+				getMenuById,
+				getFacilityById,
+				getStaffById
 			}}
 		>
 			{children}
