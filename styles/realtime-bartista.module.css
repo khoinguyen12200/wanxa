@@ -1,0 +1,29 @@
+
+.listContainer{
+    width:800px;
+    margin:20px auto;
+    max-width:95%;
+}
+
+.item{
+    display:flex;
+    flex-direction:row;
+    flex-wrap: wrap;
+    align-items:center;
+}
+
+.itemPic{
+    width:50px;
+    height:50px;
+    margin-right: 10px;
+    
+}
+.itemPic>img{
+    width:100%;
+    height:100%;
+    border-radius: 9px;
+    
+}
+.itemName{
+    flex:1;
+}

@@ -1,6 +1,10 @@
 .storeGroup{
     
 }
+.title{
+    text-align: center;
+    margin-bottom: 20px;
+}
 
 .groupTable{
     margin: 10px 0;

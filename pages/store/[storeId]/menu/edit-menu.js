@@ -14,7 +14,11 @@ import TextField, {
 import Validate from "../../../../components/Validations";
 import styles from "../../../../styles/edit-menu.module.css";
 import Nav from "../../../../components/MultiLevelNavbar";
-import { Direction, useStoreStaff } from "../../../../components/Const";
+import {
+	Direction,
+	useStoreStaff,
+	onImageChange,
+} from "../../../../components/Const";
 import Privileges from "../../../../components/Privileges";
 import { CanNotAccess } from "../../../../components/Pages";
 import { StoreContext } from "../../../../components/StoreContext";
@@ -38,7 +42,6 @@ export default function EditMenu() {
 			.then((res) => {
 				if (res.status === 200) {
 					setGroups(res.data);
-					console.log(res.data);
 				}
 			})
 			.catch((error) => console.log(error));
@@ -231,6 +234,7 @@ function MenuItem({ item, update, groupId }) {
 	const NameRef = React.useRef(null);
 	const DesRef = React.useRef(null);
 	const PriceRef = React.useRef(null);
+	const PictureInput = React.useRef(null);
 
 	function blur() {
 		if (NameRef && NameRef.current) NameRef.current.blur();
@@ -335,6 +339,52 @@ function MenuItem({ item, update, groupId }) {
 				.catch((error) => console.log(error));
 		});
 	}
+	function onPictureChange(e) {
+		onImageChange(e).then(({ src, file, size }) => {
+			if (size > 5) {
+				toast.warning("File quá lớn");
+				return;
+			}
+			setPicture(src);
+			setFile(file);
+			if (PictureInput && PictureInput.current)
+				PictureInput.current.value = null;
+		});
+	}
+	const [picture, setPicture] = React.useState(item.picture);
+	React.useEffect(()=>{
+		setPicture(item.picture);
+	},[item])
+	const [file, setFile] = React.useState(null);
+	function resetPicture() {
+		setPicture(item.picture);
+		setFile(null);
+	}
+	function submitPicture() {
+		const data = new FormData();
+		data.append("picture", file);
+		data.append("token", getSavedToken());
+		data.append("groupid", groupId);
+		data.append("id", item.id);
+		axios
+			.post("/api/store/menu/api-update-item-picture", data, {
+				headers: {
+					"Content-Type": "multipart/form-data",
+				},
+			})
+			.then((res) => {
+				const { message } = res.data;
+				if (res.status == 200) {
+					toast.success(message);
+					resetPicture();
+					if(update) update();
+					
+				} else {
+					toast.error(message);
+				}
+			})
+			.catch((error) => console.log(error));
+	}
 	return (
 		<div className={styles.item}>
 			<div className={styles.itembtndelete}>
@@ -349,11 +399,40 @@ function MenuItem({ item, update, groupId }) {
 				<div className={styles.itemS1Left}>
 					<img
 						className={styles.itemPicture}
-						src={item.picture || Direction.DefaultMenu}
+						src={picture || Direction.DefaultMenu}
 					/>
 					<div className={styles.imgBtns}>
-						<button className="btn btn-primary btn-sm m-1">Thay đổi</button>
-						<button className="btn btn-warning btn-sm  m-1">Lưu</button>
+						<button
+							onClick={() => {
+								if (PictureInput && PictureInput.current)
+									PictureInput.current.click();
+							}}
+							className="btn btn-primary btn-sm mb-1"
+						>
+							Thay đổi
+						</button>
+						<input
+							onChange={onPictureChange}
+							type="file"
+							style={{ display: "none" }}
+							ref={PictureInput}
+						/>
+						{picture != item.picture && file != null && (
+							<>
+								<button
+									onClick={submitPicture}
+									className="btn btn-success btn-sm  mb-1"
+								>
+									Lưu
+								</button>
+								<button
+									onClick={resetPicture}
+									className="btn btn-secondary btn-sm  mb-1"
+								>
+									Hủy
+								</button>
+							</>
+						)}
 					</div>
 				</div>
 

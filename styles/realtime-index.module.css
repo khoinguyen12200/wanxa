@@ -1,0 +1,42 @@
+
+.content{
+    padding:10px;
+}
+
+.group{
+
+}
+.groupName{
+    padding:10px;
+    background-color: #ddd;
+    box-shadow:3px 2px 3px 1px rgba(0,0,0,0.2);
+}
+.tables{
+    padding:10px;
+    display:flex;
+    flex-direction:row;
+    flex-wrap: wrap;
+}
+.table{
+    margin:10px;
+    min-height: 50px ;
+    min-width: 100px;
+    display:flex;
+    flex-direction:row;
+    justify-content:center;
+    align-items:center;
+    position: relative;
+}
+
+.tableNumber{
+    position: absolute !important;
+    right:-5px !important;
+    top:-5px !important;
+}
+
+.routeSpace{
+    display:flex;
+    flex-direction:row;
+    justify-content:flex-end;
+    padding:10px;
+}

@@ -62,12 +62,13 @@ export default function index() {
 	return (
 		<div>
 			<Nav />
+			<h3 className={styles.title}>Cơ sở vật chất</h3>
 			<div className={styles.listGroup}>
 				{access == 2 && (
 					<div className={styles.editSpace}>
 						<Link href={Direction.FacilityEdit(storeId)}>
 							<a className="btn btn-outline-primary btn-sm">
-								Chỉnh sửa{" "}
+								Chỉnh sửa
 							</a>
 						</Link>
 					</div>
@@ -76,6 +77,13 @@ export default function index() {
 				{groups.map((group) => (
 					<Group group={group} key={group.id} />
 				))}
+				{groups.length == 0 && (
+					<div className={styles.emptyList}>
+						<p className="alert alert-danger">
+							Danh sách trống, chọn vào chỉnh sửa để thêm
+						</p>
+					</div>
+				)}
 			</div>
 		</div>
 	);

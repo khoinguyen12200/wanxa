@@ -1,0 +1,93 @@
+.title{
+    text-align: center;
+}
+
+.group{
+    margin:10px 0;
+    padding:10px;
+}
+.groupName{
+    padding:10px;
+    background-color: #eee;
+    box-shadow: 2px 2px 3px 1px rgba(0,0,0,.2);
+    font-weight: bold;
+}
+
+.items{
+    display:flex;
+    flex-direction:row;
+    flex-wrap: wrap;
+}
+.item{
+    display:flex;
+    flex-direction:row;
+    padding:8px;
+    border-radius: 5px;
+    margin:8px;
+    background-color: #eee;
+}
+.itemS1{
+    width:50px;
+    height:50px;
+}
+.itemS1>img{
+    width:100%;
+    height:100%;
+    object-fit: cover;
+    border-radius: 3px;
+}
+.itemS2{
+    margin-left: 5px;
+    display:flex;
+    flex-direction:column;
+}
+.itemInfo{
+    padding:5px;
+    border-bottom: 1px solid #ccc;
+}
+.itemButtons{
+    margin-top: 5px;
+    display:flex;
+    flex-direction:row;
+    font-size:1.1em;
+    font-weight: bold;
+}
+.number{
+    flex:1;
+    min-width:50px;
+    padding:5px;
+    margin:0 5px;
+    display:flex;
+    flex-direction:row;
+    justify-content:center;
+    align-items:center;
+}
+.btnSpace{
+    display:flex;
+    flex-direction:row;
+    justify-content:center;
+}
+
+.submitList{
+    display:flex;
+    flex-direction:column;
+}
+.submitItem{
+    display:flex;
+    flex-direction:column;
+    background-color:#eee;
+    margin:5px;
+    padding:5px;
+}
+.siS1{
+    display:flex;
+    flex-direction:row;
+    padding:5px;
+    border-bottom: 1px solid #ccc;
+}
+.subName{
+
+}
+.subNum{
+    font-weight: bold;
+}

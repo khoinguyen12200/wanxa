@@ -29,7 +29,7 @@ export const signInValidate = Yup.object({
 export default class Vaildate {
 	static MenuItemName = Yup.string()
 		.max(50, "Yêu cầu nhiều nhất 50 ký tự")
-		.min(5, "Yêu cầu ít nhất 2 ký tự")
+		.min(2, "Yêu cầu ít nhất 2 ký tự")
 		.required("Bắt buộc phải có");
 
 	static MenuItemDes = Yup.string().max(500, "Tối đa 500 ký tự");

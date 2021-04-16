@@ -103,6 +103,10 @@ export class Direction {
 
 	static Facility = (storeId) => `/store/${storeId}/facility`;
 	static FacilityEdit = (storeId) => `/store/${storeId}/facility/edit-facility`;
+
+	static RealTime = (storeId) => `/store/${storeId}/real-time`;
+	static CreateBill = (storeId,tableId) => `/store/${storeId}/real-time/create-bill/${tableId}`;
+	static Barista = (storeId) => `/store/${storeId}/real-time/barista`;
 }
 
 const TIMEBEFORE = [
@@ -150,4 +154,8 @@ export function useStoreStaff(callBack) {
 		const value = getStorePrivileges(storeId);
 		if (callBack) callBack(value);
 	}, [storeId, state]);
+}
+
+export function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }

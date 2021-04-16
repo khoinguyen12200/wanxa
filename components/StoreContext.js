@@ -1,5 +1,6 @@
 import React from "react";
 import axios from "axios";
+import {useRouter} from 'next/router';
 import { toast } from "react-toastify";
 import { DefaultAvatar } from "./Const";
 export const StoreContext = React.createContext(null);
@@ -8,6 +9,7 @@ export const actions = {
 	signIn: "SIGN_IN",
 	signOut: "SIGN_OUT",
 	signInWithToken: "SIGN_IN_WITH_TOKEN",
+	getBillsRealTime: "GET_BILL_REAL_TIME",
 
 };
 const reducer = (state, action) => {
@@ -32,6 +34,10 @@ const reducer = (state, action) => {
 			user.avatar = user.avatar == "" ? DefaultAvatar : user.avatar;
 			return { ...state, user: user, token: token };
 
+		case actions.getBillsRealTime:
+			var { bills } = action.payload;
+			return { ...state, bills: bills};
+
 		default:
 			return state;
 	}
@@ -40,9 +46,18 @@ const reducer = (state, action) => {
 const initialState = {
 	user: null,
 	token: null,
+	bills: [],
 };
 export default function StoreProvider({ children }) {
 	const [state, dispatch] = React.useReducer(reducer, initialState);
+	
+
+	const router = useRouter();
+	const {storeId} = router.query;
+
+	React.useEffect(()=>{
+		updateBillsRealTimes();
+	},[storeId])
 	
 	React.useEffect(() => {
 		reloadToken();
@@ -84,9 +99,32 @@ export default function StoreProvider({ children }) {
 
 	}
 	
+	function updateBillsRealTimes(){
+
+		if(storeId != null){
+			const data = {
+				storeid: storeId,
+			}
+			axios
+			.post("/api/store/real-time/get-bills", data)
+			.then((res) => {
+				if (res.status === 200) {
+					const payload = { bills:res.data };
+					dispatch({ type: actions.getBillsRealTime, payload });
+				}
+			})
+			.catch((error) => console.log(error));
+		}
+	}
+	function getBills(){
+		if(state.bills != null){
+			return state.bills;
+		}
+		return [];
+	}
 
 	return (
-		<StoreContext.Provider value={{state, dispatch,reloadToken,getSavedToken,getStorePrivileges,getUserId}}>
+		<StoreContext.Provider value={{state, dispatch,reloadToken,getSavedToken,getStorePrivileges,getUserId,updateBillsRealTimes,getBills}}>
 			{children}
 		</StoreContext.Provider>
 	);

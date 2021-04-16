@@ -86,6 +86,7 @@ export default function StoreGroups() {
 	return (
 		<div className={styles.storeGroup}>
 			<NavBar />
+			<h3 className={styles.title}>Chỉnh sửa cơ sở vật chất</h3>
 			<div className={styles.content}>
 				{groups.map((group) => {
 					return (

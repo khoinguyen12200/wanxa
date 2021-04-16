@@ -7,7 +7,7 @@ export default class Privileges {
 		STATISTICS: 4,
 		MENU: 5,
 		WAITER: 6,
-		BARTISTA: 7,
+		BARISTA: 7,
 	};
 	static length = 8;
 
@@ -27,7 +27,7 @@ export default class Privileges {
 				return "Quản lý thực đơn";
 			case Privileges.Content.WAITER:
 				return "Phục vụ";
-			case Privileges.Content.BARTISTA:
+			case Privileges.Content.BARISTA:
 				return "Pha chế";
 		}
 		return "Không rõ";
@@ -48,7 +48,7 @@ export default class Privileges {
 				return 10;
 			case Privileges.Content.WAITER:
 				return 5;
-			case Privileges.Content.BARTISTA:
+			case Privileges.Content.BARISTA:
 				return 5;
 		}
 		return 0;

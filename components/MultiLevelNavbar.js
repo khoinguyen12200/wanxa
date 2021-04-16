@@ -83,6 +83,10 @@ function mapName(name) {
 			return "Thực đơn";
 		case "edit-menu":
 			return "Chỉnh sửa";
+		case "create-bill":
+			return "Tạo hóa đơn";
+		case "barista":
+			return "Pha chế";
 	}
 	return name;
 }
