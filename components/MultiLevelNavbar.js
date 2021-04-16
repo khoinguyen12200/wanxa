@@ -87,6 +87,8 @@ function mapName(name) {
 			return "Tạo hóa đơn";
 		case "barista":
 			return "Pha chế";
+		case "manage-bill":
+			return "Quản lý hóa đơn";
 	}
 	return name;
 }

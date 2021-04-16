@@ -49,8 +49,9 @@ export default function HRM() {
 	}, [storeId]);
 
 	function getAllData() {
-		var data = new FormData();
-		data.append("storeid", storeId);
+		const data = {
+			storeid:storeId
+		}
 		axios
 			.post("/api/store/staff/api-get-staff", data)
 			.then((res) => {

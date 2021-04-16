@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import axios from "axios";
 import Link from "next/link";
 
-import {StoreContext} from "../../../../components/StoreContext";
+import { StoreContext } from "../../../../components/StoreContext";
 import Nav from "../../../../components/MultiLevelNavbar";
 import styles from "../../../../styles/realtime-index.module.css";
 import { useStoreStaff, Direction } from "../../../../components/Const";
@@ -12,8 +12,8 @@ export default function index() {
 	const router = useRouter();
 	const { storeId } = router.query;
 
-	const {state,updateBillsRealTimes} = React.useContext(StoreContext);
-	const {bills} = state;
+	const { state, updateBillsRealTimes } = React.useContext(StoreContext);
+	const { facility } = state;
 
 	const [access, setAccess] = React.useState(-1);
 	useStoreStaff((value) => {
@@ -23,27 +23,6 @@ export default function index() {
 			setAccess(1);
 		}
 	});
-
-	const [tableGroups, setTableGroups] = React.useState([]);
-
-
-	React.useEffect(() => {
-		if (storeId == null) return;
-		const data = {
-			storeid: storeId,
-		};
-		axios
-			.post("/api/store/real-time/getData", data)
-			.then((res) => {
-				if (res.status === 200) {
-					console.log(res.data)
-					setTableGroups(res.data);
-				}
-			})
-			.catch((error) => console.log(error));
-
-		
-	}, [storeId]);
 
 	if (access == -1) return <CanNotAccess />;
 	return (
@@ -55,8 +34,8 @@ export default function index() {
 						<a className="btn btn-outline-primary ">Pha chế</a>
 					</Link>
 				</div>
-				{tableGroups.map((tableGroup) => (
-					<Group group={tableGroup} key={tableGroup.id}  />
+				{facility.map((tableGroup) => (
+					<Group group={tableGroup} key={tableGroup.id} />
 				))}
 			</div>
 		</div>
@@ -80,32 +59,50 @@ function Table({ table }) {
 	const router = useRouter();
 	const { storeId } = router.query;
 
-	const {state,updateBillsRealTimes} = React.useContext(StoreContext);
-	const {bills} = state;
+	const { state, updateBillsRealTimes } = React.useContext(StoreContext);
+	const { bills } = state;
 
-	const bill = React.useMemo(()=>{
-		for(let i in bills){
+	const bill = React.useMemo(() => {
+		for (let i in bills) {
 			const curBill = bills[i];
-			if(curBill.tableid == table.id){
+			if (curBill.tableid == table.id) {
 				return curBill;
 			}
 		}
 		return null;
-	},[bills]);
+	}, [bills]);
+
+	const hasNotDone = React.useMemo(() => {
+		if(bill == null) return false;
+		for (let i in bill.items) {
+			const item = bill.items[i];
+			if (item.state != 2) return true;
+		}
+		return false;
+	}, [bill]);
 
 	const hasBill = React.useMemo(() => {
 		return bill != null;
 	});
 
 	function handleClick() {
-		router.push(Direction.CreateBill(storeId, table.id));
+		
+		if(hasBill){
+			router.push(Direction.ManageBill(storeId,bill.id))
+		}else{
+			router.push(Direction.CreateBill(storeId, table.id));
+		}
+		
 	}
+
 	return (
 		<div
 			onClick={handleClick}
 			className={
 				hasBill
-					? styles.table + " btn btn-warning"
+					? hasNotDone
+						? styles.table + " btn btn-warning"
+						: styles.table + " btn btn-success"
 					: styles.table + " btn btn-outline-secondary"
 			}
 		>

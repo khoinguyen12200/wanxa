@@ -50,6 +50,30 @@ export default function barista() {
 }
 
 function Group({ bill }) {
+	const { state } = React.useContext(StoreContext);
+
+	const facilites = React.useMemo(() => {
+		var arr = [];
+		const groups = state ? state.facility : [];
+		for (let i in groups) {
+			const group = groups[i];
+			for (let j in group.tables) {
+				const table = group.tables[j];
+				arr.push(table);
+			}
+		}
+		return arr;
+	}, [state]);
+	function tableName(id) {
+		for (let i in facilites) {
+			const table = facilites[i];
+			if (table.id == id) {
+				return table.name;
+			}
+		}
+		return "";
+	}
+
 	const { items } = bill;
 	var interval = null;
 	const [timeBefore, setTimeBefore] = React.useState("");
@@ -68,25 +92,11 @@ function Group({ bill }) {
 	return (
 		<div className="card mt-2">
 			<div className="card-header">
-				<b>Bàn {bill.tablename}</b> - <i>{timeBefore}</i>
+				<b>Bàn {tableName(bill.tableid)}</b> - <i>{timeBefore}</i>
 			</div>
 			<ul className="list-group list-group-flush">
 				{items.map((item) => (
-					<li className={"list-group-item "} key={item.id}>
-						<div className={styles.item}>
-							<span className={styles.itemPic}>
-								<img
-									src={item.picture || Direction.DefaultMenu}
-								/>
-							</span>
-							<span className={styles.itemName}>{item.name}</span>
-							<span>
-								<button className="btn btn-outline-primary btn-sm">
-									Thực hiện
-								</button>
-							</span>
-						</div>
-					</li>
+					<Item item={item} key={item.id} />
 				))}
 			</ul>
 			{bill.note != "" && bill.note != null && (
@@ -96,5 +106,130 @@ function Group({ bill }) {
 				</div>
 			)}
 		</div>
+	);
+}
+
+function Item({ item }) {
+	const { getSavedToken, updateBillsRealTimes, state } = React.useContext(
+		StoreContext
+	);
+
+	const staff = React.useMemo(() => {
+		const staff = state ? state.staff : [];
+		return staff;
+	}, [state]);
+	function getBaristaName(id) {
+		for(let i in staff) {
+			if(staff[i].id === id) {
+				return staff[i].name;
+			}
+		}
+		return '';
+	}
+
+	const menuInfo = React.useMemo(() => {
+		const menu = state ? state.menu : [];
+		for (let i in menu) {
+			const group = menu[i];
+			for (let j in group.items) {
+				const menuItem = group.items[j];
+				if (menuItem.id == item["menu-item-id"]) {
+					return menuItem;
+				}
+			}
+		}
+		return { a: 0 };
+	}, [state]);
+	const userid = React.useMemo(() => {
+		const user = state ? state.user : null;
+		const id = user ? user.id : null;
+		return id;
+	}, [state]);
+
+	function makeItem(itemid) {
+		const data = {
+			state: 1,
+			token: getSavedToken(),
+			id: itemid,
+		};
+		update(data);
+	}
+	function cancelItem(itemid) {
+		const data = {
+			state: 0,
+			token: null,
+			id: itemid,
+		};
+		update(data);
+	}
+	function checkedItem(itemid) {
+		const data = {
+			state: 2,
+			token: getSavedToken(),
+			id: itemid,
+		};
+		update(data);
+	}
+	function update(data) {
+		axios
+			.post("/api/store/real-time/update-bill-row", data)
+			.then((res) => {
+				if (res.status === 200) {
+					updateBillsRealTimes();
+				}
+			})
+			.catch((error) => console.log(error));
+	}
+
+	return (
+		<li className={"list-group-item "} key={item.id}>
+			<div className={styles.item}>
+				<span className={styles.itemPic}>
+					<img src={menuInfo.picture || Direction.DefaultMenu} />
+				</span>
+				<span className={styles.itemName}>{menuInfo.name}</span>
+				<span>
+					{item.state == 0 && (
+						<button
+							onClick={() => {
+								makeItem(item.id);
+							}}
+							className="btn btn-outline-primary btn-sm"
+						>
+							Thực hiện
+						</button>
+					)}
+
+					{item.state == 1 && item.barista != userid && (
+						<p className="btn-sm bg-info text-white p-1 m-0 rounded">
+							{getBaristaName(item.barista)}
+						</p>
+					)}
+
+					{item.state == 1 &&
+						item.barista == userid &&
+						userid != null && (
+							<>
+								<button
+									onClick={() => {
+										cancelItem(item.id);
+									}}
+									className="btn btn-outline-warning btn-sm mr-2"
+								>
+									Hủy
+								</button>
+								<button
+									onClick={() => {
+										checkedItem(item.id);
+									}}
+									className="btn btn-outline-success btn-sm"
+								>
+									Đã xong
+								</button>
+							</>
+						)}
+				</span>
+			</div>
+		</li>
 	);
 }

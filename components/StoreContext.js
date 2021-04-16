@@ -1,6 +1,6 @@
 import React from "react";
 import axios from "axios";
-import {useRouter} from 'next/router';
+import { useRouter } from "next/router";
 import { toast } from "react-toastify";
 import { DefaultAvatar } from "./Const";
 export const StoreContext = React.createContext(null);
@@ -10,7 +10,9 @@ export const actions = {
 	signOut: "SIGN_OUT",
 	signInWithToken: "SIGN_IN_WITH_TOKEN",
 	getBillsRealTime: "GET_BILL_REAL_TIME",
-
+	addMenu: "ADD_MENU",
+	addFacility: "ADD_FACILITY",
+	addStaff: "ADD_STAFF",
 };
 const reducer = (state, action) => {
 	switch (action.type) {
@@ -27,8 +29,8 @@ const reducer = (state, action) => {
 		case actions.signOut:
 			localStorage.setItem("token", token);
 			localStorage.setItem("expires_at", "0");
-			toast.warning("Bạn đã đăng xuất khỏi thiết bị này")
-			return {...state,user:null,token:null};
+			toast.warning("Bạn đã đăng xuất khỏi thiết bị này");
+			return { ...state, user: null, token: null };
 		case actions.signInWithToken:
 			var { user, token } = action.payload;
 			user.avatar = user.avatar == "" ? DefaultAvatar : user.avatar;
@@ -36,7 +38,16 @@ const reducer = (state, action) => {
 
 		case actions.getBillsRealTime:
 			var { bills } = action.payload;
-			return { ...state, bills: bills};
+			return { ...state, bills: bills };
+		case actions.addMenu:
+			var { menu } = action.payload;
+			return { ...state, menu: menu };
+		case actions.addFacility:
+			var { facility } = action.payload;
+			return { ...state, facility };
+		case actions.addStaff:
+			var { staff } = action.payload;
+			return { ...state, staff };
 
 		default:
 			return state;
@@ -47,22 +58,27 @@ const initialState = {
 	user: null,
 	token: null,
 	bills: [],
+	menu: [],
+	facility: [],
+	staff: [],
 };
 export default function StoreProvider({ children }) {
 	const [state, dispatch] = React.useReducer(reducer, initialState);
-	
 
 	const router = useRouter();
-	const {storeId} = router.query;
+	const { storeId } = router.query;
 
-	React.useEffect(()=>{
+	React.useEffect(() => {
 		updateBillsRealTimes();
-	},[storeId])
-	
+		updateMenu();
+		updateFacility();
+		updateStaff();
+	}, [storeId]);
+
 	React.useEffect(() => {
 		reloadToken();
 	}, []);
-	function reloadToken(){
+	function reloadToken() {
 		const savedToken = getSavedToken();
 		var formData = new FormData();
 		formData.append("token", savedToken);
@@ -82,51 +98,123 @@ export default function StoreProvider({ children }) {
 			return localStorage.getItem("token");
 		}
 	}
-	function getUserId(){
+	function getUserId() {
 		const user = state ? state.user : null;
 		return user ? user.id : null;
 	}
-	function getStorePrivileges(storeId){
+	function getStorePrivileges(storeId) {
 		const user = state ? state.user : null;
 		const stores = user ? user.stores : [];
-		for(let i = 0; i < stores.length; i++){
+		for (let i = 0; i < stores.length; i++) {
 			const store = stores[i];
-			if(store.storeid == storeId){
+			if (store.storeid == storeId) {
 				return store.value;
 			}
 		}
 		return -1;
-
 	}
-	
-	function updateBillsRealTimes(){
 
-		if(storeId != null){
+	function updateBillsRealTimes() {
+		if (storeId != null) {
 			const data = {
 				storeid: storeId,
-			}
+			};
 			axios
-			.post("/api/store/real-time/get-bills", data)
-			.then((res) => {
-				if (res.status === 200) {
-					const payload = { bills:res.data };
-					dispatch({ type: actions.getBillsRealTime, payload });
-				}
-			})
-			.catch((error) => console.log(error));
+				.post("/api/store/real-time/get-bills", data)
+				.then((res) => {
+					if (res.status === 200) {
+						const payload = { bills: res.data };
+						dispatch({ type: actions.getBillsRealTime, payload });
+					}
+				})
+				.catch((error) => console.log(error));
+		} else {
+			const payload = { bills: [] };
+			dispatch({ type: actions.getBillsRealTime, payload });
 		}
 	}
-	function getBills(){
-		if(state.bills != null){
+	function getBills() {
+		if (state.bills != null) {
 			return state.bills;
 		}
 		return [];
 	}
 
+	function updateMenu() {
+		if (storeId != null) {
+			const data = {
+				storeid: storeId,
+			};
+			axios
+				.post("/api/store/menu/api-get-group", data)
+				.then((res) => {
+					if (res.status === 200) {
+						const menu = res.data;
+
+						const payload = { menu: menu };
+						dispatch({ type: actions.addMenu, payload: payload });
+					}
+				})
+				.catch((error) => console.log(error));
+		} else {
+			const payload = { menu: [] };
+			dispatch({ type: actions.addMenu, payload });
+		}
+	}
+
+	function updateFacility() {
+		if (storeId != null) {
+			const data = {
+				storeid: storeId,
+			};
+			axios
+				.post("/api/store/facility/api-get-facility", data)
+				.then((res) => {
+					if (res.status === 200) {
+						const payload = { facility: res.data };
+						dispatch({ type: actions.addFacility, payload });
+					}
+				})
+				.catch((error) => console.log(error));
+		} else {
+			const payload = { facility: [] };
+			dispatch({ type: actions.addFacility, payload });
+		}
+	}
+	function updateStaff(){
+		if (storeId != null) {
+			const data = {
+				storeid: storeId,
+			};
+			axios
+				.post("/api/store/staff/api-get-staff", data)
+				.then((res) => {
+					if (res.status === 200) {
+						const payload = { staff: res.data };
+						dispatch({ type: actions.addStaff, payload });
+					}
+				})
+				.catch((error) => console.log(error));
+		} else {
+			const payload = { staff: [] };
+			dispatch({ type: actions.addStaff, payload });
+		}
+	}
+
 	return (
-		<StoreContext.Provider value={{state, dispatch,reloadToken,getSavedToken,getStorePrivileges,getUserId,updateBillsRealTimes,getBills}}>
+		<StoreContext.Provider
+			value={{
+				state,
+				dispatch,
+				reloadToken,
+				getSavedToken,
+				getStorePrivileges,
+				getUserId,
+				updateBillsRealTimes,
+				getBills,
+			}}
+		>
 			{children}
 		</StoreContext.Provider>
 	);
 }
-

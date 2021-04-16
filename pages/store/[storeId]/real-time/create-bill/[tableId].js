@@ -2,13 +2,9 @@ import React from "react";
 import { useRouter } from "next/router";
 import axios from "axios";
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
-import {toast} from 'react-toastify'
+import { toast } from "react-toastify";
 
-
-
-
-
-import StoreContext from "../../../../../components/StoreContext";
+import { StoreContext } from "../../../../../components/StoreContext";
 import Nav from "../../../../../components/MultiLevelNavbar";
 import styles from "../../../../../styles/realtime-create-bill.module.css";
 import {
@@ -18,54 +14,29 @@ import {
 } from "../../../../../components/Const";
 import { CanNotAccess } from "../../../../../components/Pages";
 
-
 export default function createBill() {
 	const router = useRouter();
-	const { storeId,tableId } = router.query;
+	const { storeId, tableId } = router.query;
 
-	const [menuGroups, setMenuGroups] = React.useState([]);
-	React.useEffect(() => {
-		if (storeId == null) return;
-		const data = {
-			storeid: storeId,
-		};
-		axios
-			.post("/api/store/real-time/getMenu", data)
-			.then((res) => {
-				if (res.status === 200) {
-					var groups = res.data;
-					groups = groups.map((group) => {
-						var newGroup = group;
+	const { state } = React.useContext(StoreContext);
+	const menu = React.useMemo(() => {
+		return state ? state.menu : [];
+	}, [state]);
 
-						var items = group.items;
-						items = items.map((item) => {
-							var newItem = item;
-							item.ammount = 0;
-							return newItem;
-						});
-						newGroup.items = items;
-						return newGroup;
-					});
-					setMenuGroups(groups);
-				}
-			})
-			.catch((error) => console.log(error));
-	}, [storeId]);
+	const [selected, setSelected] = React.useState([]);
 
-	function addItem(itemid, value) {
-		var newG = menuGroups.concat([]);
-
-		for (let i in newG) {
-			var items = newG[i].items;
-			for (let j in items) {
-				var item = items[j];
-				if (item.id == itemid) {
-					const temp = item.ammount + value;
-					item.ammount = temp < 0 ? 0 : temp;
-				}
-			}
+	function addSelected(id) {
+		setSelected([...selected, id]);
+	}
+	function removeSelected(id) {
+		var temp = selected;
+		const index = temp.indexOf(id);
+		if (index > -1) {
+			temp.splice(index, 1);
+			
 		}
-		setMenuGroups(newG);
+		temp = temp.concat([])
+		setSelected(temp);
 	}
 
 	const [access, setAccess] = React.useState(-1);
@@ -83,77 +54,100 @@ export default function createBill() {
 			<Nav />
 			<h3 className={styles.title}>Tạo hóa đơn mới</h3>
 			<div className={styles.meu}>
-				{menuGroups.map(function (group) {
+				{menu.map(function (group) {
 					return (
-						<Group addItem={addItem} group={group} key={group.id} />
+						<Group
+							group={group}
+							key={group.id}
+							selected={selected}
+							addSelected={addSelected}
+							removeSelected={removeSelected}
+						/>
 					);
 				})}
 			</div>
 			<div className={styles.btnSpace}>
-				<SubmitModal groups={menuGroups} />
+				<SubmitModal menu={menu} selected={selected} />
 			</div>
 		</div>
 	);
 }
 
-const SubmitModal = ({ groups }) => {
-    const router = useRouter();
-	const { storeId,tableId } = router.query;
+const SubmitModal = ({ menu, selected }) => {
+	const router = useRouter();
+	const { storeId, tableId } = router.query;
 
 	const items = React.useMemo(() => {
-		if (groups == null || groups.length == 0) {
+		if (menu == null || menu.length == 0 || selected.length == 0) {
 			return [];
 		}
 		const arr = [];
-		for (let i in groups) {
-			const group = groups[i];
+		for (let i in menu) {
+			const group = menu[i];
 			for (let j in group.items) {
-				const item = group.items[j];
-				if (item.ammount > 0) {
-					arr.push(item);
-				}
+				var item = group.items[j];
+				const ammount = getOccurrence(selected, item.id);
+				if (ammount == 0) continue;
+				item.ammount = ammount;
+				arr.push(item);
 			}
 		}
 		return arr;
-	}, [groups]);
+	}, [menu, selected]);
+	const total = React.useMemo(() => {
+		var sum = 0;
+		items.forEach((item) => {
+			sum += item.price * item.ammount;
+		});
+		return sum;
+	}, [items]);
 
-    const [note,setNote] = React.useState('');
+	function getOccurrence(array, value) {
+		var count = 0;
+		array.forEach((v) => v === value && count++);
+		return count;
+	}
+
+	const [note, setNote] = React.useState("");
 	const [modal, setModal] = React.useState(false);
-
 
 	const toggle = () => setModal(!modal);
 
-    function submit(){
-        const list = [];
-        for(let i in items){
-            const item = items[i];
-            for(let j = 0 ;j<item.ammount;j++){
-                list.push(item.id)
-            }
-        }
-        const data = {
-            storeid:storeId,
-            tableid:tableId,
-            note:note,
-            list:list
-        }
-        axios.post('/api/store/real-time/create-bill', data)
-            .then(res => {
-                const {message} = res.data;
-                if (res.status === 200) {
-                    toast.success(message);
-                    toggle();
-                }else{
-                    toast.error(message);
-                }
-        
-            })
-            .catch(error => console.log(error));
-    }
+	function submit() {
+		const list = [];
+		for (let i in items) {
+			const item = items[i];
+			for (let j = 0; j < item.ammount; j++) {
+				list.push(item.id);
+			}
+		}
+		const data = {
+			storeid: storeId,
+			tableid: tableId,
+			note: note,
+			list: list,
+		};
+		axios
+			.post("/api/store/real-time/create-bill", data)
+			.then((res) => {
+				const { message } = res.data;
+				if (res.status === 200) {
+					toast.success(message);
+					toggle();
+				} else {
+					toast.error(message);
+				}
+			})
+			.catch((error) => console.log(error));
+	}
 
 	return (
 		<div>
-			<Button color="btn btn-primary" onClick={toggle} disabled={items == 0}>
+			<Button
+				color="btn btn-primary"
+				onClick={toggle}
+				disabled={items == 0}
+			>
 				Thêm
 			</Button>
 			<Modal isOpen={modal} toggle={toggle} centered backdrop="static">
@@ -177,7 +171,7 @@ const SubmitModal = ({ groups }) => {
 									const price = item.price * item.ammount;
 									return (
 										<tr key={index}>
-											<th scope="row">{index+1}</th>
+											<th scope="row">{index + 1}</th>
 											<td>{item.name}</td>
 											<td>{item.ammount}</td>
 											<td>{numberWithCommas(price)}</td>
@@ -186,10 +180,18 @@ const SubmitModal = ({ groups }) => {
 								})}
 							</tbody>
 						</table>
-                        <div className={styles.noteSpace}>
-                            <label>Ghi chú</label>
-                            <textarea className="form-control" value={note} onChange={e=>setNote(e.target.value)}/>
-                        </div>
+						<div className={styles.noteSpace}>
+							<div className="mb-3 mt-1">
+								<i>Tổng hóa đơn :</i>{" "}
+								<b>{numberWithCommas(total)}</b>
+							</div>
+							<label>Ghi chú</label>
+							<textarea
+								className="form-control"
+								value={note}
+								onChange={(e) => setNote(e.target.value)}
+							/>
+						</div>
 					</div>
 				</ModalBody>
 				<ModalFooter>
@@ -205,21 +207,34 @@ const SubmitModal = ({ groups }) => {
 	);
 };
 
-function Group({ group, addItem }) {
+function Group({ group, addSelected, removeSelected, selected }) {
 	const { items, name } = group;
 	return (
 		<div className={styles.group}>
 			<div className={styles.groupName}>{group.name}</div>
 			<div className={styles.items}>
 				{items.map(function (item) {
-					return <Item addItem={addItem} item={item} key={item.id} />;
+					return (
+						<Item
+							item={item}
+							key={item.id}
+							selected={selected}
+							addSelected={addSelected}
+							removeSelected={removeSelected}
+						/>
+					);
 				})}
 			</div>
 		</div>
 	);
 }
 
-function Item({ item, addItem }) {
+function Item({ item, selected, addSelected, removeSelected }) {
+	const ammount = React.useMemo(() => {
+		var count = 0;
+		selected.forEach((id) => id == item.id && count++);
+		return count;
+	}, [item, selected]);
 	return (
 		<div className={styles.item}>
 			<div className={styles.itemS1}>
@@ -235,7 +250,7 @@ function Item({ item, addItem }) {
 				<div className={styles.itemButtons}>
 					<button
 						onClick={() => {
-							addItem(item.id, -1);
+							removeSelected(item.id);
 						}}
 						className="btn btn-secondary btn-sm"
 					>
@@ -243,18 +258,18 @@ function Item({ item, addItem }) {
 					</button>
 					<span
 						className={
-							(item.ammount == 0
+							(ammount == 0
 								? "badge-secondary"
 								: "badge-success") +
 							" badge " +
 							styles.number
 						}
 					>
-						<div>{item.ammount}</div>
+						<div>{ammount}</div>
 					</span>
 					<button
 						onClick={() => {
-							addItem(item.id, +1);
+							addSelected(item.id);
 						}}
 						className="btn btn-secondary btn-sm"
 					>

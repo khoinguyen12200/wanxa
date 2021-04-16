@@ -107,6 +107,8 @@ export class Direction {
 	static RealTime = (storeId) => `/store/${storeId}/real-time`;
 	static CreateBill = (storeId,tableId) => `/store/${storeId}/real-time/create-bill/${tableId}`;
 	static Barista = (storeId) => `/store/${storeId}/real-time/barista`;
+
+	static ManageBill = (storeId,bill_id) => `/store/${storeId}/real-time/manage-bill/${bill_id}`;
 }
 
 const TIMEBEFORE = [
