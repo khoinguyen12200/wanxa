@@ -2,10 +2,15 @@
   "name": "wanxa",
   "version": "0.1.0",
   "private": true,
-  "scripts": {
+  "scriptsaa": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start"
+  },
+  "scripts": {
+    "dev": "nodemon -w server.js server.js",
+    "build": "next build",
+    "start": "NODE_ENV=production node server.js"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.35",
@@ -15,6 +20,7 @@
     "axios": "^0.21.1",
     "bootstrap": "^4.6.0",
     "dateformat": "^4.5.1",
+    "express": "^4.17.1",
     "form-data": "^4.0.0",
     "formidable": "^1.2.2",
     "formik": "^2.2.6",
@@ -33,7 +39,12 @@
     "react-toastify": "^7.0.3",
     "reactstrap": "^8.9.0",
     "sass": "^1.32.8",
+    "socket.io": "^4.0.1",
+    "socket.io-client": "^4.0.1",
     "uuid": "^8.3.2",
     "yup": "^0.32.9"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
   }
 }

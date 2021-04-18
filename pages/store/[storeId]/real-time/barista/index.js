@@ -10,6 +10,7 @@ import {
 	useStoreStaff,
 	Direction,
 	getTimeBefore,
+	socketUpdateBills,
 } from "../../../../../components/Const";
 import { CanNotAccess } from "../../../../../components/Pages";
 import Privileges from "../../../../../components/Privileges";
@@ -110,9 +111,11 @@ function Group({ bill }) {
 }
 
 function Item({ item }) {
-	const { getSavedToken, updateBillsRealTimes, state } = React.useContext(
+	const { getSavedToken,  state } = React.useContext(
 		StoreContext
 	);
+	const router = useRouter();
+	const {storeId} = router.query;
 
 	const staff = React.useMemo(() => {
 		const staff = state ? state.staff : [];
@@ -146,6 +149,14 @@ function Item({ item }) {
 		return id;
 	}, [state]);
 
+	function updateSocket(message){
+		const data = {
+			storeid:storeId,
+			message
+		};
+		axios.post('/api/socket/update-bill', data)
+	}
+
 	function makeItem(itemid) {
 		const data = {
 			state: 1,
@@ -170,12 +181,13 @@ function Item({ item }) {
 		};
 		update(data);
 	}
+
 	function update(data) {
 		axios
 			.post("/api/store/real-time/update-bill-row", data)
 			.then((res) => {
 				if (res.status === 200) {
-					updateBillsRealTimes();
+					updateSocket()
 				}
 			})
 			.catch((error) => console.log(error));

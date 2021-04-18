@@ -1,17 +1,11 @@
 import query from "../const/connection";
-import formParse from "../const/form";
 import { v4 as uuidv4 } from 'uuid';
 import {getUserById} from '../const/querySample'
 var md5 = require("md5");
 
-export const config = {
-	api: {
-		bodyParser: false,
-	},
-};
 
 export default async function (req, res) {
-	const { account, password } = await formParse(req);
+	const { account, password } = req.body;
 
 	const validation = await query(
 		"SELECT `id` from user WHERE account = ? and password = ?",

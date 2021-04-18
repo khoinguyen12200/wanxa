@@ -9,6 +9,7 @@ export default async function (req, res) {
         return;
     }
 
+
     const insertRes = await query("INSERT INTO `bill`(`storeid`, `tableid`, `note`) VALUES (?,?,?)",[storeid,tableid,note])
     for(let i in list){
         const billId = insertRes.insertId;

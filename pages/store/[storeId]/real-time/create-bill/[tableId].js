@@ -33,9 +33,8 @@ export default function createBill() {
 		const index = temp.indexOf(id);
 		if (index > -1) {
 			temp.splice(index, 1);
-			
 		}
-		temp = temp.concat([])
+		temp = temp.concat([]);
 		setSelected(temp);
 	}
 
@@ -53,7 +52,7 @@ export default function createBill() {
 		<div>
 			<Nav />
 			<h3 className={styles.title}>Tạo hóa đơn mới</h3>
-			<div className={styles.meu}>
+			<div className={styles.menu}>
 				{menu.map(function (group) {
 					return (
 						<Group
@@ -74,6 +73,9 @@ export default function createBill() {
 }
 
 const SubmitModal = ({ menu, selected }) => {
+	const {state} = React.useContext(StoreContext);
+	const {user} = state;
+
 	const router = useRouter();
 	const { storeId, tableId } = router.query;
 
@@ -133,8 +135,20 @@ const SubmitModal = ({ menu, selected }) => {
 				const { message } = res.data;
 				if (res.status === 200) {
 					toast.success(message);
-					router.push(Direction.RealTime(storeId))
+					router.push(Direction.RealTime(storeId));
 					toggle();
+					const d = {
+						storeid: storeId,
+						message:`${user.name} đã tạo hóa đơn mới`
+					}
+					axios.post('/api/socket/update-bill', d)
+						.then(res => {
+							if (res.status === 200) {
+								console.log(res.data);
+							}
+					
+						})
+						.catch(error => console.log(error));
 				} else {
 					toast.error(message);
 				}
@@ -211,44 +225,59 @@ const SubmitModal = ({ menu, selected }) => {
 function Group({ group, addSelected, removeSelected, selected }) {
 	const { items, name } = group;
 	return (
-		<div className={styles.group}>
-			<div className={styles.groupName}>{group.name}</div>
-			<div className={styles.items}>
-				{items.map(function (item) {
-					return (
-						<Item
-							item={item}
-							key={item.id}
-							selected={selected}
-							addSelected={addSelected}
-							removeSelected={removeSelected}
-						/>
-					);
-				})}
+		<div className={"card m-2 "+styles.card}>
+			<div className="card-header">{group.name}</div>
+			<div className="card-body">
+				<table className="table ">
+					<thead>
+						<tr>
+							<th scope="col">#</th>
+							<th scope="col">Hình ảnh</th>
+							<th scope="col">Tên</th>
+							<th scope="col">Giá</th>
+							<th scope="col">Số lượng</th>
+						</tr>
+					</thead>
+					<tbody>
+						{items.map(function (item, index) {
+							return (
+								<Item
+									item={item}
+									key={item.id}
+									index={index}
+									selected={selected}
+									addSelected={addSelected}
+									removeSelected={removeSelected}
+								/>
+							);
+						})}
+
+					</tbody>
+				</table>
 			</div>
 		</div>
 	);
 }
 
-function Item({ item, selected, addSelected, removeSelected }) {
+function Item({ item, selected, addSelected, removeSelected, index }) {
 	const ammount = React.useMemo(() => {
 		var count = 0;
 		selected.forEach((id) => id == item.id && count++);
 		return count;
 	}, [item, selected]);
 	return (
-		<div className={styles.item}>
-			<div className={styles.itemS1}>
-				<img src={item.picture || Direction.DefaultMenu} />
-			</div>
-			<div className={styles.itemS2}>
-				<div className={styles.itemInfo}>
-					{item.name}
-					<span className="badge badge-primary ml-2">
-						{numberWithCommas(item.price)}
-					</span>
-				</div>
-				<div className={styles.itemButtons}>
+		<tr>
+			<th scope="row">{index + 1}</th>
+			<td>
+				<img
+					className={styles.itemPicture}
+					src={item.picture || Direction.DefaultMenu}
+				/>
+			</td>
+			<td>{item.name}</td>
+			<td>{numberWithCommas(item.price)}</td>
+			<td className="d-flex justify-content-start">
+			<div className={styles.itemButtons}>
 					<button
 						onClick={() => {
 							removeSelected(item.id);
@@ -277,7 +306,7 @@ function Item({ item, selected, addSelected, removeSelected }) {
 						+
 					</button>
 				</div>
-			</div>
-		</div>
+			</td>
+		</tr>
 	);
 }

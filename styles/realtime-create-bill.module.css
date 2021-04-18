@@ -63,6 +63,8 @@
     align-items:center;
 }
 .btnSpace{
+    margin-top: 20px;
+    margin-bottom: 50px;
     display:flex;
     flex-direction:row;
     justify-content:center;
@@ -90,4 +92,23 @@
 }
 .subNum{
     font-weight: bold;
+}
+
+.menu{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+}
+.card{
+    width:700px;
+    max-width:90%;
+}
+.itemPicture{
+    width:50px;
+    height:50px;
+    border-radius:5px;
+}
+.itemButtons{
+    display:flex;
+    flex-direction:row;
 }

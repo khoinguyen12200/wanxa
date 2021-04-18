@@ -3,6 +3,8 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
 import { DefaultAvatar } from "./Const";
+import socketIOClient from "socket.io-client";
+import { Direction } from "./Const";
 export const StoreContext = React.createContext(null);
 
 export const actions = {
@@ -62,6 +64,13 @@ const initialState = {
 	facility: [],
 	staff: [],
 };
+
+const ENDPOINT = getHostname();
+function getHostname(){
+	const hostname = typeof window !== 'undefined' && window.location.hostname ? window.location.hostname : '';
+	return hostname+":3000";
+}
+
 export default function StoreProvider({ children }) {
 	const [state, dispatch] = React.useReducer(reducer, initialState);
 
@@ -73,6 +82,31 @@ export default function StoreProvider({ children }) {
 		updateMenu();
 		updateFacility();
 		updateStaff();
+
+		if (storeId == null) return;
+
+		const socket = socketIOClient(ENDPOINT);
+		socket.emit("join", Direction.SocketRoom(storeId));
+
+		socket.on("has join", (data) => {
+			console.log(data);
+		});
+
+		socket.on("update bills", (message) => {
+			updateBillsRealTimes();
+			message && toast.dark(message);
+		});
+		socket.on("connection", (data) => {
+			console.log(data);
+		});
+		socket.on("hello", (data) => {
+			console.log(data);
+		});
+		socket.on("disconnect", (data) => {
+			console.log("disconnect");
+		});
+		// CLEAN UP THE EFFECT
+		return () => socket.disconnect();
 	}, [storeId]);
 
 	React.useEffect(() => {
@@ -188,19 +222,19 @@ export default function StoreProvider({ children }) {
 			dispatch({ type: actions.addFacility, payload });
 		}
 	}
-	function getFacilityById(id){
-		for(let i in state.facility){
+	function getFacilityById(id) {
+		for (let i in state.facility) {
 			const group = state.facility[i];
-			for(let j in group.tables){
+			for (let j in group.tables) {
 				const table = group.tables[j];
-				if(table.id == id){
+				if (table.id == id) {
 					return table;
 				}
 			}
 		}
 		return null;
 	}
-	function updateStaff(){
+	function updateStaff() {
 		if (storeId != null) {
 			const data = {
 				storeid: storeId,
@@ -219,10 +253,10 @@ export default function StoreProvider({ children }) {
 			dispatch({ type: actions.addStaff, payload });
 		}
 	}
-	function getStaffById(staffId){
-		for(let i in state.staff){
+	function getStaffById(staffId) {
+		for (let i in state.staff) {
 			const staff = state.staff[i];
-			if(staff.id == staffId){
+			if (staff.id == staffId) {
 				return staff;
 			}
 		}
@@ -241,7 +275,7 @@ export default function StoreProvider({ children }) {
 				updateBillsRealTimes,
 				getMenuById,
 				getFacilityById,
-				getStaffById
+				getStaffById,
 			}}
 		>
 			{children}

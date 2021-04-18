@@ -61,9 +61,10 @@ function MyForm() {
 					toast.error(res.data.message);
 				}
 				setSubmitting(false)
+				
 		
 			})
-			.catch(error => toast.error(error));
+			.catch(error => console.log(error));
 		
 	}
 	return (

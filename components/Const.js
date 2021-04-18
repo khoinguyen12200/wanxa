@@ -1,6 +1,8 @@
 import React from "react";
 import { useRouter } from "next/router";
 import { StoreContext } from "./StoreContext";
+import axios from "axios";
+
 var dateFormat = require("dateformat");
 
 export function isMobile() {
@@ -72,6 +74,8 @@ export const EditInternalNotificationDir = (storeId, inId) =>
 	`/store/${storeId}/internal-notification/detail/${inId}/edit`;
 
 export class Direction {
+	static SocketRoom = (storeId) => `room/${storeId}/`;
+
 	static Store = (id) => "/store/" + id;
 
 	static Notification = "/account/my-notification";
@@ -84,8 +88,7 @@ export class Direction {
 	static MyInvitation = (id) => `/account/my-invitation/${id}`;
 	static DefaultAvatar = "/user/avatar/default-avatar.png";
 	static DefaultStore = "/user/store/default.png";
-	static DefaultMenu = "/user/menu/menu-item-default.png"
-	
+	static DefaultMenu = "/user/menu/menu-item-default.png";
 
 	static InternalNotification = (storeId) =>
 		`/store/${storeId}/internal-notification`;
@@ -102,13 +105,16 @@ export class Direction {
 	static MenuEdit = (storeId) => `/store/${storeId}/menu/edit-menu`;
 
 	static Facility = (storeId) => `/store/${storeId}/facility`;
-	static FacilityEdit = (storeId) => `/store/${storeId}/facility/edit-facility`;
+	static FacilityEdit = (storeId) =>
+		`/store/${storeId}/facility/edit-facility`;
 
 	static RealTime = (storeId) => `/store/${storeId}/real-time`;
-	static CreateBill = (storeId,tableId) => `/store/${storeId}/real-time/create-bill/${tableId}`;
+	static CreateBill = (storeId, tableId) =>
+		`/store/${storeId}/real-time/create-bill/${tableId}`;
 	static Barista = (storeId) => `/store/${storeId}/real-time/barista`;
 
-	static ManageBill = (storeId,bill_id) => `/store/${storeId}/real-time/manage-bill/${bill_id}`;
+	static ManageBill = (storeId, bill_id) =>
+		`/store/${storeId}/real-time/manage-bill/${bill_id}`;
 }
 
 const TIMEBEFORE = [
@@ -159,5 +165,26 @@ export function useStoreStaff(callBack) {
 }
 
 export function numberWithCommas(x) {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+export function socketUpdateBills(message) {
+	const router = useRouter();
+		const { storeId } = router.query;
+	return new Promise((resolve, reject) => {
+		
+		const data = {
+			storeid:storeId,
+			message:message,
+		}
+		console.log(data)
+		axios
+			.post("/api/socket/updateBills", data)
+			.then((res) => {
+				if (res.status === 200) {
+					resolve(res)
+				}
+			})
+			.catch((error) => reject(error));
+	});
 }
