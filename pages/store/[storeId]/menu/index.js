@@ -3,6 +3,8 @@ import Link from "next/link";
 import axios from "axios";
 import { useRouter } from "next/router";
 
+
+import {StoreContext} from "../../../../components/StoreContext";
 import styles from "../../../../styles/menu.module.css";
 import Nav from "../../../../components/MultiLevelNavbar";
 import { Direction, useStoreStaff } from "../../../../components/Const";
@@ -11,6 +13,11 @@ import { CanNotAccess } from "../../../../components/Pages";
 export default function index() {
 	const router = useRouter();
 	const { storeId } = router.query;
+
+	const {state} = React.useContext(StoreContext);
+	const groups = React.useMemo(()=>{
+		return state.menu;
+	},[state])
 
 	const [access, setAccess] = React.useState(-1);
 	useStoreStaff((value) => {
@@ -26,8 +33,6 @@ export default function index() {
 			return setAccess(-1);
 		}
 	});
-
-	const [groups, setGroups] = React.useState([]);
 
 	React.useEffect(() => {
 		fetchData();

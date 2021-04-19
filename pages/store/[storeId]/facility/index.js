@@ -14,27 +14,14 @@ export default function index() {
 	const router = useRouter();
 	const { storeId } = router.query;
 
-	const [groups, setGroups] = React.useState([]);
 	const { getSavedToken, getStorePrivileges, state } = React.useContext(
 		StoreContext
 	);
-	function update() {
-		var data = new FormData();
-		data.append("storeid", storeId);
-		data.append("token", getSavedToken());
-		axios
-			.post("/api/store/group/store-group", data)
-			.then((res) => {
-				if (res.status === 200) {
-					const groups = res.data.group;
-					setGroups(groups);
-				}
-			})
-			.catch((error) => console.log(error));
-	}
-	React.useEffect(() => {
-		update();
-	}, [storeId, state]);
+	const groups = React.useMemo(()=>{
+		return state.facility;
+	},[state])
+
+	
 
 	const [access, setAccess] = React.useState(0);
 	useStoreStaff((value) => {

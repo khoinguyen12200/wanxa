@@ -4,9 +4,7 @@ import axios from "axios";
 import Link from "next/link";
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 
-import {
-	DefaultAvatar,
-} from "../../../../components/Const";
+import { DefaultAvatar } from "../../../../components/Const";
 import StoreNavBar from "../../../../components/MultiLevelNavbar";
 import styles from "../../../../styles/hrm-index.module.css";
 
@@ -20,10 +18,9 @@ export default function HRM() {
 	const { storeId } = router.query;
 	const [staffs, setStaffs] = React.useState([]);
 
-	const { state, getSavedToken, getStorePrivileges } = React.useContext(
+	const { state, getSavedToken, getStorePrivileges,updateStaff } = React.useContext(
 		StoreContext
 	);
-
 
 	const access = React.useMemo(() => {
 		const privileges = getStorePrivileges(storeId);
@@ -43,31 +40,16 @@ export default function HRM() {
 		}
 	}, [storeId, state]);
 
-
 	React.useEffect(() => {
-		getAllData();
-	}, [storeId]);
-
-	function getAllData() {
-		const data = {
-			storeid:storeId
-		}
-		axios
-			.post("/api/store/staff/api-get-staff", data)
-			.then((res) => {
-				if (res.status === 200) {
-					var staffs = res.data;
-					staffs.sort((a, b) => {
-						return (
-							Privileges.getSumPriority(b.privilege) -
-							Privileges.getSumPriority(a.privilege)
-						);
-					});
-					setStaffs(res.data);
-				}
-			})
-			.catch((error) => console.log(error));
-	}
+		var staffs = state.staff;
+		staffs.sort((a, b) => {
+			return (
+				Privileges.getSumPriority(b.privilege) -
+				Privileges.getSumPriority(a.privilege)
+			);
+		});
+		setStaffs(staffs);
+	}, [state]);
 
 	const [chosen, setChosen] = React.useState(null);
 	const clearChosen = () => setChosen(null);
@@ -99,6 +81,7 @@ export default function HRM() {
 					const { message } = res.data;
 					if (res.status === 200) {
 						toast.success(message);
+						updateStaff()
 					} else {
 						toast.error(message);
 					}
@@ -117,7 +100,7 @@ export default function HRM() {
 			<ModalExample
 				toggle={clearChosen}
 				chosen={chosen}
-				onSubmitSuccess={getAllData}
+				onSubmitSuccess={updateStaff}
 			/>
 			<h3 className={styles.title}>Quản lý nhân sự</h3>
 			<div className={styles.staff_container}>
@@ -132,7 +115,9 @@ export default function HRM() {
 					</thead>
 					<tbody>
 						{staffs.map((staff, index) => {
-							var arrPiv =Privileges.valueToArray(staff.privilege);
+							var arrPiv = Privileges.valueToArray(
+								staff.privilege
+							);
 							arrPiv = arrPiv.map((value) =>
 								Privileges.ValueToString(value)
 							);

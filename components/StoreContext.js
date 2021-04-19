@@ -285,6 +285,9 @@ export default function StoreProvider({ children }) {
 				getMenuById,
 				getFacilityById,
 				getStaffById,
+				updateStaff,
+				updateMenu,
+				updateFacility,
 			}}
 		>
 			{children}

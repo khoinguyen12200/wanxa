@@ -18,10 +18,13 @@ export default function StoreGroups() {
 	const router = useRouter();
 	const { storeId } = router.query;
 
-	const [groups, setGroups] = React.useState([]);
-	const { getSavedToken, getStorePrivileges, state } = React.useContext(
+	
+	const { getSavedToken, getStorePrivileges, state ,updateFacility} = React.useContext(
 		StoreContext
 	);
+	const groups = React.useMemo(()=>{
+		return state.facility;
+	},[state])
 
 	const access = React.useMemo(() => {
 		const value = getStorePrivileges(storeId);
@@ -34,24 +37,6 @@ export default function StoreGroups() {
 
 	
 
-	React.useEffect(() => {
-		update();
-	}, [storeId]);
-
-	function update() {
-		var data = new FormData();
-		data.append("storeid", storeId);
-		data.append("token", getSavedToken());
-		axios
-			.post("/api/store/group/store-group", data)
-			.then((res) => {
-				if (res.status === 200) {
-					const groups = res.data.group;
-					setGroups(groups);
-				}
-			})
-			.catch((error) => console.log(error));
-	}
 
 	const addGroup = (name) => {
 		var data = new FormData();
@@ -65,7 +50,7 @@ export default function StoreGroups() {
 			.then((res) => {
 				const { message } = res.data;
 				if (res.status === 200) {
-					update();
+					updateFacility()
 				} else {
 					toast.error(message);
 				}
@@ -90,7 +75,7 @@ export default function StoreGroups() {
 			<div className={styles.content}>
 				{groups.map((group) => {
 					return (
-						<Group group={group} key={group.id} onUpdate={update} />
+						<Group group={group} key={group.id}/>
 					);
 				})}
 				<div className={styles.addGroup}>
@@ -109,8 +94,8 @@ export default function StoreGroups() {
 		</div>
 	);
 }
-function Group({ group, onUpdate }) {
-	const { getSavedToken } = React.useContext(StoreContext);
+function Group({ group }) {
+	const { getSavedToken ,updateFacility} = React.useContext(StoreContext);
 
 	const { tables, name, id } = group;
 
@@ -127,7 +112,7 @@ function Group({ group, onUpdate }) {
 			.post("/api/store/table/api-add-table", data)
 			.then((res) => {
 				if (res.status === 200) {
-					onUpdate();
+					updateFacility()
 				}
 			})
 			.catch((error) => console.log(error));
@@ -141,7 +126,6 @@ function Group({ group, onUpdate }) {
 					<Table
 						table={table}
 						key={table.id}
-						onUpdate={() => onUpdate()}
 					/>
 				))}
 				<div className={styles.addTable}>
@@ -160,9 +144,9 @@ function Group({ group, onUpdate }) {
 		</div>
 	);
 }
-function GroupNameInput({ onUpdate, group }) {
+function GroupNameInput({  group }) {
 	const [viewId, setId] = React.useState("myid" + uuidv4());
-	const { getSavedToken } = React.useContext(StoreContext);
+	const { getSavedToken ,updateFacility} = React.useContext(StoreContext);
 
 	const { name, id } = group;
 
@@ -183,7 +167,7 @@ function GroupNameInput({ onUpdate, group }) {
 					const { message } = res.data;
 					if (res.status === 200) {
 						toast.success(message);
-						onUpdate();
+						updateFacility();
 					} else {
 						toast.error(message);
 					}
@@ -245,21 +229,23 @@ function GroupNameInput({ onUpdate, group }) {
 		</form>
 	);
 }
-function Table({ table, onUpdate }) {
+function Table({ table }) {
+
+
 	const [viewId, setId] = React.useState(null);
 	React.useEffect(() => {
 		setId("id" + uuidv4());
 	}, []);
 
-	const [oldValue, setOldValue] = React.useState(table.name);
+	
 	const [value, setValue] = React.useState(table.name);
-	const { getSavedToken } = React.useContext(StoreContext);
+	const { getSavedToken,updateFacility } = React.useContext(StoreContext);
 	const inputRef = React.useRef(null);
 
 	function updateName(e) {
 		e.preventDefault();
 		const name = value.trim();
-		if (name == oldValue) {
+		if (name == table.name) {
 			toast.warning("Tên chưa có sự thay đổi");
 			return;
 		} else {
@@ -272,9 +258,12 @@ function Table({ table, onUpdate }) {
 				.post("/api/store/table/api-update-name-table", data)
 				.then((res) => {
 					if (res.status === 200) {
+						
+						updateFacility()
 						toast.success(res.data.message);
 						inputRef.current.blur();
-						setOldValue(value);
+					
+						
 					}
 				})
 				.catch((error) => toast.error(error));
@@ -293,7 +282,7 @@ function Table({ table, onUpdate }) {
 					const { message } = res.data;
 					if (res.status === 200) {
 						toast.success(message);
-						onUpdate();
+						updateFacility()
 					} else {
 						toast.error(message);
 					}

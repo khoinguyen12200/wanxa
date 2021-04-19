@@ -27,28 +27,18 @@ export default function EditMenu() {
 	const router = useRouter();
 	const { storeId } = router.query;
 
-	const [groups, setGroups] = React.useState([]);
-
-	React.useEffect(() => {
-		fetchData();
-	}, [storeId]);
-	function fetchData() {
-		if (storeId == null) return;
-		const data = {
-			storeid: storeId,
-		};
-		axios
-			.post("/api/store/menu/api-get-group", data)
-			.then((res) => {
-				if (res.status === 200) {
-					setGroups(res.data);
-				}
-			})
-			.catch((error) => console.log(error));
-	}
-	const { getSavedToken, getStorePrivileges, state } = React.useContext(
+	const { getSavedToken, getStorePrivileges, state,updateMenu } = React.useContext(
 		StoreContext
 	);
+
+
+
+	const groups = React.useMemo(()=>{
+		return state.menu;
+	},[state])
+
+
+	
 
 	const access = React.useMemo(() => {
 		const value = getStorePrivileges(storeId);
@@ -75,7 +65,7 @@ export default function EditMenu() {
 				.post("/api/store/menu/api-add-group", data)
 				.then((res) => {
 					const { message } = res.data;
-					fetchData();
+					updateMenu();
 					if (res.status === 200) {
 						toast.success(message);
 					} else {
@@ -96,7 +86,7 @@ export default function EditMenu() {
 							<Group
 								group={group}
 								key={group.id}
-								update={fetchData}
+								update={updateMenu}
 							/>
 						);
 					})}
