@@ -115,6 +115,8 @@ export class Direction {
 
 	static ManageBill = (storeId, bill_id) =>
 		`/store/${storeId}/real-time/manage-bill/${bill_id}`;
+
+
 }
 
 const TIMEBEFORE = [
@@ -170,19 +172,18 @@ export function numberWithCommas(x) {
 
 export function socketUpdateBills(message) {
 	const router = useRouter();
-		const { storeId } = router.query;
+	const { storeId } = router.query;
 	return new Promise((resolve, reject) => {
-		
 		const data = {
-			storeid:storeId,
-			message:message,
-		}
-		console.log(data)
+			storeid: storeId,
+			message: message,
+		};
+		console.log(data);
 		axios
 			.post("/api/socket/updateBills", data)
 			.then((res) => {
 				if (res.status === 200) {
-					resolve(res)
+					resolve(res);
 				}
 			})
 			.catch((error) => reject(error));

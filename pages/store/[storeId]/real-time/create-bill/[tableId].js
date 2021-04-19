@@ -73,7 +73,7 @@ export default function createBill() {
 }
 
 const SubmitModal = ({ menu, selected }) => {
-	const {state} = React.useContext(StoreContext);
+	const {state,requestUpdateBills} = React.useContext(StoreContext);
 	const {user} = state;
 
 	const router = useRouter();
@@ -134,21 +134,9 @@ const SubmitModal = ({ menu, selected }) => {
 			.then((res) => {
 				const { message } = res.data;
 				if (res.status === 200) {
-					toast.success(message);
 					router.push(Direction.RealTime(storeId));
 					toggle();
-					const d = {
-						storeid: storeId,
-						message:`${user.name} đã tạo hóa đơn mới`
-					}
-					axios.post('/api/socket/update-bill', d)
-						.then(res => {
-							if (res.status === 200) {
-								console.log(res.data);
-							}
-					
-						})
-						.catch(error => console.log(error));
+					requestUpdateBills(`${user.name} đã tạo hóa đơn mới`)
 				} else {
 					toast.error(message);
 				}

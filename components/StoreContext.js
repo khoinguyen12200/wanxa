@@ -3,7 +3,7 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
 import { DefaultAvatar } from "./Const";
-import socketIOClient from "socket.io-client";
+import SocketContext from "./SocketContext";
 import { Direction } from "./Const";
 export const StoreContext = React.createContext(null);
 
@@ -65,14 +65,9 @@ const initialState = {
 	staff: [],
 };
 
-const ENDPOINT = getHostname();
-function getHostname(){
-	const hostname = typeof window !== 'undefined' && window.location.hostname ? window.location.hostname : '';
-	return hostname+":3000";
-}
-
 export default function StoreProvider({ children }) {
 	const [state, dispatch] = React.useReducer(reducer, initialState);
+	const socket = React.useContext(SocketContext);
 
 	const router = useRouter();
 	const { storeId } = router.query;
@@ -83,31 +78,36 @@ export default function StoreProvider({ children }) {
 		updateFacility();
 		updateStaff();
 
-		if (storeId == null) return;
+		if (storeId == null) {
+			socket.emit("leave all");
+		} else {
+			socket.emit("leave all");
+			console.log(Direction.SocketRoom(storeId))
+			socket.emit("join", Direction.SocketRoom(storeId));
+			
 
-		const socket = socketIOClient(ENDPOINT);
-		socket.emit("join", Direction.SocketRoom(storeId));
+			socket.on("has join", (data) => {
+				console.log(data);
+			});
+			socket.on("connection", (data) => {
+				console.log(data);
+			});
+			socket.on("hello", (data) => {
+				console.log(data);
+			});
+			socket.on("disconnect", (data) => {
+				console.log("disconnect");
+			});
 
-		socket.on("has join", (data) => {
-			console.log(data);
-		});
-
-		socket.on("update bills", (message) => {
-			updateBillsRealTimes();
-			message && toast.dark(message);
-		});
-		socket.on("connection", (data) => {
-			console.log(data);
-		});
-		socket.on("hello", (data) => {
-			console.log(data);
-		});
-		socket.on("disconnect", (data) => {
-			console.log("disconnect");
-		});
-		// CLEAN UP THE EFFECT
-		return () => socket.disconnect();
+			socket.on("request-update-bills", ({bills,message}) => {
+				toast.dark(message);
+				const payload = { bills:bills };
+				dispatch({ type: actions.getBillsRealTime, payload });
+			});
+		}
 	}, [storeId]);
+
+	
 
 	React.useEffect(() => {
 		reloadToken();
@@ -146,6 +146,10 @@ export default function StoreProvider({ children }) {
 			}
 		}
 		return -1;
+	}
+
+	function requestUpdateBills(message){
+		if(storeId != null) socket.emit("update-bills",{storeid:storeId,message:message});
 	}
 
 	function updateBillsRealTimes() {
@@ -272,7 +276,7 @@ export default function StoreProvider({ children }) {
 				getSavedToken,
 				getStorePrivileges,
 				getUserId,
-				updateBillsRealTimes,
+				requestUpdateBills,
 				getMenuById,
 				getFacilityById,
 				getStaffById,

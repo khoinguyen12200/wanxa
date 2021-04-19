@@ -32,7 +32,7 @@ export default function barista() {
 		}
 	});
 
-	const { state, updateBillsRealTimes } = React.useContext(StoreContext);
+	const { state } = React.useContext(StoreContext);
 	const { bills } = state;
 
 	if (access == -1) {
@@ -111,7 +111,7 @@ function Group({ bill }) {
 }
 
 function Item({ item }) {
-	const { getSavedToken,  state } = React.useContext(
+	const { getSavedToken,  state,requestUpdateBills } = React.useContext(
 		StoreContext
 	);
 	const router = useRouter();
@@ -149,13 +149,6 @@ function Item({ item }) {
 		return id;
 	}, [state]);
 
-	function updateSocket(message){
-		const data = {
-			storeid:storeId,
-			message
-		};
-		axios.post('/api/socket/update-bill', data)
-	}
 
 	function makeItem(itemid) {
 		const data = {
@@ -187,7 +180,7 @@ function Item({ item }) {
 			.post("/api/store/real-time/update-bill-row", data)
 			.then((res) => {
 				if (res.status === 200) {
-					updateSocket()
+					requestUpdateBills()
 				}
 			})
 			.catch((error) => console.log(error));

@@ -61,7 +61,7 @@ function Bill({ bill }) {
 		state,
 		getMenuById,
 		getSavedToken,
-		updateBillsRealTimes,
+		requestUpdateBills,
 	} = React.useContext(StoreContext);
 	const { facility } = React.useMemo(() => {
 		return state;
@@ -114,9 +114,10 @@ function Bill({ bill }) {
 					.post("/api/store/real-time/pay-bill", data)
 					.then((res) => {
 						if (res.status === 200) {
-							updateBillsRealTimes();
+							
 							toast.success("Thanh toán thành công");
 							router.push(Direction.RealTime(storeId));
+							requestUpdateBills();
 						}
 					})
 					.catch((error) => console.log(error));
@@ -263,7 +264,7 @@ function Item({ item, index }) {
 	const router = useRouter();
 	const { bill_id } = router.query;
 
-    const {updateBillsRealTimes,getSavedToken} = React.useContext(StoreContext);
+    const {requestUpdateBills,getSavedToken} = React.useContext(StoreContext);
 
     const [loading,setLoading] =React.useState(false);
 
@@ -278,7 +279,7 @@ function Item({ item, index }) {
             .then(res => {
                 if (res.status === 200) {
                     toast.success("Đã thêm thành công")
-                    updateBillsRealTimes();
+                    requestUpdateBills();
                     setLoading(false)
                 }
         
@@ -298,7 +299,7 @@ function Item({ item, index }) {
 }
 
 function BillRow({ billRow, index }) {
-	const { state, updateBillsRealTimes, getSavedToken } = React.useContext(
+	const { state, requestUpdateBills, getSavedToken } = React.useContext(
 		StoreContext
 	);
 	const { menu } = React.useMemo(() => {
@@ -328,8 +329,7 @@ function BillRow({ billRow, index }) {
 				.post("/api/store/real-time/delete-bill-row", data)
 				.then((res) => {
 					if (res.status === 200) {
-						console.log("fire");
-						updateBillsRealTimes();
+						requestUpdateBills();
 					}
 				})
 				.catch((error) => console.log(error));

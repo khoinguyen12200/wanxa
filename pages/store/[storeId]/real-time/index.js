@@ -12,7 +12,7 @@ export default function index() {
 	const router = useRouter();
 	const { storeId } = router.query;
 
-	const { state, updateBillsRealTimes } = React.useContext(StoreContext);
+	const { state } = React.useContext(StoreContext);
 	const { facility } = state;
 
 	const [access, setAccess] = React.useState(-1);
@@ -59,7 +59,7 @@ function Table({ table }) {
 	const router = useRouter();
 	const { storeId } = router.query;
 
-	const { state, updateBillsRealTimes } = React.useContext(StoreContext);
+	const { state, } = React.useContext(StoreContext);
 	const { bills } = state;
 
 	const bill = React.useMemo(() => {
