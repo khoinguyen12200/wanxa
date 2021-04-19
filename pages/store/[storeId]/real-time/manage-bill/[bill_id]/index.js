@@ -3,6 +3,8 @@ import { useRouter } from "next/router";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
+import { FiLoader } from "react-icons/fi";
+import { motion } from "framer-motion";
 
 import {
 	useStoreStaff,
@@ -114,7 +116,6 @@ function Bill({ bill }) {
 					.post("/api/store/real-time/pay-bill", data)
 					.then((res) => {
 						if (res.status === 200) {
-							
 							toast.success("Thanh toán thành công");
 							router.push(Direction.RealTime(storeId));
 							requestUpdateBills();
@@ -264,35 +265,54 @@ function Item({ item, index }) {
 	const router = useRouter();
 	const { bill_id } = router.query;
 
-    const {requestUpdateBills,getSavedToken} = React.useContext(StoreContext);
+	const { requestUpdateBills, getSavedToken } = React.useContext(
+		StoreContext
+	);
 
-    const [loading,setLoading] =React.useState(false);
+	const [loading, setLoading] = React.useState(false);
 
-    function onAdd(){
-        setLoading(true);
-        const data = {
-            token:getSavedToken(),
-            bill_id : bill_id,
-            menu_item_id:item.id
-        }
-        axios.post('/api/store/real-time/add-bill-row', data)
-            .then(res => {
-                if (res.status === 200) {
-                    toast.success("Đã thêm thành công")
-                    requestUpdateBills();
-                    setLoading(false)
-                }
-        
-            })
-            .catch(error => console.log(error));
-    }
+	function onAdd() {
+		setLoading(true);
+		const data = {
+			token: getSavedToken(),
+			bill_id: bill_id,
+			menu_item_id: item.id,
+		};
+		axios
+			.post("/api/store/real-time/add-bill-row", data)
+			.then((res) => {
+				if (res.status === 200) {
+					toast.success("Đã thêm thành công");
+					requestUpdateBills();
+					setLoading(false);
+				}
+			})
+			.catch((error) => console.log(error));
+	}
 	return (
 		<tr>
 			<th scope="row">{index + 1}</th>
 			<td>{item.name}</td>
 			<td>{numberWithCommas(item.price)}</td>
 			<td>
-				<button disabled={loading} onClick={onAdd} className="btn btn-sm btn-outline-primary">Thêm</button>
+				<button
+					disabled={loading}
+					onClick={onAdd}
+					className="btn btn-sm btn-outline-primary"
+				>
+					{loading ? (
+						<motion.div
+							initial={{ rotateZ: 0 }}
+							animate={{ rotateZ: 360 }}
+							transition={{type:'tween',duration:0.7,repeat:Infinity} }
+							style={{padding:0}}
+						>
+							<FiLoader style={{width:20,height:20}}/>
+						</motion.div>
+					) : (
+						"Thêm"
+					)}
+				</button>
 			</td>
 		</tr>
 	);

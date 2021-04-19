@@ -79,6 +79,8 @@ const SubmitModal = ({ menu, selected }) => {
 	const router = useRouter();
 	const { storeId, tableId } = router.query;
 
+	const [loading,setLoading] = React.useState(false);
+
 	const items = React.useMemo(() => {
 		if (menu == null || menu.length == 0 || selected.length == 0) {
 			return [];
@@ -129,6 +131,7 @@ const SubmitModal = ({ menu, selected }) => {
 			note: note,
 			list: list,
 		};
+		setLoading(true)
 		axios
 			.post("/api/store/real-time/create-bill", data)
 			.then((res) => {
@@ -140,6 +143,7 @@ const SubmitModal = ({ menu, selected }) => {
 				} else {
 					toast.error(message);
 				}
+				setLoading(false)
 			})
 			.catch((error) => console.log(error));
 	}
@@ -198,7 +202,7 @@ const SubmitModal = ({ menu, selected }) => {
 					</div>
 				</ModalBody>
 				<ModalFooter>
-					<Button color="primary mr-1" onClick={submit}>
+					<Button disabled={loading} color="primary mr-1" onClick={submit}>
 						Đồng ý
 					</Button>
 					<Button color="secondary" onClick={toggle}>

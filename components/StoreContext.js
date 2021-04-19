@@ -82,7 +82,6 @@ export default function StoreProvider({ children }) {
 			socket.emit("leave all");
 		} else {
 			socket.emit("leave all");
-			console.log(Direction.SocketRoom(storeId))
 			socket.emit("join", Direction.SocketRoom(storeId));
 			
 
@@ -106,6 +105,12 @@ export default function StoreProvider({ children }) {
 			});
 		}
 	}, [storeId]);
+	React.useEffect(()=>{
+		if(state.user != null){
+			socket.emit("setInfo",state.user.id);
+			
+		}
+	},[state.user])
 
 	
 

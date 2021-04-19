@@ -109,6 +109,7 @@ export class Direction {
 		`/store/${storeId}/facility/edit-facility`;
 
 	static RealTime = (storeId) => `/store/${storeId}/real-time`;
+	static RealTimeHRM = (storeId) => `/store/${storeId}/real-time/hrm`;
 	static CreateBill = (storeId, tableId) =>
 		`/store/${storeId}/real-time/create-bill/${tableId}`;
 	static Barista = (storeId) => `/store/${storeId}/real-time/barista`;

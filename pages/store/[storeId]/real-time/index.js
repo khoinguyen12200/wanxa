@@ -8,6 +8,7 @@ import Nav from "../../../../components/MultiLevelNavbar";
 import styles from "../../../../styles/realtime-index.module.css";
 import { useStoreStaff, Direction } from "../../../../components/Const";
 import { CanNotAccess } from "../../../../components/Pages";
+import Privileges from "../../../../components/Privileges";
 export default function index() {
 	const router = useRouter();
 	const { storeId } = router.query;
@@ -16,11 +17,17 @@ export default function index() {
 	const { facility } = state;
 
 	const [access, setAccess] = React.useState(-1);
-	useStoreStaff((value) => {
+	const [isHRM,setIsHRM] = React.useState(false);
+ 	useStoreStaff((value) => {
 		if (value < 0) {
 			setAccess(-1);
 		} else {
 			setAccess(1);
+		}
+		if(Privileges.isValueIncluded(value,[Privileges.Content.OWNER,Privileges.Content.HRM])){
+			setIsHRM(true)
+		}else{
+			setIsHRM(false)
 		}
 	});
 
@@ -30,6 +37,12 @@ export default function index() {
 			<Nav />
 			<div className={styles.content}>
 				<div className={styles.routeSpace}>
+					{
+						isHRM && 
+						<Link href={Direction.RealTimeHRM(storeId)}>
+							<a className="btn btn-outline-primary mr-2">Quản lý</a>
+						</Link>
+					}
 					<Link href={Direction.Barista(storeId)}>
 						<a className="btn btn-outline-primary ">Pha chế</a>
 					</Link>

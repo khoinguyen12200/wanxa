@@ -14,6 +14,7 @@ import {
 } from "../../../../../components/Const";
 import { CanNotAccess } from "../../../../../components/Pages";
 import Privileges from "../../../../../components/Privileges";
+import { alertDialog } from "../../../../../components/Modal";
 
 export default function barista() {
 	const router = useRouter();
@@ -45,6 +46,17 @@ export default function barista() {
 				{bills.map((bill) => (
 					<Group bill={bill} key={bill.id} />
 				))}
+				{bills.length == 0 && (
+					<div
+						className={
+							styles.noItem + " d-flex p-2 justify-content-center"
+						}
+					>
+						<div className="alert alert-secondary" role="alert">
+							Danh sách trống !
+						</div>
+					</div>
+				)}
 			</div>
 		</div>
 	);
@@ -111,23 +123,25 @@ function Group({ bill }) {
 }
 
 function Item({ item }) {
-	const { getSavedToken,  state,requestUpdateBills } = React.useContext(
+	const [loading, setLoading] = React.useState(false);
+
+	const { getSavedToken, state, requestUpdateBills } = React.useContext(
 		StoreContext
 	);
 	const router = useRouter();
-	const {storeId} = router.query;
+	const { storeId } = router.query;
 
 	const staff = React.useMemo(() => {
 		const staff = state ? state.staff : [];
 		return staff;
 	}, [state]);
 	function getBaristaName(id) {
-		for(let i in staff) {
-			if(staff[i].id === id) {
+		for (let i in staff) {
+			if (staff[i].id === id) {
 				return staff[i].name;
 			}
 		}
-		return '';
+		return "";
 	}
 
 	const menuInfo = React.useMemo(() => {
@@ -148,7 +162,6 @@ function Item({ item }) {
 		const id = user ? user.id : null;
 		return id;
 	}, [state]);
-
 
 	function makeItem(itemid) {
 		const data = {
@@ -176,12 +189,14 @@ function Item({ item }) {
 	}
 
 	function update(data) {
+		setLoading(true);
 		axios
 			.post("/api/store/real-time/update-bill-row", data)
 			.then((res) => {
 				if (res.status === 200) {
-					requestUpdateBills()
+					requestUpdateBills();
 				}
+				setLoading(false);
 			})
 			.catch((error) => console.log(error));
 	}
@@ -196,6 +211,7 @@ function Item({ item }) {
 				<span>
 					{item.state == 0 && (
 						<button
+							disabled={loading}
 							onClick={() => {
 								makeItem(item.id);
 							}}
@@ -216,6 +232,7 @@ function Item({ item }) {
 						userid != null && (
 							<>
 								<button
+									disabled={loading}
 									onClick={() => {
 										cancelItem(item.id);
 									}}
@@ -224,8 +241,12 @@ function Item({ item }) {
 									Hủy
 								</button>
 								<button
+									disabled={loading}
 									onClick={() => {
-										checkedItem(item.id);
+										alertDialog("Đánh dấu món này đã làm xong (Hành động này không thể thay đổi)",()=>{
+											checkedItem(item.id);
+										})
+										
 									}}
 									className="btn btn-outline-success btn-sm"
 								>

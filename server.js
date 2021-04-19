@@ -31,18 +31,27 @@ const io = require("socket.io")(server, {
 function emitToRoom(room, path, data) {
 	io.to(room).emit(path, data);
 }
+function StoreRoom(storeid){
+	return `room/${storeid}/`
+}
 
 nextApp.prepare().then(async () => {
+	var clientsMap = new Map();
+
 	io.on("connection", (socket) => {
 
 		socket.on("update-bills", ({storeid,message}) => {
 			if(storeid){
 				GetBills(storeid).then(bills => {
-					io.to(`room/${storeid}/`).emit('request-update-bills',{bills:bills,message:message});
+					io.to(StoreRoom(storeid)).emit('request-update-bills',{bills:bills,message:message});
 				})
 			}
 			
 		})
+
+		socket.on('setInfo', function (data) {
+			clientsMap.set(socket.id,data)
+        });
 
 		socket.on("join", (room) => {
 			console.log(`${socket.id} has joined ${room}`);
@@ -50,6 +59,7 @@ nextApp.prepare().then(async () => {
 			socket.join(room);
 		});
 		socket.on("disconnect", () => {
+			clientsMap.delete(socket.id)
 			console.log("Client disconnected");
 		});
 
@@ -65,10 +75,17 @@ nextApp.prepare().then(async () => {
 		console.log(`room ${room} was created`);
 	});
 
+	app.post("/api/socket/get-current-staffs", (req, res) => {
+		const { storeid } = req.body;
+		var staffs = findStaffs(StoreRoom(storeid));
+		staffs = staffs.map((socketid) => {return clientsMap.get(socketid)})
+		res.status(200).json(staffs);
+	
+	});
+
 	app.post("/api/socket/update-bill", (req, res) => {
 		const { storeid, message } = req.body;
-		console.log("fire");
-		emitToRoom(`room/${storeid}/`, "update bills", message);
+		emitToRoom(StoreRoom(storeid), "update bills", message);
 		res.status(200).end();
 	});
 
@@ -83,6 +100,32 @@ function getAllRooms() {
 	const rooms = io.sockets.adapter.rooms.entries();
 	return rooms;
 }
+
+function findStaffs(name){
+	const rooms = getAllRooms();
+	var arr = [];
+	let result = rooms.next();
+	while (!result.done) {
+		
+		const entry = result.value;
+		const roomName = entry[0];
+		const clients = entry[1]; 
+
+		console.log(roomName,name);
+		if(roomName == name) {
+			console.log("into if",clients)
+			clients.forEach(client => {
+				arr.push(client);
+			})
+		};
+
+		result = rooms.next();
+
+	}
+
+	return arr;
+}
+
 function findRooms(socketId) {
 	const rooms = getAllRooms();
 	var arr = [];
