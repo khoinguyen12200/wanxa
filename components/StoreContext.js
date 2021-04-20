@@ -15,6 +15,9 @@ export const actions = {
 	addMenu: "ADD_MENU",
 	addFacility: "ADD_FACILITY",
 	addStaff: "ADD_STAFF",
+	addMessage: "ADD_MESSAGE",
+	newMessage:"NEW_MESSAGE",
+
 };
 const reducer = (state, action) => {
 	switch (action.type) {
@@ -50,6 +53,14 @@ const reducer = (state, action) => {
 		case actions.addStaff:
 			var { staff } = action.payload;
 			return { ...state, staff };
+		case actions.addMessage:
+			var { message } = action.payload;
+			return { ...state, message };
+		case actions.newMessage:
+			var { newMessage } = action.payload;
+			var messages = state.message.concat([]);
+			messages.unshift(newMessage);
+			return { ...state, message: messages };
 
 		default:
 			return state;
@@ -63,6 +74,7 @@ const initialState = {
 	menu: [],
 	facility: [],
 	staff: [],
+	message: [],
 };
 
 export default function StoreProvider({ children }) {
@@ -77,13 +89,13 @@ export default function StoreProvider({ children }) {
 		updateMenu();
 		updateFacility();
 		updateStaff();
+		updateMessage();
 
 		if (storeId == null) {
 			socket.emit("leave all");
 		} else {
 			socket.emit("leave all");
 			socket.emit("join", Direction.SocketRoom(storeId));
-			
 
 			socket.on("has join", (data) => {
 				console.log(data);
@@ -98,25 +110,29 @@ export default function StoreProvider({ children }) {
 				console.log("disconnect");
 			});
 
-			socket.on("request-update-bills", ({bills,message}) => {
+			socket.on("new-message", (data) => {
+				const payload = { newMessage: data };
+				dispatch({ type: actions.newMessage, payload });
+			});
+
+			socket.on("request-update-bills", ({ bills, message }) => {
 				toast.dark(message);
-				const payload = { bills:bills };
+				const payload = { bills: bills };
 				dispatch({ type: actions.getBillsRealTime, payload });
 			});
 		}
 	}, [storeId]);
-	React.useEffect(()=>{
-		if(state.user != null){
-			socket.emit("setInfo",state.user.id);
-			
+	React.useEffect(() => {
+		if (state.user != null) {
+			socket.emit("setInfo", state.user.id);
 		}
-	},[state.user])
-
-	
+	}, [state.user]);
 
 	React.useEffect(() => {
 		reloadToken();
 	}, []);
+
+
 	function reloadToken() {
 		const savedToken = getSavedToken();
 		var formData = new FormData();
@@ -129,6 +145,7 @@ export default function StoreProvider({ children }) {
 			}
 		});
 	}
+
 	function getSavedToken() {
 		const time = JSON.parse(localStorage.getItem("expires_at"));
 		if (new Date().getTime() > time) {
@@ -153,8 +170,9 @@ export default function StoreProvider({ children }) {
 		return -1;
 	}
 
-	function requestUpdateBills(message){
-		if(storeId != null) socket.emit("update-bills",{storeid:storeId,message:message});
+	function requestUpdateBills(message) {
+		if (storeId != null)
+			socket.emit("update-bills", { storeid: storeId, message: message });
 	}
 
 	function updateBillsRealTimes() {
@@ -198,7 +216,25 @@ export default function StoreProvider({ children }) {
 			dispatch({ type: actions.addMenu, payload });
 		}
 	}
+	function updateMessage() {
+		const data = {
+			storeid: storeId,
+		};
+		axios
+			.post("/api/store/message/getAllMessage", data)
+			.then((res) => {
+				if (res.status === 200) {
+					const message = res.data;
 
+					const payload = { message: message };
+					dispatch({ type: actions.addMessage, payload: payload });
+				} else {
+					const payload = { message: [] };
+					dispatch({ type: actions.addMessage, payload: payload });
+				}
+			})
+			.catch((error) => console.log(error));
+	}
 	function getMenuById(id) {
 		for (let i in state.menu) {
 			const group = state.menu[i];

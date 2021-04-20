@@ -75,6 +75,24 @@ nextApp.prepare().then(async () => {
 		console.log(`room ${room} was created`);
 	});
 
+
+	app.post("/api/socket/send-message",async (req, res) => {
+		const {message,storeid,token} = req.body;
+		const user = await query("SELECT * FROM `user-token` WHERE token = ?",[token]);
+		const userid = user.length > 0 ? user[0].userid : null;
+		const pri = await query("SELECT * FROM `privileges` WHERE userid = ? and storeid = ?",[userid,storeid]);
+		const privileges = pri.length > 0 ? pri[0].value : -1;
+
+		if(privileges > 0){
+			const insertRes = await query("INSERT INTO `store-message`(`storeid`, `userid`, `message`) VALUES (?,?,?)",[storeid,userid,message]);
+			const messageRes = await query("SELECT * FROM `store-message` where id = ?",[insertRes.insertId]);
+			io.to(StoreRoom(storeid)).emit("new-message",messageRes[0])
+			res.status(200).end();
+		} else{ 
+			res.status(202).end();
+		}
+	})
+
 	app.post("/api/socket/get-current-staffs", (req, res) => {
 		const { storeid } = req.body;
 		var staffs = findStaffs(StoreRoom(storeid));

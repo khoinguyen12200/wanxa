@@ -1,7 +1,9 @@
 import Link from "next/link";
 import React from "react";
 import axios from "axios";
+import { useRouter } from "next/router";
 import { BsBellFill } from "react-icons/bs";
+import { AiFillMessage, AiOutlineSend } from "react-icons/ai";
 
 import {
 	Badge,
@@ -28,17 +30,19 @@ import {
 	AccountDir,
 	StoreDir,
 	NotificationDir,
+	Direction
 } from "./Const";
 import { StoreContext } from "./StoreContext";
 import { NotificationRow } from "./Notification";
+import { toast } from "react-toastify";
 
 export default function MyNavbar() {
 	const [isOpen, toggle] = React.useState(false);
 	const { state, dispatch } = React.useContext(StoreContext);
-	const [mobile,setMobile] = React.useState(false);
+	const [mobile, setMobile] = React.useState(false);
 	React.useEffect(() => {
 		setMobile(isMobile());
-	},[])
+	}, []);
 	const { user } = state;
 	const stores = user ? user.stores : [];
 	return (
@@ -79,7 +83,10 @@ export default function MyNavbar() {
 }
 
 function UserSpace(props) {
+	const { state } = React.useContext(StoreContext);
 	const { user } = props;
+	const router = useRouter();
+	const { storeId } = router.query;
 	const [modal, setModal] = React.useState(false);
 	function toggle() {
 		setModal(!modal);
@@ -101,11 +108,12 @@ function UserSpace(props) {
 		return (
 			<>
 				<div style={{ display: "flex", alignItems: "center" }}>
+					{storeId != null && <Message />}
 					<Button
+						className="ml-1"
 						onClick={toggle}
 						size="sm"
 						color={colorName}
-						
 					>
 						<BsBellFill />
 						<Badge className="ml-1" color={colorName}>
@@ -130,6 +138,146 @@ function UserSpace(props) {
 	}
 }
 
+function Message({}) {
+	const router = useRouter();
+	const { storeId } = router.query;
+	const { state, getSavedToken } = React.useContext(StoreContext);
+	const message = React.useMemo(()=>{
+		return state.message;
+	},[state])
+	const messages = React.useMemo(() => {
+		const arr = message.concat([]);
+		var newArr = [];
+		for (let i = 0; i < arr.length; i++) {
+			newArr.unshift(arr[i]);
+		}
+		return newArr;
+	}, [message, storeId]);
+
+	const storeName = React.useMemo(() => {
+		const user = state.user;
+		const stores = user ? user.stores : [];
+		for (let i in stores) {
+			const store = stores[i];
+			if (store.storeid == storeId) return store.name;
+		}
+		return "";
+	}, [state, storeId]);
+	const [modal, setModal] = React.useState(false);
+
+	const toggle = () => setModal(!modal);
+
+	const [value, setValue] = React.useState("");
+	function submitSend(e) {
+		e.preventDefault();
+		const messageStr = value.trim();
+		if (messageStr.length > 0) {
+			if (messageStr.length > 499) {
+				toast.error("Tin nhắn quá dài");
+			} else {
+				const data = {
+					storeid: storeId,
+					message: messageStr,
+					token: getSavedToken(),
+				};
+				axios
+					.post("/api/socket/send-message", data)
+					.then((res) => {
+						if (res.status === 200) {
+							setValue("");
+						}
+					})
+					.catch((error) => console.log(error));
+			}
+		}
+	}
+	return (
+		<div>
+			<button className="btn btn-sm btn-secondary" onClick={toggle}>
+				<AiFillMessage />
+				<span className="ml-1 badge badge-secondary">0</span>
+			</button>
+			<Modal centered isOpen={modal} toggle={toggle} className={styles.modalContent}>
+				<ModalHeader toggle={toggle}>Tin nhắn {storeName}</ModalHeader>
+				<ModalBody className={styles.messageBody}>
+					{messages.map((message) => (
+						<ItemMessage message={message} key={message.id} />
+					))}
+				</ModalBody>
+				<ModalFooter>
+					<form onSubmit={submitSend} className="d-flex w-100">
+						<input
+							type="text"
+							className="form-control p-1 mr-1"
+							value={value}
+							onChange={(e) => setValue(e.target.value)}
+						/>
+						<button
+							style={{ minWidth: 50 }}
+							className="btn btn-sm btn-primary"
+						>
+							<AiOutlineSend />
+						</button>
+					</form>
+				</ModalFooter>
+			</Modal>
+		</div>
+	);
+}
+function ItemMessage({ message }) {
+	const { state } = React.useContext(StoreContext);
+
+
+	const staff = React.useMemo(() => {
+		const staffs = state.staff;
+		for (let i in staffs) {
+			const desStaff = staffs[i];
+			if (desStaff.id == message.userid) {
+				return desStaff;
+			}
+		}
+		return { name: "unknow staff" };
+	}, [state]);
+	const user = React.useMemo(() => {
+		return state.user;
+	}, [state]);
+	const isMe = React.useMemo(() => {
+		return message.userid == user.id;
+	}, [user, message]);
+
+	const [extra, setExtra] = React.useState(false);
+	function toggle() {
+		setExtra(!extra);
+	}
+	return (
+		<div
+			onClick={() => toggle()}
+			key={message.id}
+			className={
+				isMe
+					? styles.myMessage + " " + styles.messageContainer
+					: styles.othersMessage + " " + styles.messageContainer
+			}
+		>
+			<div className={styles.directionContainer}>
+				<div className={styles.content}>
+					{!isMe && (
+						<span className={styles.avatarSpace}>
+							<img src={staff.avatar || Direction.DefaultAvatar} />
+						</span>
+					)}
+
+					<div className={styles.messageAndName}>
+						{!isMe && <div className={styles.messageOwner}>{staff.name}</div>}
+						<div className={styles.message}>{message.message}</div>
+					</div>
+				</div>
+
+				{extra && <span className={styles.messageTime}>{getTimeBefore(message.time)}</span>}
+			</div>
+		</div>
+	);
+}
 function NotificationSpace({
 	modal,
 	toggle,
@@ -195,7 +343,11 @@ function NotificationSpace({
 						</Link>
 					</div>
 					<div>
-						<Button color="primary" onClick={seenAll} disabled={unSeenNotifications.length === 0}>
+						<Button
+							color="primary"
+							onClick={seenAll}
+							disabled={unSeenNotifications.length === 0}
+						>
 							Đã đọc tất cả
 						</Button>{" "}
 						<Button color="secondary" onClick={toggle}>
