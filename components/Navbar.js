@@ -36,6 +36,7 @@ import { StoreContext } from "./StoreContext";
 import { NotificationRow } from "./Notification";
 import { toast } from "react-toastify";
 
+
 export default function MyNavbar() {
 	const [isOpen, toggle] = React.useState(false);
 	const { state, dispatch } = React.useContext(StoreContext);
@@ -142,6 +143,33 @@ function Message({}) {
 	const router = useRouter();
 	const { storeId } = router.query;
 	const { state, getSavedToken } = React.useContext(StoreContext);
+	const [lastSeen,setLastSeen] = React.useState(new Date());
+	const [firstTimeRender,setFirstTime] = React.useState(true);
+	
+
+	React.useEffect(()=>{
+		if(state.user == null || storeId == null || !firstTimeRender) {
+			return;
+		}
+		updateLastSeen()
+	},[state,storeId]);
+	
+	function updateLastSeen(){
+		setFirstTime(false);
+		const data = {
+			token: getSavedToken(),
+			storeid: storeId,
+		}
+		axios.post('/api/store/message/get-last-seen', data)
+			.then(res => {
+				if (res.status === 200) {
+					console.log(new Date(res.data.time).getTime()  - new Date().getTime())
+					setLastSeen(res.data.time)
+				}
+		
+			})
+			.catch(error => console.log(error));
+	}
 	const message = React.useMemo(()=>{
 		return state.message;
 	},[state])
@@ -166,6 +194,41 @@ function Message({}) {
 	const [modal, setModal] = React.useState(false);
 
 	const toggle = () => setModal(!modal);
+	React.useEffect(()=>{
+		if(firstTimeRender) return;
+		const data = {
+			token:getSavedToken(),
+			storeid:storeId,
+		}
+		axios.post('/api/store/message/set-last-seen', data)
+			.then(res => {
+				updateLastSeen()
+			})
+			.catch(error => console.log(error));
+	},[modal])
+
+	const watingMessages = React.useMemo(() => {
+		var count = 0;
+		
+	
+		if(lastSeen!= null && messages != [] && messages != null) {
+			const lastTime = new Date(lastSeen);
+			var lastMessageTime = messages[messages.length - 1] ? messages[messages.length - 1].time : null;
+			lastMessageTime = new Date(lastMessageTime)
+			for(let i = messages.length - 1; i >= 0; i--) {
+				
+				const messTime = new Date(messages[i].time);
+				if(lastTime.getTime()  - messTime.getTime() > 0){
+					
+					break;
+				}
+				count ++;
+			} 
+		}
+		return count;
+			
+			
+	},[lastSeen,messages])
 
 	const [value, setValue] = React.useState("");
 	function submitSend(e) {
@@ -193,15 +256,15 @@ function Message({}) {
 	}
 	return (
 		<div>
-			<button className="btn btn-sm btn-secondary" onClick={toggle}>
+			<button className={"btn btn-sm "+ (watingMessages > 0 ? "btn-primary " : "btn-secondary")} onClick={toggle}>
 				<AiFillMessage />
-				<span className="ml-1 badge badge-secondary">0</span>
+				<span className={"ml-1 badge "+(watingMessages > 0 ? "badge-primary" : "badge-secondary")}>{watingMessages}</span>
 			</button>
 			<Modal centered isOpen={modal} toggle={toggle} className={styles.modalContent}>
 				<ModalHeader toggle={toggle}>Tin nhắn {storeName}</ModalHeader>
 				<ModalBody className={styles.messageBody}>
-					{messages.map((message) => (
-						<ItemMessage message={message} key={message.id} />
+					{messages.map((message,index) => (
+						<ItemMessage message={message} key={message.id} lastChild={index == messages.length - 1}/>
 					))}
 				</ModalBody>
 				<ModalFooter>
@@ -216,15 +279,23 @@ function Message({}) {
 							style={{ minWidth: 50 }}
 							className="btn btn-sm btn-primary"
 						>
-							<AiOutlineSend />
-						</button>
+							<AiOutlineSend style={{height:"80%", width:"auto"}}/>
+						</button> 
 					</form>
 				</ModalFooter>
 			</Modal>
 		</div>
 	);
 }
-function ItemMessage({ message }) {
+function ItemMessage({ message,lastChild }) {
+	const MessRef = React.useRef(null)
+	React.useEffect(()=>{
+		if(lastChild){
+			if(MessRef && MessRef.current){
+				MessRef.current.scrollIntoView();
+			}
+		}
+	},[])
 	const { state } = React.useContext(StoreContext);
 
 
@@ -251,7 +322,8 @@ function ItemMessage({ message }) {
 	}
 	return (
 		<div
-			onClick={() => toggle()}
+			ref={MessRef}
+			
 			key={message.id}
 			className={
 				isMe
@@ -259,7 +331,7 @@ function ItemMessage({ message }) {
 					: styles.othersMessage + " " + styles.messageContainer
 			}
 		>
-			<div className={styles.directionContainer}>
+			<div onClick={() => toggle()} className={styles.directionContainer}>
 				<div className={styles.content}>
 					{!isMe && (
 						<span className={styles.avatarSpace}>

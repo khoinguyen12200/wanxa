@@ -46,7 +46,6 @@ nextApp.prepare().then(async () => {
 					io.to(StoreRoom(storeid)).emit('request-update-bills',{bills:bills,message:message});
 				})
 			}
-			
 		})
 
 		socket.on('setInfo', function (data) {

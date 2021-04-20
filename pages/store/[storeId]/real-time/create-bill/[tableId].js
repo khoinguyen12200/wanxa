@@ -217,9 +217,9 @@ const SubmitModal = ({ menu, selected }) => {
 function Group({ group, addSelected, removeSelected, selected }) {
 	const { items, name } = group;
 	return (
-		<div className={"card m-2 "+styles.card}>
+		<div className={"card m-2 w-100"+styles.card}>
 			<div className="card-header">{group.name}</div>
-			<div className="card-body">
+			<div className="card-body">    
 				<table className="table ">
 					<thead>
 						<tr>

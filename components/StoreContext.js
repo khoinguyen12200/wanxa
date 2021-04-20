@@ -59,8 +59,14 @@ const reducer = (state, action) => {
 		case actions.newMessage:
 			var { newMessage } = action.payload;
 			var messages = state.message.concat([]);
-			messages.unshift(newMessage);
-			return { ...state, message: messages };
+			const messageids = messages.map((message) => message.id);
+			if(messageids.includes(newMessage.id)) {
+				return {...state}
+			}else{
+				messages.unshift(newMessage);
+				return { ...state, message: messages };
+			}
+			
 
 		default:
 			return state;
