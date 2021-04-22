@@ -9,8 +9,11 @@ import styles from "../../../../styles/realtime-index.module.css";
 import { useStoreStaff, Direction } from "../../../../components/Const";
 import { CanNotAccess } from "../../../../components/Pages";
 import Privileges from "../../../../components/Privileges";
+
+
 export default function index() {
 	const router = useRouter();
+
 	const { storeId } = router.query;
 
 	const { state } = React.useContext(StoreContext);
@@ -43,7 +46,7 @@ export default function index() {
 							<a className="btn btn-outline-primary mr-2">Quản lý</a>
 						</Link>
 					}
-					<Link href={Direction.Barista(storeId)}>
+					<Link href={Direction.RealTimeBarista(storeId)}>
 						<a className="btn btn-outline-primary ">Pha chế</a>
 					</Link>
 				</div>
@@ -101,9 +104,9 @@ function Table({ table }) {
 	function handleClick() {
 		
 		if(hasBill){
-			router.push(Direction.ManageBill(storeId,bill.id))
+			router.push(Direction.RealTimeManageBill(storeId,bill.id))
 		}else{
-			router.push(Direction.CreateBill(storeId, table.id));
+			router.push(Direction.RealTimeCreateBill(storeId, table.id));
 		}
 		
 	}

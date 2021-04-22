@@ -4,7 +4,7 @@ import { AiFillAppstore } from "react-icons/ai";
 import {IoNotificationsCircleOutline} from 'react-icons/io5';
 
 
-import {RiProfileFill} from "react-icons/ri";
+import {RiProfileFill,RiBillFill} from "react-icons/ri";
 import {SiAirtable} from 'react-icons/si';
 import {BsPeopleFill} from 'react-icons/bs';
 import {MdRestaurantMenu} from 'react-icons/md';
@@ -53,7 +53,7 @@ function AcceptAccessStore({ storeid }) {
 			
 			<NavBar/>
 			<div className={styles.router}>
-				<Link href={`/store/${storeid}/real-time`} >
+				<Link href={Direction.RealTime(storeid)} >
 					<a className={styles.routeItem} style={{color:'#0080ff'}}>
 						<AiFillAppstore />
 						<div>
@@ -61,7 +61,17 @@ function AcceptAccessStore({ storeid }) {
 						</div>
 					</a>
 				</Link>
-				<Link href={`/store/${storeid}/facility`}>
+				
+				<Link href={Direction.Bills(storeid)}>
+					<a className={styles.routeItem} style={{color:"#996633"}}>
+						<RiBillFill />
+						<div>
+							<p>Hóa đơn</p>
+						</div>
+					</a>
+				</Link>
+
+				<Link href={Direction.Facility(storeid)}>
 					<a className={styles.routeItem} style={{color:"#ff6600"}}>
 						<SiAirtable />
 						<div>
@@ -79,7 +89,7 @@ function AcceptAccessStore({ storeid }) {
 					</a>
 				</Link>
 				
-				<Link href={`/store/${storeid}/hrm`}>
+				<Link href={Direction.HRM(storeid)}>
 					<a className={styles.routeItem} style={{color:"#cc0000"}}>
 						<BsPeopleFill />
 						<div>
@@ -87,20 +97,21 @@ function AcceptAccessStore({ storeid }) {
 						</div>
 					</a>
 				</Link>
-				<Link href={`/store/${storeid}/basic-info`}>
-					<a className={styles.routeItem} style={{color:"#669900"}}>
-						<RiProfileFill />
-						<div>
-							<p>Thông tin cơ bản</p>
-						</div>
-					</a>
-				</Link>
+				
 
 				<Link href={Direction.Menu(storeid)}>
 					<a className={styles.routeItem} style={{color:"#cc9900"}}>
 						<MdRestaurantMenu />
 						<div>
 							<p>Thực đơn</p>
+						</div>
+					</a>
+				</Link>
+				<Link href={Direction.BasicInfo(storeid)}>
+					<a className={styles.routeItem} style={{color:"#669900"}}>
+						<RiProfileFill />
+						<div>
+							<p>Thông tin cơ bản</p>
 						</div>
 					</a>
 				</Link>

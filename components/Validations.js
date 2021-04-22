@@ -28,6 +28,10 @@ export const signInValidate = Yup.object({
 
 export default class Vaildate {
 	static MenuItemName = Yup.string()
+		.matches(
+			/^[aAàÀảẢãÃáÁạẠăĂằẰẳẲẵẴắẮặẶâÂầẦẩẨẫẪấẤậẬbBcCdDđĐeEèÈẻẺẽẼéÉẹẸêÊềỀểỂễỄếẾệỆfFgGhHiIìÌỉỈĩĨíÍịỊjJkKlLmMnNoOòÒỏỎõÕóÓọỌôÔồỒổỔỗỖốỐộỘơƠờỜởỞỡỠớỚợỢpPqQrRsStTuUùÙủỦũŨúÚụỤưƯừỪửỬữỮứỨựỰvVwWxXyYỳỲỷỶỹỸýÝỵỴzZ 0-9]+$/,
+			"Chỉ được phép chứa chữ, số và khoảng trắng"
+		)
 		.max(50, "Yêu cầu nhiều nhất 50 ký tự")
 		.min(2, "Yêu cầu ít nhất 2 ký tự")
 		.required("Bắt buộc phải có");

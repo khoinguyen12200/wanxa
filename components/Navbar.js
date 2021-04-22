@@ -163,7 +163,6 @@ function Message({}) {
 		axios.post('/api/store/message/get-last-seen', data)
 			.then(res => {
 				if (res.status === 200) {
-					console.log(new Date(res.data.time).getTime()  - new Date().getTime())
 					setLastSeen(res.data.time)
 				}
 		

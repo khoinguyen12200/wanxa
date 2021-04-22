@@ -73,7 +73,7 @@ export default function createBill() {
 }
 
 const SubmitModal = ({ menu, selected }) => {
-	const {state,requestUpdateBills} = React.useContext(StoreContext);
+	const {state,requestUpdateBills,getSavedToken} = React.useContext(StoreContext);
 	const {user} = state;
 
 	const router = useRouter();
@@ -130,6 +130,7 @@ const SubmitModal = ({ menu, selected }) => {
 			tableid: tableId,
 			note: note,
 			list: list,
+			token:getSavedToken(),
 		};
 		setLoading(true)
 		axios

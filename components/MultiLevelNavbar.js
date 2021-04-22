@@ -89,6 +89,8 @@ function mapName(name) {
 			return "Pha chế";
 		case "manage-bill":
 			return "Quản lý hóa đơn";
+		case "bills":
+			return "Quản lý hóa đơn";
 	}
 	return name;
 }

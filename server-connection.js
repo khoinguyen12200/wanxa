@@ -10,11 +10,14 @@ var pool = mysql.createPool({
 
 exports.query = function(sql, arr) {
 	return new Promise((resolve, reject) => {
-		pool.query(sql, arr, function (err, results) {
-
-
-			if (err) return reject(err);
-			else return resolve(results);
-		});
+		pool.getConnection((err,connection) => {
+			if(err) return reject(err);
+			connection.query(sql, arr, function (err, results) {
+				connection.release();
+				if (err) return reject(err);
+				else return resolve(results);
+			});
+		})
+		
 	});
 }

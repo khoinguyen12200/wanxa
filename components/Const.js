@@ -94,12 +94,19 @@ export class Direction {
 		`/store/${storeId}/internal-notification`;
 	static CreateInternalNotification = (storeId) =>
 		`/store/${storeId}/internal-notification/create`;
-
 	static InternalNotificationDetail = (storeId, inId) =>
 		`/store/${storeId}/internal-notification/detail/${inId}`;
-
 	static EditInternalNotification = (storeId, inId) =>
 		`/store/${storeId}/internal-notification/detail/${inId}/edit`;
+
+
+	static HRM = (storeId) => `/store/${storeId}/hrm`;
+
+	static BasicInfo = (storeId) => `/store/${storeId}/basic-info`;
+
+	static Bills = (storeId) => `/store/${storeId}/bills`;
+
+
 
 	static Menu = (storeId) => `/store/${storeId}/menu`;
 	static MenuEdit = (storeId) => `/store/${storeId}/menu/edit-menu`;
@@ -110,12 +117,14 @@ export class Direction {
 
 	static RealTime = (storeId) => `/store/${storeId}/real-time`;
 	static RealTimeHRM = (storeId) => `/store/${storeId}/real-time/hrm`;
-	static CreateBill = (storeId, tableId) =>
+	static RealTimeCreateBill = (storeId, tableId) =>
 		`/store/${storeId}/real-time/create-bill/${tableId}`;
-	static Barista = (storeId) => `/store/${storeId}/real-time/barista`;
+	static RealTimeBarista = (storeId) => `/store/${storeId}/real-time/barista`;
 
-	static ManageBill = (storeId, bill_id) =>
+	static RealTimeManageBill = (storeId, bill_id) =>
 		`/store/${storeId}/real-time/manage-bill/${bill_id}`;
+
+
 
 
 }
@@ -154,7 +163,7 @@ export function getTimeBefore(date) {
 }
 
 export const FormatDateTime = (date) => {
-	return dateFormat(date, "HH:MM-dd/mm/yyyy ");
+	return dateFormat(date, "HH:MM - dd/mm/yyyy ");
 };
 
 export function useStoreStaff(callBack) {

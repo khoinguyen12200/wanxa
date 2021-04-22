@@ -1,7 +1,13 @@
 import query from '../../const/connection';
+import {getUserIdByToken,getPrivileges} from '../../const/querySample'
+
 
 export default async function (req, res) {
-    const {storeid,tableid,note,list} = req.body;
+    const {storeid,tableid,note,list,token} = req.body;
+
+
+    
+    const userid = await getUserIdByToken(token)
 
     const selectRes = await query("Select * from `bill` where tableid = ? and state != 1",[tableid]);
     if(selectRes.length > 0) {
@@ -9,8 +15,9 @@ export default async function (req, res) {
         return;
     }
 
-
     const insertRes = await query("INSERT INTO `bill`(`storeid`, `tableid`, `note`) VALUES (?,?,?)",[storeid,tableid,note])
+    
+    
     for(let i in list){
         const billId = insertRes.insertId;
         const item = list[i];

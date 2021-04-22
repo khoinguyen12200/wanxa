@@ -1,0 +1,11 @@
+.title{
+    margin:20px;
+    text-align: center;
+}
+
+.OptionBar{
+    display:flex;
+    flex-direction:row;
+    padding:5px;
+    flex-wrap: wrap;
+}
