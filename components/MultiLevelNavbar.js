@@ -91,6 +91,8 @@ function mapName(name) {
 			return "Quản lý hóa đơn";
 		case "bills":
 			return "Quản lý hóa đơn";
+		case "statistics":
+			return "Thống kê";
 	}
 	return name;
 }

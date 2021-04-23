@@ -99,14 +99,11 @@ export class Direction {
 	static EditInternalNotification = (storeId, inId) =>
 		`/store/${storeId}/internal-notification/detail/${inId}/edit`;
 
-
 	static HRM = (storeId) => `/store/${storeId}/hrm`;
 
 	static BasicInfo = (storeId) => `/store/${storeId}/basic-info`;
 
 	static Bills = (storeId) => `/store/${storeId}/bills`;
-
-
 
 	static Menu = (storeId) => `/store/${storeId}/menu`;
 	static MenuEdit = (storeId) => `/store/${storeId}/menu/edit-menu`;
@@ -124,9 +121,7 @@ export class Direction {
 	static RealTimeManageBill = (storeId, bill_id) =>
 		`/store/${storeId}/real-time/manage-bill/${bill_id}`;
 
-
-
-
+	static Statistics = (storeId) => `/store/${storeId}/statistics`;
 }
 
 const TIMEBEFORE = [

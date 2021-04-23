@@ -18,7 +18,7 @@ export default function index() {
 	const router = useRouter();
 	const { storeId } = router.query;
 
-	const [firstRender,setFirstRender] = React.useState(true)
+	const [firstRender, setFirstRender] = React.useState(true);
 
 	const [access, setAccess] = React.useState(false);
 	useStoreStaff((value) => {
@@ -28,60 +28,59 @@ export default function index() {
 	const { state } = React.useContext(StoreContext);
 	const [bills, setBills] = React.useState([]);
 	React.useEffect(() => {
-		if(storeId != null){
-			firstFetch()
+		if (storeId != null) {
+			firstFetch();
 		}
-		
 	}, [storeId]);
 
-	function xemthem(){
+	function xemthem() {
 		if (storeId == null) return;
 		const data = {
 			storeid: storeId,
 			limit: LIMIT,
 			offset: bills.length,
-			options:options
+			options: options,
 		};
-		console.log(data)
+		console.log(data);
 		axios
 			.post("/api/store/bills/get-bills", data)
 			.then((res) => {
 				if (res.status === 200) {
-					const newArr = bills.concat(res.data)
+					const newArr = bills.concat(res.data);
 					setBills(newArr);
 				}
 			})
 			.catch((error) => console.log(error));
 	}
-	function firstFetch(){
-		setFirstRender(false)
+	function firstFetch() {
+		setFirstRender(false);
 		if (storeId == null) return;
 		const data = {
 			storeid: storeId,
 			limit: LIMIT,
 			offset: 0,
-			options:options
+			options: options,
 		};
-		console.log(data)
+		console.log(data);
 		axios
 			.post("/api/store/bills/get-bills", data)
 			.then((res) => {
 				if (res.status === 200) {
-					console.log(res.data)
+					console.log(res.data);
 					setBills(res.data);
 				}
 			})
 			.catch((error) => console.log(error));
 	}
 
-	const [options,setOptions] = React.useState({
-		fromTime:null,
-		toTime:null,
-	})
-	React.useEffect(()=>{
-		if(firstRender) return;
-		firstFetch()
-	},[options])
+	const [options, setOptions] = React.useState({
+		fromTime: null,
+		toTime: null,
+	});
+	React.useEffect(() => {
+		if (firstRender) return;
+		firstFetch();
+	}, [options]);
 
 	if (access < 0) return <CanNotAccess />;
 	return (
@@ -94,7 +93,10 @@ export default function index() {
 					<Bill bill={bill} key={bill.id} />
 				))}
 				<div className="d-flex justify-content-center p-3">
-					<button onClick={xemthem} className="btn btn-outline-primary">
+					<button
+						onClick={xemthem}
+						className="btn btn-outline-primary"
+					>
 						Xem thêm
 					</button>
 				</div>
@@ -103,7 +105,7 @@ export default function index() {
 	);
 }
 
-function OptionBar({options,setOptions}) {
+function OptionBar({ options, setOptions }) {
 	return (
 		<div className={styles.OptionBar}>
 			<div className="input-group mb-3 ml-3 w-auto">
@@ -114,7 +116,9 @@ function OptionBar({options,setOptions}) {
 					type="datetime-local"
 					className="form-control"
 					placeholder="date"
-					onChange={e=>setOptions({...options,fromTime:e.target.value})}
+					onChange={(e) =>
+						setOptions({ ...options, fromTime: e.target.value })
+					}
 				/>
 			</div>
 			<div className="input-group mb-3 ml-3 w-auto">
@@ -125,8 +129,9 @@ function OptionBar({options,setOptions}) {
 					type="datetime-local"
 					className="form-control"
 					placeholder="date"
-	
-					onChange={e=>setOptions({...options,toTime:e.target.value})}
+					onChange={(e) =>
+						setOptions({ ...options, toTime: e.target.value })
+					}
 				/>
 			</div>
 		</div>
@@ -198,10 +203,7 @@ function Bill({ bill }) {
 						</tbody>
 					</table>
 					<div className="alert alert-primary" role="alert">
-						Tổng:{" "}
-						{numberWithCommas(
-							bill.rows.reduce((prev, row) => prev + row.price, 0)
-						)}
+						Tổng: {numberWithCommas(bill.price)}
 					</div>
 				</div>
 			</div>
