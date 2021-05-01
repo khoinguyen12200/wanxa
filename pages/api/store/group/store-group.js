@@ -1,6 +1,7 @@
 import query from "../../const/connection";
 import formParse from '../../const/form'
 import {getUserIdByToken} from '../../const/querySample'
+import {getUserId} from '../../const/jwt'
 
 export const config = {
     api: {
@@ -10,9 +11,9 @@ export const config = {
 
 export default async function (req, res) {
 
-    const {storeid,token} = await formParse(req);
+    const {storeid} = await formParse(req);
 
-    const userid = await getUserIdByToken(token);
+    const userid = getUserId(req);
     const store = await query("SELECT `storeid` FROM `privileges` WHERE `userid`=? and `storeid`=?",[userid,storeid]);
     if(store.length > 0) {
         const groups = await query("SELECT * FROM `store-table-group` WHERE `storeid`=?",storeid);

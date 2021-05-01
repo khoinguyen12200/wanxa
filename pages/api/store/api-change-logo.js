@@ -2,7 +2,7 @@ import query from "../const/connection";
 import formParse from '../const/form'
 import {upLoadAvatar,userStoreDir,deleteFile} from '../const/file'
 import {getUserIdByToken,getPrivileges} from '../const/querySample'
-
+import {getUserId} from '../const/jwt'
 import Privileges from '../../../components/Privileges';
 
 export const config = {
@@ -13,10 +13,10 @@ export const config = {
 
 export default async function (req, res) {
 
-    const {token,files,storeid} = await formParse(req);
+    const {files,storeid} = await formParse(req);
     var logo = files != null ? files.logo : "";
 
-    const userid = await getUserIdByToken(token);
+    const userid = getUserId(req);
     const pri = await getPrivileges(userid, storeid);
     const check = Privileges.isValueIncluded(pri,[Privileges.Content.OWNER,Privileges.Content.FACILITY]);
     if(!check){

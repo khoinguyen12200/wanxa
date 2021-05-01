@@ -1,6 +1,6 @@
 import query from "../const/connection";
 import formParse from '../const/form'
-import {getUserIdByToken} from '../const/querySample'
+import {getUserId} from '../const/jwt'
 
 
 export const config = {
@@ -11,9 +11,9 @@ export const config = {
 
 export default async function (req, res) {
 
-    const {token,name} = await formParse(req);
+    const {name} = await formParse(req);
 
-    const userid = await getUserIdByToken(token);
+    const userid = getUserId(req);
   
     const changeRes = await query("update `user` set `name`=? where id =?",[name,userid]);
     if(changeRes){

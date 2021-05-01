@@ -17,29 +17,28 @@ export const actions = {
 	addStaff: "ADD_STAFF",
 	addMessage: "ADD_MESSAGE",
 	newMessage:"NEW_MESSAGE",
-
 };
+
+function setAxiosHeaderToken(token) {
+	axios.defaults.headers.common["Authorization"] =  token;
+}
+function setAxiosHeaderStoreId(storeid) {
+	axios.defaults.headers.common["storeid"] =  storeid;
+}
 const reducer = (state, action) => {
 	switch (action.type) {
 		case actions.signIn:
-			var { user, token, save } = action.payload;
-			const saveTime = save ? 30 : 1;
-			const availableTo =
-				1000 * 60 * 60 * 24 * saveTime + new Date().getTime();
+			var { user, token } = action.payload;
+			setAxiosHeaderToken(token);
 			localStorage.setItem("token", token);
-			localStorage.setItem("expires_at", JSON.stringify(availableTo));
 			user.avatar = user.avatar == "" ? DefaultAvatar : user.avatar;
 			return { ...state, user: user, token: token };
 
 		case actions.signOut:
-			localStorage.setItem("token", token);
-			localStorage.setItem("expires_at", "0");
+			setAxiosHeaderToken(null);
+			localStorage.setItem("token", null);
 			toast.warning("Bạn đã đăng xuất khỏi thiết bị này");
 			return { ...state, user: null, token: null };
-		case actions.signInWithToken:
-			var { user, token } = action.payload;
-			user.avatar = user.avatar == "" ? DefaultAvatar : user.avatar;
-			return { ...state, user: user, token: token };
 
 		case actions.getBillsRealTime:
 			var { bills } = action.payload;
@@ -91,6 +90,7 @@ export default function StoreProvider({ children }) {
 	const { storeId } = router.query;
 
 	React.useEffect(() => {
+		setAxiosHeaderStoreId(storeId);
 		updateBillsRealTimes();
 		updateMenu();
 		updateFacility();
@@ -140,25 +140,21 @@ export default function StoreProvider({ children }) {
 
 
 	function reloadToken() {
+		
 		const savedToken = getSavedToken();
-		var formData = new FormData();
-		formData.append("token", savedToken);
-		axios.post("/api/user/signInWithToken", formData).then((res) => {
+		setAxiosHeaderToken(savedToken);
+
+		axios.post("/api/user/signInWithToken").then((res) => {
 			if (res.status === 200) {
-				const { message, user } = res.data;
-				const payload = { user: user, token: savedToken };
-				dispatch({ type: actions.signInWithToken, payload });
+				const { message, user,token } = res.data;
+				const payload = { user: user, token: token };
+				dispatch({ type: actions.signIn, payload });
 			}
 		});
 	}
 
 	function getSavedToken() {
-		const time = JSON.parse(localStorage.getItem("expires_at"));
-		if (new Date().getTime() > time) {
-			return null;
-		} else {
-			return localStorage.getItem("token");
-		}
+		return localStorage.getItem("token");
 	}
 	function getUserId() {
 		const user = state ? state.user : null;

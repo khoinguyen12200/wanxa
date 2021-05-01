@@ -2,6 +2,7 @@ import query from "../const/connection";
 import Privileges from '../../../components/Privileges'
 import formParse from '../const/form'
 import {upLoadAvatar,userStoreDir} from '../const/file'
+import {getUserId} from '../const/jwt'
 
 export const config = {
     api: {
@@ -11,7 +12,8 @@ export const config = {
 
 export default async function (req, res) {
 
-    const {userid,name,des,files} = await formParse(req);
+    const {name,des,files} = await formParse(req);
+    const userid = getUserId(req);
     var logo = files != null ? files.logo : "";
     const uploadDir = logo ? await upLoadAvatar(logo,userStoreDir) : "";
 

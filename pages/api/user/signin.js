@@ -1,6 +1,9 @@
 import query from "../const/connection";
 import { v4 as uuidv4 } from 'uuid';
 import {getUserById} from '../const/querySample'
+import {signToken} from '../const/jwt';
+
+
 var md5 = require("md5");
 
 
@@ -13,13 +16,14 @@ export default async function (req, res) {
 	);
     if(validation.length > 0) {
         const user = validation[0];
-        const deleteToken = await query("DELETE FROM `user-token` WHERE userid = ?",user.id);
-        const tokencode = user.id+"---"+uuidv4();
-        const createToken = await query("INSERT INTO `user-token`(`token`, `userid`) VALUES (?,?)",
-        [tokencode,user.id]);
 
+        const privileges = await query("select * from privileges where userid = ?",user.id);
+
+
+        const token = signToken(user.id,privileges);
+        console.log(token);
         const sampleUser = await getUserById(user.id);
-        res.status(200).json({message:"Sign in successfully",token:tokencode,user:sampleUser})
+        res.status(200).json({message:"Đăng nhập thành công",token:token,user:sampleUser})
     }else{
         res.status(202).json({message:"Account and password doesn't matches"});
     }

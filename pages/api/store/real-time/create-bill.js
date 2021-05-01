@@ -6,8 +6,6 @@ export default async function (req, res) {
     const {storeid,tableid,note,list,token} = req.body;
 
 
-    
-    const userid = await getUserIdByToken(token)
 
     const selectRes = await query("Select * from `bill` where tableid = ? and state != 1",[tableid]);
     if(selectRes.length > 0) {

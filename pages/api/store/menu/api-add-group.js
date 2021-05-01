@@ -1,10 +1,11 @@
 import query from '../../const/connection';
 import {getUserIdByToken,getPrivileges} from '../../const/querySample';
 import Privileges from '../../../../components/Privileges';
-
+import {getUserId} from '../../const/jwt'
 export default async function (req, res) {
 
-    const {token,storeid,name} = req.body;
+    const {storeid,name} = req.body;
+    const userid = getUserId(req);
     
     const userid = await getUserIdByToken(token);
     const privalue = await getPrivileges(userid, storeid);

@@ -2,7 +2,7 @@ import query from "../../const/connection";
 import formParse from '../../const/form'
 import {getUserIdByToken,getPrivileges} from '../../const/querySample';
 import {upLoadAvatar,UploadDir} from '../../const/file'
-
+import {getUserId} from '../../const/jwt'
 import Privileges from '../../../../components/Privileges'
 
 
@@ -14,10 +14,10 @@ export const config = {
 
 export default async function (req, res) {
 
-    const {name,des,price,files,token,groupid} = await formParse(req);
+    const {name,des,price,files,groupid} = await formParse(req);
     var picture = files != null ? files.picture : "";
 
-    const userid = await getUserIdByToken(token);
+    const userid = getUserId(req);
     const menuGroup = await query("select * from `menu-group` where id =?",groupid);
     const storeid = menuGroup.length > 0 ? menuGroup[0].storeid : null;
     const privalue = await getPrivileges(userid,storeid);

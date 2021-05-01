@@ -2,10 +2,10 @@ import query from "../../const/connection";
 import formParse from "../../const/form";
 import { getUserIdByToken, getPrivileges } from "../../const/querySample";
 import Privileges from "../../../../components/Privileges";
-
+import {getUserId} from '../../const/jwt'
 export default async function index(req, res) {
-	const { userid, privileges, token, storeid } = req.body;
-	const executorId = await getUserIdByToken(token);
+	const { userid, privileges,  storeid } = req.body;
+	const executorId = getUserId(req)
 
 	const executorPri = await getPrivileges(executorId, storeid);
 

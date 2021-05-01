@@ -169,6 +169,7 @@ export default class Notification {
 				const define = defines[key];
 				if (typeof this.content[key] !== define) {
 					check = false;
+				}else{
 				}
 			}
 		} else {

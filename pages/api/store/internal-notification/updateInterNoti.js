@@ -1,15 +1,13 @@
 import query from "../../const/connection";
-import {
-	getUserIdByToken,
-
-} from "../../const/querySample";
+import {getUserId} from '../../const/jwt'
 
 export default async function (req, res) {
-	const { id ,token ,value} = req.body;
+	const { id ,value} = req.body;
 
-    const userid = await getUserIdByToken(token);
+    const userid = getUserId(req);
 
     const InterNoti = await query("Select * from `internal-notification` where executor = ? and id = ?",[userid,id]);
+    console.log(InterNoti);
     if(InterNoti.length > 0){
         const resu = await query("update `internal-notification` set content =?, date =? where id =?",[value,new Date(),id]);
         res.status(200).json({message:"Lưu lại thành công"});

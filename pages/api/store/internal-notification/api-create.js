@@ -3,14 +3,14 @@ import {
 	getUserIdByToken,
 	getPrivileges
 } from "../../const/querySample";
-
+import {getUserId} from '../../const/jwt'
 
 import Privileges from "../../../../components/Privileges";
 import Notification from "../../../../components/Notification";
 export default async function (req, res) {
-	const { value, token, storeid } = req.body;
+	const { value,  storeid } = req.body;
 
-	const userId = await getUserIdByToken(token);
+	const userId = getUserId(req);
 	const priValue = await getPrivileges(userId,storeid);
 
 	const hasNotiRights = Privileges.isValueIncluded(priValue,[Privileges.Content.OWNER,Privileges.Content.Notification]);

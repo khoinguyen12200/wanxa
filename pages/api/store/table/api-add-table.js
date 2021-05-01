@@ -2,7 +2,7 @@ import query from "../../const/connection";
 import formParse from "../../const/form";
 import { getPrivileges, getUserIdByToken } from "../../const/querySample";
 import Privileges from "../../../../components/Privileges";
-
+import {getUserId} from '../../const/jwt'
 export const config = {
 	api: {
 		bodyParser: false,
@@ -10,14 +10,13 @@ export const config = {
 };
 
 export default async function (req, res) {
-	const { name, token, groupid } = await formParse(req);
+	const { name,  groupid } = await formParse(req);
+	const userid = getUserId(req);
 	const groups = await query(
 		"SELECT * FROM `store-table-group` WHERE id=?",
 		groupid
 	);
 	const storeid = groups[0].storeid;
-
-	const userid = await getUserIdByToken(token);
 	if (userid == null) {
 		res.status(202).json({ message: "Token đã hết hạn" });
 	} else {

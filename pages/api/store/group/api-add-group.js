@@ -1,6 +1,7 @@
 import query from "../../const/connection";
 import formParse from "../../const/form";
 import { getUserIdByToken,getPrivileges } from "../../const/querySample";
+import {getUserId} from '../../const/jwt'
 import Privileges from '../../../../components/Privileges';
 export const config = {
 	api: {
@@ -9,9 +10,9 @@ export const config = {
 };
 
 export default async function (req, res) {
-    const {name,token,storeid} = await formParse(req);
+    const {name,storeid} = await formParse(req);
     
-    const userid = await getUserIdByToken(token);
+    const userid = getUserId(req);
     const priValue = await getPrivileges(userid,storeid);
     
     const accepted = Privileges.isValueIncluded(priValue,[Privileges.Content.OWNER,Privileges.Content.FACILITY])

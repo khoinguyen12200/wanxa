@@ -9,6 +9,7 @@ import {
 	getPrivileges
 } from "../../const/querySample";
 import Privileges from '../../../../components/Privileges';
+import {getUserId} from '../../const/jwt'
 
 var md5 = require("md5");
 
@@ -21,10 +22,10 @@ export const config = {
 export default async function (req, res) {
 	var failed = [];
 
-	var { user, storeId, token, files } = await formParse(req);
+	var { user, storeId,  files } = await formParse(req);
 	const userS = JSON.parse(user);
 
-	const userid = await getUserIdByToken(token);
+	const userid = getUserId(req)
 	const priValue = await getPrivileges(userid,storeId);
 
 	const privilegesOwner = Privileges.isValueIncluded(priValue,[Privileges.Content.OWNER])

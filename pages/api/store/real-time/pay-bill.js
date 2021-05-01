@@ -1,8 +1,7 @@
 import query from '../../const/connection';
-import {getUserIdByToken,getPrivileges} from '../../const/querySample'
 
 export default async function (req, res) {
-    const {id,token,note} = req.body;
+    const {id,note} = req.body;
 
 
     var sum = 0;

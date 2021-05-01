@@ -1,13 +1,9 @@
 import query from "../../const/connection";
-import {
-	getUserIdByToken,
-
-} from "../../const/querySample";
-
+import {getUserId} from '../../const/jwt'
 export default async function (req, res) {
-	const { id ,token} = req.body;
+	const { id } = req.body;
 
-    const userid = await getUserIdByToken(token);
+    const userid = getUserId(req)
 
     const InterNoti = await query("Select * from `internal-notification` where executor = ? and id = ?",[userid,id]);
     if(InterNoti.length > 0){

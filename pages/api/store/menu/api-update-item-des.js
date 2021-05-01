@@ -2,15 +2,15 @@ import query from '../../const/connection';
 import {getUserIdByToken,getPrivileges} from '../../const/querySample';
 import Privileges from '../../../../components/Privileges';
 
-
+import {getUserId} from '../../const/jwt'
 export default async function (req, res) {
 
-    const {id,des,token,groupid} = req.body;
+    const {id,des,groupid} = req.body;
     
     
     const store = await query("Select storeid from `menu-group` where id = ?",[groupid]);
     const storeid = store.length >0 ? store[0].storeid : null
-    const userid = await getUserIdByToken(token);
+    const userid = getUserId(req);
     const privalue = await getPrivileges(userid, storeid);
     const checked = Privileges.isValueIncluded(privalue,[Privileges.Content.OWNER,Privileges.Content.MENU]);
 

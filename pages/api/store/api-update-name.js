@@ -3,13 +3,13 @@ import formParse from "../const/form";
 import {
 	getAllStaff,
 	getBasicInforFromToken,
-	getUserIdByToken,
+	getUserById,
 	getPrivileges
 } from "../const/querySample";
 
 import Privileges from "../../../components/Privileges";
 import Notification from "../../../components/Notification";
-
+import {getUserId} from '../const/jwt'
 export const config = {
 	api: {
 		bodyParser: false,
@@ -17,12 +17,14 @@ export const config = {
 };
 
 export default async function (req, res) {
-	var { token, name, storeid } = await formParse(req);
+	var {  name, storeid } = await formParse(req);
+	const userid = getUserId(req);
+	
 	storeid = parseInt(storeid);
 
-	const userid = await getUserIdByToken(token);
-	const priValue = await getPrivileges(userid, storeid);
 
+	const priValue = await getPrivileges(userid, storeid);
+	
 
 	const check = Privileges.isValueIncluded(priValue,[Privileges.Content.OWNER])
 	if (!check) {
@@ -37,7 +39,7 @@ export default async function (req, res) {
 		storeid,
 	]);
 	if (changeRes) {
-		const executor = await getBasicInforFromToken(token);
+		const executor = await getUserById(userid);
 
 		var notification = new Notification({
 			type: Notification.TYPE.UPDATE_STORE_NAME,

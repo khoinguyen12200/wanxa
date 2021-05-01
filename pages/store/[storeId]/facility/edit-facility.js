@@ -277,7 +277,7 @@ function Table({ table }) {
 			data.append("tableid", table.id);
 
 			axios
-				.post("/api/store/api-delete-table", data)
+				.post("/api/store/table/api-delete-table", data)
 				.then((res) => {
 					const { message } = res.data;
 					if (res.status === 200) {

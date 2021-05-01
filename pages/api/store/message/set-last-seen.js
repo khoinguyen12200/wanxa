@@ -1,12 +1,12 @@
 import query from '../../const/connection';
 import {getUserIdByToken,getPrivileges} from '../../const/querySample';
-
+import {getUserId} from '../../const/jwt'
 
 export default async function (req, res) {
-    const {token,storeid} = req.body;
+    const {storeid} = req.body;
     const newTime = new Date();
     
-    const userid = await getUserIdByToken(token);
+    const userid = getUserId(req)
     const lastSeens = await query("SELECT * FROM `last-seen-message` WHERE userid = ? and storeid = ?", [userid,storeid]);
     if(lastSeens.length > 0) {
         const updateRes = await query("UPDATE `last-seen-message` SET `time`=? WHERE id =?",[newTime,lastSeens[0].id])

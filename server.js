@@ -6,6 +6,7 @@ const port = parseInt(process.env.PORT || "3000", 10);
 const dev = process.env.NODE_ENV !== "production";
 const nextApp = next({ dev });
 const nextHandler = nextApp.getRequestHandler();
+const myJsonWebToken = require("./server-jwt");
 
 const app = express();
 const server = http.createServer(app);
@@ -21,6 +22,7 @@ app.use(
 		extended: true,
 	})
 );
+
 
 const io = require("socket.io")(server, {
 	cors: {
@@ -106,13 +108,40 @@ nextApp.prepare().then(async () => {
 		res.status(200).end();
 	});
 
-	app.all("*", (req, res) => nextHandler(req, res));
+	app.all("*",protectedMiddleware, (req, res) => nextHandler(req, res));
 
 	server.listen(port, () => {
 		console.log(`> Ready on http://localhost:${port}`);
 	});
 });
+async function protectedMiddleware(req, res, nextHandler) {
 
+	try{
+		const token = req.headers['authorization'];
+		const storeid = req.headers['storeid'];
+	
+		const url = req.url;
+		if(url.includes('/api/store/') && storeid != null && token != null){
+			const privileges = myJsonWebToken.getPrivileges(req,storeid);
+			const userid = myJsonWebToken.getUserId(req)
+			req.headers.userid = userid;
+			req.headers.privileges = privileges;
+			console.log(req.headers);
+			if(privileges < 0 || privileges == null){
+				res.status(202).json({message: 'Invalid call'})
+				return;
+			}
+		}
+		nextHandler();
+		return;
+	}catch(e) {
+		res.status(401).send({message: 'Invalid call'});
+		return;
+	}
+	
+	
+	
+}
 function getAllRooms() {
 	const rooms = io.sockets.adapter.rooms.entries();
 	return rooms;

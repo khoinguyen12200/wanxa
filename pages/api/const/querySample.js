@@ -1,6 +1,5 @@
 import query from "../const/connection";
 
-
 import Privileges from "../../../components/Privileges";
 
 

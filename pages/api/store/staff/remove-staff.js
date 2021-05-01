@@ -6,10 +6,11 @@ import {
 	getPrivileges,
 } from "../../const/querySample";
 import Privileges from '../../../../components/Privileges';
+import {getUserId} from '../../const/jwt'
 export default async function index(req, res) {
-	const { userid, token, storeid } = req.body;
+	const { userid,  storeid } = req.body;
 
-	const performerId = await getUserIdByToken(token);
+	const performerId =getUserId(req)
 
 	var performerPrivileges = await getPrivileges(performerId, storeid);
 	const isPerformerOwner = Privileges.isValueIncluded(performerPrivileges,[Privileges.Content.OWNER]);

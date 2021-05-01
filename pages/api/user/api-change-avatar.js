@@ -1,8 +1,7 @@
 import query from "../const/connection";
 import formParse from '../const/form'
 import {upLoadAvatar,userAvatarDir,deleteFile} from '../const/file'
-import {getUserIdByToken} from '../const/querySample'
-
+import {getUserId} from '../const/jwt';
 
 export const config = {
     api: {
@@ -12,10 +11,11 @@ export const config = {
 
 export default async function (req, res) {
 
-    const {token,files} = await formParse(req);
+
+    const {files} = await formParse(req);
     var avatar = files != null ? files.avatar : "";
 
-    const userid = await getUserIdByToken(token);
+    const userid = getUserId(req);
     const user = await query("select `avatar` from user where id = ?",userid);
 
     const oldPath = user[0].avatar;

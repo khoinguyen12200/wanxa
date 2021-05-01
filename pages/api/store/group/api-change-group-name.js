@@ -1,6 +1,7 @@
 import query from "../../const/connection";
 import formParse from "../../const/form";
 import { getUserIdByToken,getPrivileges } from "../../const/querySample";
+import {getUserId} from '../../const/jwt'
 import Privileges from '../../../../components/Privileges';
 export const config = {
 	api: {
@@ -12,7 +13,7 @@ export default async function (req, res) {
     const {newName,token,groupid} = await formParse(req);
     const groupRes = await query("SELECT `storeid` FROM `store-table-group` WHERE id = ?",[groupid])
     const storeid = groupRes.length >0 ? groupRes[0].storeid : -1;
-    const userid = await getUserIdByToken(token);
+    const userid = getUserId(req);
     const priValue = await getPrivileges(userid,storeid);
 
     const accepted = Privileges.isValueIncluded(priValue,[Privileges.Content.OWNER,Privileges.Content.FACILITY])

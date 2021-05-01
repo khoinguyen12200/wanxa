@@ -1,5 +1,5 @@
 import query from '../../const/connection';
-
+import {getUserId} from '../../const/jwt'
 export default async function (req, res) {
 
     const {storeid} = req.body;
