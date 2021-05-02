@@ -234,10 +234,8 @@ const ModalExample = ({ toggle, chosen, onSubmitSuccess }) => {
 		);
 		function run() {
 			const data = {
-				userid: chosen.id,
-				privileges: value,
-				token: getSavedToken(),
-				storeid: storeId,
+				staffid: chosen.id,
+				staffPrivileges: value,
 			};
 
 			axios
@@ -263,9 +261,7 @@ const ModalExample = ({ toggle, chosen, onSubmitSuccess }) => {
 
 		function run() {
 			const data = {
-				userid: chosen.id,
-				token: getSavedToken(),
-				storeid: storeId,
+				staffid: chosen.id,
 			};
 
 			axios

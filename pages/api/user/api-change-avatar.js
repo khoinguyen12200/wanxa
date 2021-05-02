@@ -1,7 +1,6 @@
 import query from "../const/connection";
 import formParse from '../const/form'
 import {upLoadAvatar,userAvatarDir,deleteFile} from '../const/file'
-import {getUserId} from '../const/jwt';
 
 export const config = {
     api: {
@@ -15,7 +14,7 @@ export default async function (req, res) {
     const {files} = await formParse(req);
     var avatar = files != null ? files.avatar : "";
 
-    const userid = getUserId(req);
+    const {userid} = req.headers;
     const user = await query("select `avatar` from user where id = ?",userid);
 
     const oldPath = user[0].avatar;

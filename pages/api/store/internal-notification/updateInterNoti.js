@@ -1,10 +1,9 @@
 import query from "../../const/connection";
-import {getUserId} from '../../const/jwt'
 
 export default async function (req, res) {
 	const { id ,value} = req.body;
 
-    const userid = getUserId(req);
+    const {storeid,privileges,userid} = req.headers;
 
     const InterNoti = await query("Select * from `internal-notification` where executor = ? and id = ?",[userid,id]);
     console.log(InterNoti);

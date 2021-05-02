@@ -1,7 +1,7 @@
 import query from '../../const/connection';
 
 export default async function (req, res) {
-    const {storeid} = req.body;
+    const { privileges, userid, storeid } = req.headers;
 
     const tableGroups = await query("SELECT * FROM `store-table-group` WHERE storeid = ?",storeid);
 

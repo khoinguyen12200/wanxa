@@ -1,16 +1,13 @@
 import query from '../../const/connection';
-import {getUserIdByToken,getPrivileges} from '../../const/querySample';
 import Privileges from '../../../../components/Privileges';
-import {getUserId} from '../../const/jwt'
 export default async function (req, res) {
 
     const {id,name} = req.body;
+
+    const {storeid,privileges,userid} = req.headers;
     
-    const store = await query("Select storeid from `menu-group` where id = ?",[id]);
-    const storeid = store.length >0 ? store[0].storeid : null
-    const userid = getUserId(req);
-    const privalue = await getPrivileges(userid, storeid);
-    const checked = Privileges.isValueIncluded(privalue,[Privileges.Content.OWNER,Privileges.Content.MENU]);
+  
+    const checked = Privileges.isValueIncluded(privileges,[Privileges.Content.OWNER,Privileges.Content.MENU]);
     if(checked){
         const updateRes = await query("UPDATE `menu-group` SET `name`=? WHERE id = ?",[name,id]);
         res.status(200).json({message:"Chỉnh sửa thành công"})

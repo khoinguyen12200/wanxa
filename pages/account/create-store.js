@@ -39,7 +39,7 @@ export default function createStores() {
 		data.append("name",name);
 		data.append("des",des);
 		data.append("userid",user.id)
-		axios.post('/api/store/api-create-store', data)
+		axios.post('/api/user/api-create-store', data)
 			.then(res => {
 				console.log(res.data);
 

@@ -2,13 +2,12 @@ import query from "../../const/connection";
 
 import Notification from "../../../../components/Notification";
 
-import { getUserIdByToken } from "../../const/querySample";
-import {getUserId} from '../../const/jwt'
-
 export default async function (req, res) {
-	const { storeid, token, destination } = req.body;
+	const { destination } = req.body;
 
-	const executorId = getUserId(req)
+	const {storeid,userid,privileges} = req.headers;
+
+	const executorId = userid;
 	const executor = await query("select name from user where id = ?", [
 		executorId,
 	]);

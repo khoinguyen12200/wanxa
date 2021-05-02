@@ -1,10 +1,9 @@
 import query from "../const/connection";
-import {getUserId} from '../const/jwt';
 
 
 export default async function (req, res) {
     const {state,id} = req.body;
-    const userid = getUserId(req);
+    const {userid} = req.headers;
 
     var invitation = await query("SELECT * FROM `staff-invitation` WHERE id =?",id);
     invitation = invitation.length > 0 ? invitation[0] : null;

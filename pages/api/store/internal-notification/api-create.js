@@ -1,38 +1,32 @@
 import query from "../../const/connection";
-import {
-	getUserIdByToken,
-	getPrivileges
-} from "../../const/querySample";
-import {getUserId} from '../../const/jwt'
+
 
 import Privileges from "../../../../components/Privileges";
 import Notification from "../../../../components/Notification";
 export default async function (req, res) {
-	const { value,  storeid } = req.body;
+	const { value } = req.body;
 
-	const userId = getUserId(req);
-	const priValue = await getPrivileges(userId,storeid);
+	const {storeid,privileges,userid} = req.headers;
 
-	const hasNotiRights = Privileges.isValueIncluded(priValue,[Privileges.Content.OWNER,Privileges.Content.Notification]);
+	const hasNotiRights = Privileges.isValueIncluded(privileges,[Privileges.Content.OWNER,Privileges.Content.Notification]);
 
 	
 	if (hasNotiRights) {
 		const insertRes = await query(
 			"INSERT INTO `internal-notification`(`executor`, `content`,`storeid`) VALUES (?,?,?)",
-			[userId, value, storeid]
+			[userid, value, storeid]
 		);
 		const allStaff = await query(
 			"select * from privileges where storeid = ?",
 			[storeid]
 		);
-		const executor = await query ("select name from user where id = ?",[userId]);
+		const executor = await query ("select name from user where id = ?",[userid]);
 		for (let i in allStaff) {
 			const staff = allStaff[i];
-			console.log(staff)
 			var notification = new Notification({
 				type: Notification.TYPE.INTERNAL_NOTIFICATION,
 				content: {
-					ExecutorId: parseInt(userId),
+					ExecutorId: parseInt(userid),
 					ExecutorName: executor[0].name,
 					StoreId: parseInt(storeid),
 					Message: value,

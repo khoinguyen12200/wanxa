@@ -1,6 +1,5 @@
 import query from "../const/connection";
 import formParse from '../const/form'
-import {getUserId} from '../const/jwt'
 
 
 export const config = {
@@ -13,7 +12,7 @@ export default async function (req, res) {
 
     const {description} = await formParse(req);
 
-    const userid = getUserId(req);
+    const {userid} = req.headers;
   
     const changeRes = await query("update `user` set `description`=? where id =?",[description,userid]);
     if(changeRes){

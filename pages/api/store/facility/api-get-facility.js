@@ -1,10 +1,8 @@
 import query from "../../const/connection";
-import { getUserIdByToken,getPrivileges } from "../../const/querySample";
-import Privileges from '../../../../components/Privileges';
-
 
 export default async function (req, res) {
-    const {storeid} = req.body;
+    
+    const {storeid,privileges} = req.headers;
     
     var arr = await query("SELECT * FROM `store-table-group` WHERE storeid = ?",storeid);
     for(let i in arr){

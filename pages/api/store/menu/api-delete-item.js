@@ -1,18 +1,15 @@
 import query from '../../const/connection';
-import {getUserIdByToken,getPrivileges} from '../../const/querySample';
 import Privileges from '../../../../components/Privileges';
 import {deleteFile} from '../../const/file';
-import {getUserId} from '../../const/jwt'
+
 export default async function (req, res) {
 
     const {id,groupid} = req.body;
     
     
-    const store = await query("Select storeid from `menu-group` where id = ?",[groupid]);
-    const storeid = store.length >0 ? store[0].storeid : null
-    const userid = getUserId(req);
-    const privalue = await getPrivileges(userid, storeid);
-    const checked = Privileges.isValueIncluded(privalue,[Privileges.Content.OWNER,Privileges.Content.MENU]);
+    const {storeid,privileges,userid} = req.headers;
+
+    const checked = Privileges.isValueIncluded(privileges,[Privileges.Content.OWNER,Privileges.Content.MENU]);
 
     const item = await query("select * from `menu-item` where id = ?" ,[id]);
     const path = item[0].picture;

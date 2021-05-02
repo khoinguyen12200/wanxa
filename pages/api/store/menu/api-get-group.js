@@ -1,8 +1,8 @@
 import query from '../../const/connection';
-import {getUserId} from '../../const/jwt'
 export default async function (req, res) {
 
-    const {storeid} = req.body;
+    const {storeid,privileges,userid} = req.headers;
+    
     const groups = await query("SELECT * FROM `menu-group` WHERE storeid = ?",storeid);
 
     var newArr = [];

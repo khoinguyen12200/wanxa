@@ -168,7 +168,7 @@ nextApp.prepare().then(function _callee2() {
 });
 
 function protectedMiddleware(req, res, nextHandler) {
-  var token, storeid, url, privileges, userid;
+  var token, storeid, userid, privileges, url;
   return regeneratorRuntime.async(function protectedMiddleware$(_context3) {
     while (1) {
       switch (_context3.prev = _context3.next) {
@@ -176,21 +176,19 @@ function protectedMiddleware(req, res, nextHandler) {
           _context3.prev = 0;
           token = req.headers['authorization'];
           storeid = req.headers['storeid'];
+          userid = myJsonWebToken.getUserId(req);
+          req.headers.userid = userid;
+          privileges = myJsonWebToken.getPrivileges(req, storeid);
+          req.headers.privileges = privileges;
           url = req.url;
 
           if (!(url.includes('/api/store/') && storeid != null && token != null)) {
-            _context3.next = 13;
+            _context3.next = 12;
             break;
           }
 
-          privileges = myJsonWebToken.getPrivileges(req, storeid);
-          userid = myJsonWebToken.getUserId(req);
-          req.headers.userid = userid;
-          req.headers.privileges = privileges;
-          console.log(req.headers);
-
           if (!(privileges < 0 || privileges == null)) {
-            _context3.next = 13;
+            _context3.next = 12;
             break;
           }
 
@@ -199,24 +197,24 @@ function protectedMiddleware(req, res, nextHandler) {
           });
           return _context3.abrupt("return");
 
-        case 13:
+        case 12:
           nextHandler();
           return _context3.abrupt("return");
 
-        case 17:
-          _context3.prev = 17;
+        case 16:
+          _context3.prev = 16;
           _context3.t0 = _context3["catch"](0);
           res.status(401).send({
             message: 'Invalid call'
           });
           return _context3.abrupt("return");
 
-        case 21:
+        case 20:
         case "end":
           return _context3.stop();
       }
     }
-  }, null, null, [[0, 17]]);
+  }, null, null, [[0, 16]]);
 }
 
 function getAllRooms() {

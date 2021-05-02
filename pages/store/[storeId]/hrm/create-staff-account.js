@@ -371,8 +371,9 @@ function User({ object, updateObject, removeObject }) {
 }
 
 async function userIsExist(account) {
-	var data = new FormData();
-	data.append("account", account);
+	var data = {
+		account: account,
+	}
 	const res = await axios.post("/api/user/api-check-user-exist", data);
 	const result = res.data;
 	if (result.length > 0) {

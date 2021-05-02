@@ -1,26 +1,13 @@
 import query from "../../const/connection";
-import formParse from "../../const/form";
-import {getUserId} from '../../const/jwt'
-import {  getPrivileges } from "../../const/querySample";
 import Privileges from "../../../../components/Privileges";
 
-export const config = {
-	api: {
-		bodyParser: false,
-	},
-};
-
 export default async function (req, res) {
-    const {groupid} = await formParse(req);
+    const {groupid} = req.body;
     
-    const storeRes = await query("SELECT `storeid` from `store-table-group` where id = ?",groupid);
-    const storeid = storeRes.length != 0 ? storeRes[0].storeid : -1;
-    
-    const userid = getUserId(req);
-    const priValue = await getPrivileges(userid,storeid);
+    const {storeid,privileges,userid} = req.headers;
 
 
-    const accepted =Privileges.isValueIncluded(priValue,[Privileges.Content.OWNER,Privileges.Content.FACILITY])
+    const accepted =Privileges.isValueIncluded(privileges,[Privileges.Content.OWNER,Privileges.Content.FACILITY])
     
     if(accepted) {
         const delRes = await query("DELETE FROM `store-table-group` where id = ?",[groupid]);

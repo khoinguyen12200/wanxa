@@ -1,6 +1,5 @@
 import query from "../../const/connection";
 import formParse from '../../const/form'
-import {getUserIdByToken,getPrivileges} from '../../const/querySample';
 import {upLoadAvatar,UploadDir,deleteFile} from '../../const/file'
 import {getUserId} from '../../const/jwt'
 import Privileges from '../../../../components/Privileges'
@@ -14,15 +13,12 @@ export const config = {
 
 export default async function (req, res) {
 
-    const {files,token,groupid,id} = await formParse(req);
+    const {files,id} = await formParse(req);
     var picture = files != null ? files.picture : "";
 
-    const userid = getUserId(req);
-    const menuGroup = await query("select * from `menu-group` where id =?",groupid);
-    const storeid = menuGroup.length > 0 ? menuGroup[0].storeid : null;
-    const privalue = await getPrivileges(userid,storeid);
+    const {privileges,userid,storeid} = req.headers;
 
-    const accepted = Privileges.isValueIncluded(privalue,[Privileges.Content.OWNER,Privileges.Content.MENU]);
+    const accepted = Privileges.isValueIncluded(privileges,[Privileges.Content.OWNER,Privileges.Content.MENU]);
 
     if(accepted) {
         const oldItem = await query("select * from `menu-item` where id =?",id);

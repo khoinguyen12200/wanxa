@@ -1,12 +1,11 @@
 import query from "../const/connection";
-import {getUserId} from '../const/jwt'
 var md5 = require('md5');
 
 export default async function (req, res) {
 
     const {oldPassword,newPassword} = req.body;
 
-    const userid =getUserId(req);
+    const {userid} = req.headers;
   
     const isExisting = await query ("Select * from user where id = ? and password = ?",[userid,md5(oldPassword)]);
     if(isExisting.length > 0) {

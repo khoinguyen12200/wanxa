@@ -1,8 +1,10 @@
 import query from "../../const/connection";
 
 export default async function (req, res) {
-	const { storeid, limit, offset, options } = req.body;
-    console.log(options)
+	const { limit, offset, options } = req.body;
+	const storeid = req.headers.storeid;
+
+
 	var fromTime = options ? options.fromTime || new Date(0) : new Date(0);
 	var toTime = options ? options.toTime || new Date() : new Date();
 	var queryRes = await query(

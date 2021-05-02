@@ -18,13 +18,15 @@ export default function StoreGroups() {
 	const router = useRouter();
 	const { storeId } = router.query;
 
-	
-	const { getSavedToken, getStorePrivileges, state ,updateFacility} = React.useContext(
-		StoreContext
-	);
-	const groups = React.useMemo(()=>{
+	const {
+		getSavedToken,
+		getStorePrivileges,
+		state,
+		updateFacility,
+	} = React.useContext(StoreContext);
+	const groups = React.useMemo(() => {
 		return state.facility;
-	},[state])
+	}, [state]);
 
 	const access = React.useMemo(() => {
 		const value = getStorePrivileges(storeId);
@@ -35,22 +37,16 @@ export default function StoreGroups() {
 		return pri ? 1 : -1;
 	}, [storeId, state]);
 
-	
-
-
 	const addGroup = (name) => {
-		var data = new FormData();
 		if (name == null) return;
-		data.append("storeid", storeId);
-		data.append("token", getSavedToken());
-		data.append("name", name);
+		const data = { name };
 
 		axios
 			.post("/api/store/group/api-add-group", data)
 			.then((res) => {
 				const { message } = res.data;
 				if (res.status === 200) {
-					updateFacility()
+					updateFacility();
 				} else {
 					toast.error(message);
 				}
@@ -58,7 +54,7 @@ export default function StoreGroups() {
 			.catch((error) => toast.error(error));
 	};
 
-	if (access == -1){
+	if (access == -1) {
 		return (
 			<div>
 				<NavBar />
@@ -66,7 +62,6 @@ export default function StoreGroups() {
 			</div>
 		);
 	}
-		
 
 	return (
 		<div className={styles.storeGroup}>
@@ -74,9 +69,7 @@ export default function StoreGroups() {
 			<h3 className={styles.title}>Chỉnh sửa cơ sở vật chất</h3>
 			<div className={styles.content}>
 				{groups.map((group) => {
-					return (
-						<Group group={group} key={group.id}/>
-					);
+					return <Group group={group} key={group.id} />;
 				})}
 				<div className={styles.addGroup}>
 					<button
@@ -95,7 +88,7 @@ export default function StoreGroups() {
 	);
 }
 function Group({ group }) {
-	const { getSavedToken ,updateFacility} = React.useContext(StoreContext);
+	const { getSavedToken, updateFacility } = React.useContext(StoreContext);
 
 	const { tables, name, id } = group;
 
@@ -103,16 +96,16 @@ function Group({ group }) {
 		const groupId = id;
 		if (tbName == null) return;
 
-		var data = new FormData();
-		data.append("name", tbName);
-		data.append("groupid", groupId);
-		data.append("token", getSavedToken());
+		var data = {
+			name: tbName,
+			groupid: groupId,
+		};
 
 		axios
 			.post("/api/store/table/api-add-table", data)
 			.then((res) => {
 				if (res.status === 200) {
-					updateFacility()
+					updateFacility();
 				}
 			})
 			.catch((error) => console.log(error));
@@ -123,10 +116,7 @@ function Group({ group }) {
 			<GroupNameInput group={group} onUpdate={() => onUpdate()} />
 			<div className={styles.groupTableContent}>
 				{tables.map((table) => (
-					<Table
-						table={table}
-						key={table.id}
-					/>
+					<Table table={table} key={table.id} />
 				))}
 				<div className={styles.addTable}>
 					<button
@@ -144,9 +134,9 @@ function Group({ group }) {
 		</div>
 	);
 }
-function GroupNameInput({  group }) {
+function GroupNameInput({ group }) {
 	const [viewId, setId] = React.useState("myid" + uuidv4());
-	const { getSavedToken ,updateFacility} = React.useContext(StoreContext);
+	const { getSavedToken, updateFacility } = React.useContext(StoreContext);
 
 	const { name, id } = group;
 
@@ -157,10 +147,9 @@ function GroupNameInput({  group }) {
 		alertDialog("Bạn có chắc muốn xóa", () => del());
 
 		const del = () => {
-			var data = new FormData();
-			// console.log("groupid",id);
-			data.append("groupid", id);
-			data.append("token", getSavedToken());
+			var data = {
+				groupid: id,
+			};
 			axios
 				.post("/api/store/group/api-delete-group", data)
 				.then((res) => {
@@ -182,10 +171,7 @@ function GroupNameInput({  group }) {
 		if (value == name) {
 			toast.warning("Không tìm thấy sự thay đổi của tên");
 		} else {
-			var data = new FormData();
-			data.append("newName", value);
-			data.append("groupid", id);
-			data.append("token", getSavedToken());
+			var data = { newName: value, groupid: id };
 			axios
 				.post("/api/store/group/api-change-group-name", data)
 				.then((res) => {
@@ -230,16 +216,13 @@ function GroupNameInput({  group }) {
 	);
 }
 function Table({ table }) {
-
-
 	const [viewId, setId] = React.useState(null);
 	React.useEffect(() => {
 		setId("id" + uuidv4());
 	}, []);
 
-	
 	const [value, setValue] = React.useState(table.name);
-	const { getSavedToken,updateFacility } = React.useContext(StoreContext);
+	const { getSavedToken, updateFacility } = React.useContext(StoreContext);
 	const inputRef = React.useRef(null);
 
 	function updateName(e) {
@@ -249,21 +232,18 @@ function Table({ table }) {
 			toast.warning("Tên chưa có sự thay đổi");
 			return;
 		} else {
-			var data = new FormData();
-			data.append("token", getSavedToken());
-			data.append("name", name);
-			data.append("tableid", table.id);
+			var data = {
+				name: name,
+				tableid: table.id,
+			};
 
 			axios
 				.post("/api/store/table/api-update-name-table", data)
 				.then((res) => {
 					if (res.status === 200) {
-						
-						updateFacility()
+						updateFacility();
 						toast.success(res.data.message);
 						inputRef.current.blur();
-					
-						
 					}
 				})
 				.catch((error) => toast.error(error));
@@ -272,9 +252,7 @@ function Table({ table }) {
 	function deleteTable() {
 		alertDialog("Bạn có chắc muốn xóa bàn này ?", () => doIt());
 		function doIt() {
-			var data = new FormData();
-			data.append("token", getSavedToken());
-			data.append("tableid", table.id);
+			var data = { tableid: table.id };
 
 			axios
 				.post("/api/store/table/api-delete-table", data)
@@ -282,7 +260,7 @@ function Table({ table }) {
 					const { message } = res.data;
 					if (res.status === 200) {
 						toast.success(message);
-						updateFacility()
+						updateFacility();
 					} else {
 						toast.error(message);
 					}

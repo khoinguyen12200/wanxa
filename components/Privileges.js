@@ -11,6 +11,10 @@ export default class Privileges {
 	};
 	static length = 8;
 
+	static ErrorMessage = function (right){
+		return `Yêu cầu quyền ${Privileges.ValueToString(right)}`
+	}
+
 	static ValueToString = (right) => {
 		switch (right) {
 			case Privileges.Content.OWNER:
@@ -56,11 +60,9 @@ export default class Privileges {
 
 	static arrToValue = (arr) => {
 		var value = 0;
-		if (arr.length > 0) {
-			for (let i in arr) {
-				const right = parseInt(arr[i], 0);
-				value = value + 2 ** right;
-			}
+		for (let i in arr) {
+			const right = parseInt(arr[i]);
+			value = value + (2 ** right);
 		}
 		return value;
 	};

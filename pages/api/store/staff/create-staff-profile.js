@@ -9,7 +9,6 @@ import {
 	getPrivileges
 } from "../../const/querySample";
 import Privileges from '../../../../components/Privileges';
-import {getUserId} from '../../const/jwt'
 
 var md5 = require("md5");
 
@@ -22,17 +21,17 @@ export const config = {
 export default async function (req, res) {
 	var failed = [];
 
-	var { user, storeId,  files } = await formParse(req);
+	var { user,   files } = await formParse(req);
 	const userS = JSON.parse(user);
 
-	const userid = getUserId(req)
-	const priValue = await getPrivileges(userid,storeId);
+	const { privileges, userid, storeid } = req.headers;
 
-	const privilegesOwner = Privileges.isValueIncluded(priValue,[Privileges.Content.OWNER])
-	const privilegesHRM =  Privileges.isValueIncluded(priValue,[Privileges.Content.HRM])
+
+	const privilegesOwner = Privileges.isValueIncluded(privileges,[Privileges.Content.OWNER])
+	const privilegesHRM =  Privileges.isValueIncluded(privileges,[Privileges.Content.HRM])
 
 	if (!privilegesOwner && !privilegesHRM) {
-		res.status(202).json({
+		res.status(401).send({
 			message: "Bạn không có quyền thực hiện yêu cầu này",
 		});
 		return;
@@ -43,7 +42,7 @@ export default async function (req, res) {
 			const pri = newUser.privileges;
 			const isOwner = Privileges.isValueIncluded(pri,[Privileges.Content.OWNER]);
 			if(isOwner){
-				res.status(202).json({
+				res.status(401).send({
 					message: "Bạn không có quyền thực hiện yêu cầu này",
 				});
 				return;
@@ -63,7 +62,7 @@ export default async function (req, res) {
 		} else {
 			const insertToPrivileges = await query(
 				"INSERT INTO `privileges`(`storeid`, `userid`, `value`) VALUES (?,?,?)",
-				[storeId, insertId, newUser.privileges]
+				[storeid, insertId, newUser.privileges]
 			);
 
 		}

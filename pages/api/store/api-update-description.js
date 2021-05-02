@@ -11,14 +11,12 @@ export const config = {
 
 export default async function (req, res) {
 
-    const {description,storeid} = await formParse(req);
-
-    const userid = getUserId(req);
-    const priValue = await getPrivileges(userid,storeid);
- 
-    const check = Privileges.isValueIncluded(priValue,[Privileges.Content.OWNER]);
+    const {description} = await formParse(req);
+    const { storeid, userid, privileges } = req.headers;
+  
+    const check = Privileges.isValueIncluded(privileges,[Privileges.Content.OWNER]);
     if(!check) {
-        res.status(202).json({message:"Yêu cầu quyền chủ sở hữu"});
+        res.status(401).send({message:Privileges.ErrorMessage(Privileges.Content.OWNER)});
         return;
     }
   

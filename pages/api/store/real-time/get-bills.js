@@ -1,7 +1,8 @@
 import query from "../../const/connection";
 
 export default async function (req, res) {
-	const { storeid } = req.body;
+	const { privileges, userid, storeid } = req.headers;
+
 
 	var bills = await query(
 		"SELECT * FROM `bill` WHERE storeid =? and state = 0",

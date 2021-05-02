@@ -17,18 +17,13 @@ export const config = {
 };
 
 export default async function (req, res) {
-	var {  name, storeid } = await formParse(req);
-	const userid = getUserId(req);
-	
-	storeid = parseInt(storeid);
-
-
-	const priValue = await getPrivileges(userid, storeid);
+	var {  name } = await formParse(req);
+	const { storeid, userid, privileges } = req.headers;
 	
 
-	const check = Privileges.isValueIncluded(priValue,[Privileges.Content.OWNER])
+	const check = Privileges.isValueIncluded(privileges,[Privileges.Content.OWNER])
 	if (!check) {
-		res.status(202).json({ message: "Yêu cầu quyền chủ sở hữu" });
+		res.status(401).send({ message: Privileges.ErrorMessage(Privileges.Content.OWNER)});
 		return;
 	}
 
@@ -44,9 +39,9 @@ export default async function (req, res) {
 		var notification = new Notification({
 			type: Notification.TYPE.UPDATE_STORE_NAME,
 			content: {
-				ExecutorId: executor.id,
+				ExecutorId: parseInt(executor.id),
 				ExecutorName: executor.name,
-				StoreId: storeid,
+				StoreId: parseInt(storeid),
 				OldName: oldName,
 				NewName: name,
 			},

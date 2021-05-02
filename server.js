@@ -119,19 +119,22 @@ async function protectedMiddleware(req, res, nextHandler) {
 	try{
 		const token = req.headers['authorization'];
 		const storeid = req.headers['storeid'];
+
+		const userid = myJsonWebToken.getUserId(req);
+		req.headers.userid = userid;
+
+		const privileges = myJsonWebToken.getPrivileges(req,storeid);
+		req.headers.privileges = privileges;
 	
 		const url = req.url;
 		if(url.includes('/api/store/') && storeid != null && token != null){
-			const privileges = myJsonWebToken.getPrivileges(req,storeid);
-			const userid = myJsonWebToken.getUserId(req)
-			req.headers.userid = userid;
-			req.headers.privileges = privileges;
-			console.log(req.headers);
 			if(privileges < 0 || privileges == null){
 				res.status(202).json({message: 'Invalid call'})
 				return;
 			}
 		}
+
+
 		nextHandler();
 		return;
 	}catch(e) {

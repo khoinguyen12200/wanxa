@@ -1,22 +1,14 @@
 import query from "../../const/connection";
-import formParse from "../../const/form";
-import { getUserIdByToken,getPrivileges } from "../../const/querySample";
-import {getUserId} from '../../const/jwt'
 import Privileges from '../../../../components/Privileges';
-export const config = {
-	api: {
-		bodyParser: false,
-	},
-};
 
 export default async function (req, res) {
-    const {newName,token,groupid} = await formParse(req);
-    const groupRes = await query("SELECT `storeid` FROM `store-table-group` WHERE id = ?",[groupid])
-    const storeid = groupRes.length >0 ? groupRes[0].storeid : -1;
-    const userid = getUserId(req);
-    const priValue = await getPrivileges(userid,storeid);
+    const {newName,groupid} =req.body;
+   
+    
+    const {storeid,privileges,userid} = req.headers;
 
-    const accepted = Privileges.isValueIncluded(priValue,[Privileges.Content.OWNER,Privileges.Content.FACILITY])
+
+    const accepted = Privileges.isValueIncluded(privileges,[Privileges.Content.OWNER,Privileges.Content.FACILITY])
     
     if(accepted) {
         const updateRes = await query("UPDATE `store-table-group` SET `name`=? WHERE id =?",[newName,groupid]);

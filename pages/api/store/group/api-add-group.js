@@ -1,21 +1,14 @@
 import query from "../../const/connection";
-import formParse from "../../const/form";
-import { getUserIdByToken,getPrivileges } from "../../const/querySample";
-import {getUserId} from '../../const/jwt'
 import Privileges from '../../../../components/Privileges';
-export const config = {
-	api: {
-		bodyParser: false,
-	},
-};
+
 
 export default async function (req, res) {
-    const {name,storeid} = await formParse(req);
+    const {name} = req.body;
+
+    const {storeid,privileges} = req.headers;
+
     
-    const userid = getUserId(req);
-    const priValue = await getPrivileges(userid,storeid);
-    
-    const accepted = Privileges.isValueIncluded(priValue,[Privileges.Content.OWNER,Privileges.Content.FACILITY])
+    const accepted = Privileges.isValueIncluded(privileges,[Privileges.Content.OWNER,Privileges.Content.FACILITY])
     
     if(accepted) {
         const addRes = await query("INSERT INTO `store-table-group`(`storeid`, `name`) VALUES (?,?)",[storeid,name]);

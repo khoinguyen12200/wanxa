@@ -2,6 +2,7 @@ import query from "../../const/connection";
 
 export default async function (req, res) {
 	const { id } = req.body;
+	
 
 	const resu = await query(
 		"select `internal-notification`.*,user.avatar,user.name as username" +
