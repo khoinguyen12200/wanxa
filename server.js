@@ -42,10 +42,10 @@ nextApp.prepare().then(async () => {
 
 	io.on("connection", (socket) => {
 
-		socket.on("update-bills", ({storeid,message}) => {
+		socket.on("update-bills", ({storeid,notification}) => {
 			if(storeid){
 				GetBills(storeid).then(bills => {
-					io.to(StoreRoom(storeid)).emit('request-update-bills',{bills:bills,message:message});
+					io.to(StoreRoom(storeid)).emit('request-update-bills',{bills:bills,notification});
 				})
 			}
 		})
@@ -77,12 +77,12 @@ nextApp.prepare().then(async () => {
 	});
 
 
-	app.post("/api/socket/send-message",async (req, res) => {
-		const {message,storeid,token} = req.body;
-		const user = await query("SELECT * FROM `user-token` WHERE token = ?",[token]);
-		const userid = user.length > 0 ? user[0].userid : null;
-		const pri = await query("SELECT * FROM `privileges` WHERE userid = ? and storeid = ?",[userid,storeid]);
-		const privileges = pri.length > 0 ? pri[0].value : -1;
+	app.post("/api/socket/send-message",protectedMiddleware,async (req, res) => {
+		const {userid,storeid,privileges} = req.headers;
+		const {message} = req.body;
+
+		console.log(message);
+		console.log(userid)
 
 		if(privileges > 0){
 			const insertRes = await query("INSERT INTO `store-message`(`storeid`, `userid`, `message`) VALUES (?,?,?)",[storeid,userid,message]);

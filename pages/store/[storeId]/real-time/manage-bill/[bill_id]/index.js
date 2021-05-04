@@ -18,6 +18,7 @@ import { alertDialog } from "../../../../../../components/Modal";
 import { StoreContext } from "../../../../../../components/StoreContext";
 import Nav from "../../../../../../components/MultiLevelNavbar";
 import styles from "../../../../../../styles/manage-bill.module.css";
+import RealtimeNotification from "../../../../../../components/RealtimeNotification";
 export default function index() {
 	const { state } = React.useContext(StoreContext);
 	const { bills, facility, staff } = React.useMemo(() => {
@@ -116,9 +117,13 @@ function Bill({ bill }) {
 					.post("/api/store/real-time/pay-bill", data)
 					.then((res) => {
 						if (res.status === 200) {
-							toast.success("Thanh toán thành công");
 							router.push(Direction.RealTime(storeId));
-							requestUpdateBills();
+							const noti = {
+								type:RealtimeNotification.TYPE.PAY_BILL,
+								executor:state.user.id,
+								payload:{table_id:bill.tableid}
+							}
+							requestUpdateBills(noti);
 						}
 					})
 					.catch((error) => console.log(error));
@@ -265,7 +270,7 @@ function Item({ item, index }) {
 	const router = useRouter();
 	const { bill_id } = router.query;
 
-	const { requestUpdateBills, getSavedToken } = React.useContext(
+	const { requestUpdateBills, getSavedToken,state } = React.useContext(
 		StoreContext
 	);
 
@@ -282,8 +287,12 @@ function Item({ item, index }) {
 			.post("/api/store/real-time/add-bill-row", data)
 			.then((res) => {
 				if (res.status === 200) {
-					toast.success("Đã thêm thành công");
-					requestUpdateBills();
+					const noti = {
+						type:RealtimeNotification.TYPE.ADD_MENU_ITEM,
+						executor:state.user.id,
+						payload:{menu_item_id:item.id,bill_id:bill_id}
+					}
+					requestUpdateBills(noti);
 					setLoading(false);
 				}
 			})
@@ -325,6 +334,7 @@ function BillRow({ billRow, index }) {
 	const { menu } = React.useMemo(() => {
 		return state;
 	}, [state]);
+	const {bill_id} = useRouter().query;
 
 	const menuItem = React.useMemo(() => {
 		for (let i in menu) {
@@ -349,7 +359,13 @@ function BillRow({ billRow, index }) {
 				.post("/api/store/real-time/delete-bill-row", data)
 				.then((res) => {
 					if (res.status === 200) {
-						requestUpdateBills();
+						const noti = {
+							type:RealtimeNotification.TYPE.REMOVE_MENU_ITEM,
+							executor:state.user.id,
+							payload:{menu_item_id:menuItem.id,bill_id:bill_id},
+							
+						}
+						requestUpdateBills(noti);
 					}
 				})
 				.catch((error) => console.log(error));

@@ -13,6 +13,7 @@ import {
 	numberWithCommas,
 } from "../../../../../components/Const";
 import { CanNotAccess } from "../../../../../components/Pages";
+import RealtimeNotification from "../../../../../components/RealtimeNotification";
 
 export default function createBill() {
 	const router = useRouter();
@@ -73,13 +74,15 @@ export default function createBill() {
 }
 
 const SubmitModal = ({ menu, selected }) => {
-	const {state,requestUpdateBills,getSavedToken} = React.useContext(StoreContext);
-	const {user} = state;
+	const { state, requestUpdateBills, getSavedToken } = React.useContext(
+		StoreContext
+	);
+	const { user } = state;
 
 	const router = useRouter();
 	const { storeId, tableId } = router.query;
 
-	const [loading,setLoading] = React.useState(false);
+	const [loading, setLoading] = React.useState(false);
 
 	const items = React.useMemo(() => {
 		if (menu == null || menu.length == 0 || selected.length == 0) {
@@ -130,9 +133,9 @@ const SubmitModal = ({ menu, selected }) => {
 			tableid: tableId,
 			note: note,
 			list: list,
-			token:getSavedToken(),
+			token: getSavedToken(),
 		};
-		setLoading(true)
+		setLoading(true);
 		axios
 			.post("/api/store/real-time/create-bill", data)
 			.then((res) => {
@@ -140,11 +143,19 @@ const SubmitModal = ({ menu, selected }) => {
 				if (res.status === 200) {
 					router.push(Direction.RealTime(storeId));
 					toggle();
-					requestUpdateBills(`${user.name} đã tạo hóa đơn mới`)
+					const notification = {
+						type: RealtimeNotification.TYPE.CREATE_BILL,
+						executor: user.id,
+						payload: {
+							table_id: tableId,
+						},
+					};
+					console.log(notification.getMessage())
+					requestUpdateBills(notification);
 				} else {
 					toast.error(message);
 				}
-				setLoading(false)
+				setLoading(false);
 			})
 			.catch((error) => console.log(error));
 	}
@@ -203,7 +214,11 @@ const SubmitModal = ({ menu, selected }) => {
 					</div>
 				</ModalBody>
 				<ModalFooter>
-					<Button disabled={loading} color="primary mr-1" onClick={submit}>
+					<Button
+						disabled={loading}
+						color="primary mr-1"
+						onClick={submit}
+					>
 						Đồng ý
 					</Button>
 					<Button color="secondary" onClick={toggle}>
@@ -218,9 +233,9 @@ const SubmitModal = ({ menu, selected }) => {
 function Group({ group, addSelected, removeSelected, selected }) {
 	const { items, name } = group;
 	return (
-		<div className={"card m-2 w-100"+styles.card}>
+		<div className={"card m-2 w-100" + styles.card}>
 			<div className="card-header">{group.name}</div>
-			<div className="card-body">    
+			<div className="card-body">
 				<table className="table ">
 					<thead>
 						<tr>
@@ -244,7 +259,6 @@ function Group({ group, addSelected, removeSelected, selected }) {
 								/>
 							);
 						})}
-
 					</tbody>
 				</table>
 			</div>
@@ -270,7 +284,7 @@ function Item({ item, selected, addSelected, removeSelected, index }) {
 			<td>{item.name}</td>
 			<td>{numberWithCommas(item.price)}</td>
 			<td className="d-flex justify-content-start">
-			<div className={styles.itemButtons}>
+				<div className={styles.itemButtons}>
 					<button
 						onClick={() => {
 							removeSelected(item.id);

@@ -142,7 +142,7 @@ function UserSpace(props) {
 function Message({}) {
 	const router = useRouter();
 	const { storeId } = router.query;
-	const { state, getSavedToken } = React.useContext(StoreContext);
+	const { state } = React.useContext(StoreContext);
 	const [lastSeen,setLastSeen] = React.useState(new Date());
 	const [firstTimeRender,setFirstTime] = React.useState(true);
 	
@@ -157,7 +157,6 @@ function Message({}) {
 	function updateLastSeen(){
 		setFirstTime(false);
 		const data = {
-			token: getSavedToken(),
 			storeid: storeId,
 		}
 		axios.post('/api/store/message/get-last-seen', data)
@@ -196,7 +195,6 @@ function Message({}) {
 	React.useEffect(()=>{
 		if(firstTimeRender) return;
 		const data = {
-			token:getSavedToken(),
 			storeid:storeId,
 		}
 		axios.post('/api/store/message/set-last-seen', data)
@@ -240,7 +238,6 @@ function Message({}) {
 				const data = {
 					storeid: storeId,
 					message: messageStr,
-					token: getSavedToken(),
 				};
 				axios
 					.post("/api/socket/send-message", data)

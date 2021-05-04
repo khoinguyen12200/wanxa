@@ -53,13 +53,13 @@ nextApp.prepare().then(function _callee2() {
           io.on("connection", function (socket) {
             socket.on("update-bills", function (_ref) {
               var storeid = _ref.storeid,
-                  message = _ref.message;
+                  notification = _ref.notification;
 
               if (storeid) {
                 GetBills(storeid).then(function (bills) {
                   io.to(StoreRoom(storeid)).emit('request-update-bills', {
                     bills: bills,
-                    message: message
+                    notification: notification
                   });
                 });
               }
@@ -86,51 +86,42 @@ nextApp.prepare().then(function _callee2() {
           io.of("/").adapter.on("create-room", function (room) {
             console.log("room ".concat(room, " was created"));
           });
-          app.post("/api/socket/send-message", function _callee(req, res) {
-            var _req$body, message, storeid, token, user, userid, pri, privileges, insertRes, messageRes;
+          app.post("/api/socket/send-message", protectedMiddleware, function _callee(req, res) {
+            var _req$headers, userid, storeid, privileges, message, insertRes, messageRes;
 
             return regeneratorRuntime.async(function _callee$(_context) {
               while (1) {
                 switch (_context.prev = _context.next) {
                   case 0:
-                    _req$body = req.body, message = _req$body.message, storeid = _req$body.storeid, token = _req$body.token;
-                    _context.next = 3;
-                    return regeneratorRuntime.awrap(query("SELECT * FROM `user-token` WHERE token = ?", [token]));
-
-                  case 3:
-                    user = _context.sent;
-                    userid = user.length > 0 ? user[0].userid : null;
-                    _context.next = 7;
-                    return regeneratorRuntime.awrap(query("SELECT * FROM `privileges` WHERE userid = ? and storeid = ?", [userid, storeid]));
-
-                  case 7:
-                    pri = _context.sent;
-                    privileges = pri.length > 0 ? pri[0].value : -1;
+                    _req$headers = req.headers, userid = _req$headers.userid, storeid = _req$headers.storeid, privileges = _req$headers.privileges;
+                    message = req.body.message;
+                    console.log(message);
+                    console.log(userid);
 
                     if (!(privileges > 0)) {
-                      _context.next = 20;
+                      _context.next = 15;
                       break;
                     }
 
-                    _context.next = 12;
+                    _context.next = 7;
                     return regeneratorRuntime.awrap(query("INSERT INTO `store-message`(`storeid`, `userid`, `message`) VALUES (?,?,?)", [storeid, userid, message]));
 
-                  case 12:
+                  case 7:
                     insertRes = _context.sent;
-                    _context.next = 15;
+                    _context.next = 10;
                     return regeneratorRuntime.awrap(query("SELECT * FROM `store-message` where id = ?", [insertRes.insertId]));
 
-                  case 15:
+                  case 10:
                     messageRes = _context.sent;
                     io.to(StoreRoom(storeid)).emit("new-message", messageRes[0]);
                     res.status(200).end();
-                    _context.next = 21;
+                    _context.next = 16;
                     break;
 
-                  case 20:
+                  case 15:
                     res.status(202).end();
 
-                  case 21:
+                  case 16:
                   case "end":
                     return _context.stop();
                 }
@@ -146,9 +137,9 @@ nextApp.prepare().then(function _callee2() {
             res.status(200).json(staffs);
           });
           app.post("/api/socket/update-bill", function (req, res) {
-            var _req$body2 = req.body,
-                storeid = _req$body2.storeid,
-                message = _req$body2.message;
+            var _req$body = req.body,
+                storeid = _req$body.storeid,
+                message = _req$body.message;
             emitToRoom(StoreRoom(storeid), "update bills", message);
             res.status(200).end();
           });

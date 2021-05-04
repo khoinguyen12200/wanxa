@@ -15,6 +15,7 @@ import {
 import { CanNotAccess } from "../../../../../components/Pages";
 import Privileges from "../../../../../components/Privileges";
 import { alertDialog } from "../../../../../components/Modal";
+import RealtimeNotification from "../../../../../components/RealtimeNotification";
 
 export default function barista() {
 	const router = useRouter();
@@ -155,7 +156,7 @@ function Item({ item }) {
 				}
 			}
 		}
-		return { a: 0 };
+		return { id: 0 };
 	}, [state]);
 	const userid = React.useMemo(() => {
 		const user = state ? state.user : null;
@@ -194,7 +195,12 @@ function Item({ item }) {
 			.post("/api/store/real-time/update-bill-row", data)
 			.then((res) => {
 				if (res.status === 200) {
-					requestUpdateBills();
+					const noti = {
+						type: RealtimeNotification.TYPE.UPDATE_MENU_ITEM,
+						executor: state.user.id,
+						payload: { type: data.state, menu_item_id: menuInfo.id },
+					};
+					requestUpdateBills(noti);
 				}
 				setLoading(false);
 			})
@@ -243,10 +249,12 @@ function Item({ item }) {
 								<button
 									disabled={loading}
 									onClick={() => {
-										alertDialog("Đánh dấu món này đã làm xong (Hành động này không thể thay đổi)",()=>{
-											checkedItem(item.id);
-										})
-										
+										alertDialog(
+											"Đánh dấu món này đã làm xong (Hành động này không thể thay đổi)",
+											() => {
+												checkedItem(item.id);
+											}
+										);
 									}}
 									className="btn btn-outline-success btn-sm"
 								>

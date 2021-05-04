@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import { DefaultAvatar } from "./Const";
 import SocketContext from "./SocketContext";
 import { Direction } from "./Const";
+import RealtimeNotification from "./RealtimeNotification";
 export const StoreContext = React.createContext(null);
 
 export const actions = {
@@ -16,14 +17,14 @@ export const actions = {
 	addFacility: "ADD_FACILITY",
 	addStaff: "ADD_STAFF",
 	addMessage: "ADD_MESSAGE",
-	newMessage:"NEW_MESSAGE",
+	newMessage: "NEW_MESSAGE",
 };
 
 function setAxiosHeaderToken(token) {
-	axios.defaults.headers.common["Authorization"] =  token;
+	axios.defaults.headers.common["Authorization"] = token;
 }
 function setAxiosHeaderStoreId(storeid) {
-	axios.defaults.headers.common["storeid"] =  storeid;
+	axios.defaults.headers.common["storeid"] = storeid;
 }
 const reducer = (state, action) => {
 	switch (action.type) {
@@ -59,13 +60,12 @@ const reducer = (state, action) => {
 			var { newMessage } = action.payload;
 			var messages = state.message.concat([]);
 			const messageids = messages.map((message) => message.id);
-			if(messageids.includes(newMessage.id)) {
-				return {...state}
-			}else{
+			if (messageids.includes(newMessage.id)) {
+				return { ...state };
+			} else {
 				messages.unshift(newMessage);
 				return { ...state, message: messages };
 			}
-			
 
 		default:
 			return state;
@@ -102,32 +102,45 @@ export default function StoreProvider({ children }) {
 		} else {
 			socket.emit("leave all");
 			socket.emit("join", Direction.SocketRoom(storeId));
-
-			socket.on("has join", (data) => {
-				console.log(data);
-			});
-			socket.on("connection", (data) => {
-				console.log(data);
-			});
-			socket.on("hello", (data) => {
-				console.log(data);
-			});
-			socket.on("disconnect", (data) => {
-				console.log("disconnect");
-			});
-
-			socket.on("new-message", (data) => {
-				const payload = { newMessage: data };
-				dispatch({ type: actions.newMessage, payload });
-			});
-
-			socket.on("request-update-bills", ({ bills, message }) => {
-				toast.dark(message);
-				const payload = { bills: bills };
-				dispatch({ type: actions.getBillsRealTime, payload });
-			});
 		}
 	}, [storeId]);
+
+	React.useEffect(() => {
+		socket.off("request-update-bills");
+		socket.off("new-message");
+
+		socket.on("request-update-bills", ({ bills, notification }) => {
+			const payload = { bills: bills };
+			dispatch({ type: actions.getBillsRealTime, payload });
+			try {
+				const noti = new RealtimeNotification({
+					...notification,
+					state: state,
+				});
+				toast.info(noti.getMessage());
+			} catch (e) {}
+		});
+
+		socket.on("new-message", (data) => {
+			const payload = { newMessage: data };
+			dispatch({ type: actions.newMessage, payload });
+			if (data.userid != state.user.id) {
+				const noti = new RealtimeNotification({
+					type: RealtimeNotification.TYPE.NEW_MESSAGE,
+					executor: data.userid,
+					payload: { message: data.message },
+					state: state,
+				});
+				toast.info(noti.getMessage());
+			}
+		});
+	}, [state]);
+
+	React.useEffect(() => {
+		if (state == null) {
+			return;
+		}
+	}, [state]);
 	React.useEffect(() => {
 		if (state.user != null) {
 			socket.emit("setInfo", state.user.id);
@@ -138,15 +151,13 @@ export default function StoreProvider({ children }) {
 		reloadToken();
 	}, []);
 
-
 	function reloadToken() {
-		
 		const savedToken = getSavedToken();
 		setAxiosHeaderToken(savedToken);
 
 		axios.post("/api/user/signInWithToken").then((res) => {
 			if (res.status === 200) {
-				const { message, user,token } = res.data;
+				const { message, user, token } = res.data;
 				const payload = { user: user, token: token };
 				dispatch({ type: actions.signIn, payload });
 			}
@@ -172,9 +183,12 @@ export default function StoreProvider({ children }) {
 		return -1;
 	}
 
-	function requestUpdateBills(message) {
+	function requestUpdateBills(notification) {
 		if (storeId != null)
-			socket.emit("update-bills", { storeid: storeId, message: message });
+			socket.emit("update-bills", {
+				storeid: storeId,
+				notification: notification,
+			});
 	}
 
 	function updateBillsRealTimes() {
