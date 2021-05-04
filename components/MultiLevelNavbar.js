@@ -93,6 +93,8 @@ function mapName(name) {
 			return "Quản lý hóa đơn";
 		case "statistics":
 			return "Thống kê";
+		case "setting":
+			return "Cài đặt";
 	}
 	return name;
 }

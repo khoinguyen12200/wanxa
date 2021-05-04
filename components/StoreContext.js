@@ -6,6 +6,8 @@ import { DefaultAvatar } from "./Const";
 import SocketContext from "./SocketContext";
 import { Direction } from "./Const";
 import RealtimeNotification from "./RealtimeNotification";
+import RealtimeSetting from "./SettingContext";
+
 export const StoreContext = React.createContext(null);
 
 export const actions = {
@@ -89,6 +91,35 @@ export default function StoreProvider({ children }) {
 	const router = useRouter();
 	const { storeId } = router.query;
 
+	const { action, SETTING } = React.useContext(RealtimeSetting);
+
+	function notify(notification) {
+		try {
+			const noti = new RealtimeNotification({
+				...notification,
+				state: state,
+			});
+			console.log(noti);
+			const setting = action.getSetting(noti.type);
+			console.log(setting);
+			if (
+				setting == SETTING.STATE.SHOW ||
+				setting == SETTING.STATE.SHOW_SOUND
+			) {
+				toast.info(noti.getMessage());
+			}
+			if (
+				setting == SETTING.STATE.SOUND ||
+				setting == SETTING.STATE.SHOW_SOUND
+			) {
+				const audio = new Audio('/system/sound/notification.mp3');
+				audio.play();
+			}
+		} catch (e) {
+			console.log(e);
+		}
+	}
+
 	React.useEffect(() => {
 		setAxiosHeaderStoreId(storeId);
 		updateBillsRealTimes();
@@ -112,26 +143,20 @@ export default function StoreProvider({ children }) {
 		socket.on("request-update-bills", ({ bills, notification }) => {
 			const payload = { bills: bills };
 			dispatch({ type: actions.getBillsRealTime, payload });
-			try {
-				const noti = new RealtimeNotification({
-					...notification,
-					state: state,
-				});
-				toast.info(noti.getMessage());
-			} catch (e) {}
+			notify(notification);
 		});
 
 		socket.on("new-message", (data) => {
 			const payload = { newMessage: data };
 			dispatch({ type: actions.newMessage, payload });
 			if (data.userid != state.user.id) {
-				const noti = new RealtimeNotification({
+				const notification = {
 					type: RealtimeNotification.TYPE.NEW_MESSAGE,
 					executor: data.userid,
 					payload: { message: data.message },
 					state: state,
-				});
-				toast.info(noti.getMessage());
+				};
+				notify(notification);
 			}
 		});
 	}, [state]);

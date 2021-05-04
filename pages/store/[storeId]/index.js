@@ -1,6 +1,6 @@
 import React from "react";
 import { useRouter } from "next/router";
-import { AiFillAppstore ,AiOutlineAreaChart} from "react-icons/ai";
+import { AiFillAppstore ,AiOutlineAreaChart,AiFillSetting} from "react-icons/ai";
 import {IoNotificationsCircleOutline} from 'react-icons/io5';
 
 
@@ -121,6 +121,14 @@ function AcceptAccessStore({ storeid }) {
 						<RiProfileFill />
 						<div>
 							<p>Thông tin cơ bản</p>
+						</div>
+					</a>
+				</Link>
+				<Link href={Direction.Setting(storeid)}>
+					<a className={styles.routeItem} style={{color:"#666699"}}>
+						<AiFillSetting />
+						<div>
+							<p>Cài đặt thông báo</p>
 						</div>
 					</a>
 				</Link>

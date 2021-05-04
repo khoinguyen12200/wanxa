@@ -122,6 +122,8 @@ export class Direction {
 		`/store/${storeId}/real-time/manage-bill/${bill_id}`;
 
 	static Statistics = (storeId) => `/store/${storeId}/statistics`;
+
+	static Setting = (storeId) => `/store/${storeId}/setting`;
 }
 
 const TIMEBEFORE = [

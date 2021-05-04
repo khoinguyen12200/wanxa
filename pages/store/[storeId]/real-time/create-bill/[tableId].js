@@ -150,7 +150,6 @@ const SubmitModal = ({ menu, selected }) => {
 							table_id: tableId,
 						},
 					};
-					console.log(notification.getMessage())
 					requestUpdateBills(notification);
 				} else {
 					toast.error(message);

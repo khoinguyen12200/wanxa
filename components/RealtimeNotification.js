@@ -1,5 +1,4 @@
-import React from "react";
-import { StoreContext } from "./StoreContext";
+
 
 export default class RealtimeNotification {
 	static TYPE = {
@@ -10,6 +9,17 @@ export default class RealtimeNotification {
 		UPDATE_MENU_ITEM: "update-menu-item",
         NEW_MESSAGE: "new-message"
 	};
+	static getTypeName(type){
+		switch(type){
+			case this.TYPE.CREATE_BILL: return "Tạo hóa đơn";
+			case this.TYPE.ADD_MENU_ITEM: return "Thêm món";
+			case this.TYPE.REMOVE_MENU_ITEM: return "Xóa món";
+			case this.TYPE.PAY_BILL: return "Thanh toán hóa đơn";
+			case this.TYPE.UPDATE_MENU_ITEM: return "Thay đổi trạng thái món đơn";
+			case this.TYPE.NEW_MESSAGE: return "Tin nhắn";
+
+		}
+	}
 	constructor({ type, executor, payload, state }) {
 		this.type = type;
 		this.executor = executor;

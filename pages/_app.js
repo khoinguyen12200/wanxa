@@ -16,9 +16,9 @@ import { SettingContextProvider } from "../components/SettingContext";
 function MyApp({ Component, pageProps }) {
 	return (
 		<div>
-			<SocketContext.Provider value={socket}>
-				<StoreProvider>
-					<SettingContextProvider>
+			<SettingContextProvider>
+				<SocketContext.Provider value={socket}>
+					<StoreProvider>
 						<Head>
 							<title>Wanxa</title>
 							<link rel="icon" href="/favicon.ico" />
@@ -31,9 +31,9 @@ function MyApp({ Component, pageProps }) {
 						/>
 						<Navbar />
 						<Component {...pageProps} />
-					</SettingContextProvider>
-				</StoreProvider>
-			</SocketContext.Provider>
+					</StoreProvider>
+				</SocketContext.Provider>
+			</SettingContextProvider>
 		</div>
 	);
 }
