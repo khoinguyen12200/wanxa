@@ -50,7 +50,7 @@ export default function Register({}) {
 				}
 				setSubmitting(false);
 			})
-			.catch((error) => console.log(error));
+			.catch((error) => {setSubmitting(false);console.log(error);toast.error(error.message)});
 	}
 	return (
 		<div className={styles.register}>

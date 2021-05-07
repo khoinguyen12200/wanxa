@@ -49,7 +49,7 @@ function _callee(req, res) {
 
         case 13:
           sampleUser = _context.sent;
-          res.status(200).json({
+          res.json({
             message: "Đăng nhập thành công",
             token: token,
             user: sampleUser
@@ -58,8 +58,9 @@ function _callee(req, res) {
           break;
 
         case 17:
-          res.status(202).json({
-            message: "Account and password doesn't matches"
+          res.json({
+            error: true,
+            message: "Tài khoản và mật khẩu không khớp"
           });
 
         case 18:

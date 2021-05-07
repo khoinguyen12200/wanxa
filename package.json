@@ -10,7 +10,7 @@
   "scripts": {
     "dev": "nodemon -w server.js server.js",
     "build": "next build",
-    "start": "NODE_ENV=production node server.js"
+    "start": "node server.js"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.35",
