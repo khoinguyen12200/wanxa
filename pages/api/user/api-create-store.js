@@ -27,8 +27,6 @@ export default async function (req, res) {
     }
     const storeId = storeRes.insertId;
 
-    console.log("1")
-
     const addSql = "INSERT INTO `store-table-group`(`storeid`, `name`) VALUES (?,?)";
     const addRes = await query(addSql,[storeId,"Trung tâm"])
 

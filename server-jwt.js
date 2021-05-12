@@ -34,8 +34,7 @@ function getPrivileges(req, storeid) {
 	try {
 		const jsonToken = verify(req);
 		const privileges = jsonToken.privileges;
-		for (let i in privileges) {
-			const privilege = privileges[i];
+		for (let privilege of privileges) {
 			if (privilege.storeid == storeid) {
 				return privilege.value;
 			}

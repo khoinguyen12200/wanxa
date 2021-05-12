@@ -112,9 +112,7 @@ function Profile() {
 	const [description, setDescription] = React.useState(user.description);
 
 	function submitChangeDes() {
-		var data = new FormData();
-		data.append("token", getSavedToken());
-		data.append("description", description);
+		var data = {description:description}
 
 		axios
 			.post("/api/user/api-change-description", data)
@@ -130,9 +128,7 @@ function Profile() {
 
 	function submitChangeName(values, { setSubmitting }) {
 		const { name } = values;
-		var data = new FormData();
-		data.append("token", getSavedToken());
-		data.append("name", name);
+		var data = {name:name}
 		axios
 			.post("/api/user/api-change-name", data)
 			.then((res) => {
@@ -239,7 +235,6 @@ function AvatarInput({ defaultAvatar }) {
 	}
 	function saveAvatarChange() {
 		var data = new FormData();
-		data.append("token", getSavedToken());
 		data.append("avatar", fileObject.file);
 		axios
 			.post("/api/user/api-change-avatar", data)

@@ -81,9 +81,6 @@ nextApp.prepare().then(async () => {
 		const {userid,storeid,privileges} = req.headers;
 		const {message} = req.body;
 
-		console.log(message);
-		console.log(userid)
-
 		if(privileges > 0){
 			const insertRes = await query("INSERT INTO `store-message`(`storeid`, `userid`, `message`) VALUES (?,?,?)",[storeid,userid,message]);
 			const messageRes = await query("SELECT * FROM `store-message` where id = ?",[insertRes.insertId]);
@@ -129,7 +126,8 @@ async function protectedMiddleware(req, res, nextHandler) {
 		const url = req.url;
 		if(url.includes('/api/store/') && storeid != null && token != null){
 			if(privileges < 0 || privileges == null){
-				res.status(202).json({message: 'Invalid call'})
+				console.log(req.headers);
+				res.status(202).json({error:true,message: 'Invalid call'})
 				return;
 			}
 		}

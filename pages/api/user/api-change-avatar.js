@@ -9,9 +9,8 @@ export const config = {
 }
 
 export default async function (req, res) {
-
-
-    const {files} = await formParse(req);
+    const body = await formParse(req);
+    const {files} = body;
     var avatar = files != null ? files.avatar : "";
 
     const {userid} = req.headers;
@@ -28,7 +27,7 @@ export default async function (req, res) {
             return;
         }
     }
-    res.status(202).json({message:"Có lỗi xảy ra"});
+    res.status(200).json({error:true,message:"Có lỗi xảy ra"});
 
 	
 }

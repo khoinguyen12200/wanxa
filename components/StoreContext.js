@@ -32,6 +32,9 @@ const reducer = (state, action) => {
 	switch (action.type) {
 		case actions.signIn:
 			var { user, token } = action.payload;
+			if(user==null){
+				return state;
+			}
 			setAxiosHeaderToken(token);
 			localStorage.setItem("token", token);
 			user.avatar = user.avatar == "" ? DefaultAvatar : user.avatar;

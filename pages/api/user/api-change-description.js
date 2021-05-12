@@ -1,16 +1,9 @@
 import query from "../const/connection";
-import formParse from '../const/form'
 
-
-export const config = {
-    api: {
-      bodyParser: false,
-    },
-}
 
 export default async function (req, res) {
 
-    const {description} = await formParse(req);
+    const {description} = req.body;
 
     const {userid} = req.headers;
   
