@@ -13,7 +13,7 @@ export default async function (req, res) {
         const udpateRes = await query("update `menu-item` set name = ? where id = ?",[name,id]);
         res.status(200).json({message: 'Thay đổi thành công'})
     }else{
-        res.status(202).json({message: 'Bạn không có quyền thực hiện'})
+        res.status(202).json({error:true,message: 'Bạn không có quyền thực hiện'})
     }
 
 }

@@ -98,13 +98,13 @@ async function getStaffs(storeid) {
 	return staffs;
 }
 
-async function getMenus(storeid) {
+export async function getMenus(storeid) {
 	var groups = await query(
 		"SELECT * FROM `menu-group` WHERE storeid = ?",
 		storeid
 	);
 	for (let group of groups) {
-		groups.list = await query(
+		group.list = await query(
 			"SELECT * FROM `menu-item` WHERE groupid = ?",
 			[group.id]
 		);

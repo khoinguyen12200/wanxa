@@ -12,6 +12,6 @@ export default async function (req, res) {
         const addRes = await query("INSERT INTO `menu-group`(`storeid`, `name`) VALUES (?,?)",[storeid,name]);
         res.status(200).json({message:"Thêm thành công"})
     }else{
-        res.status(202).json({message:"Bạn không đủ quyền để thực hiện yêu cầu"})
+        res.status(202).json({error:true,message:"Bạn không đủ quyền để thực hiện yêu cầu"})
     }
 }
