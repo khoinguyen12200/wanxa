@@ -5,7 +5,7 @@ import Notification from "../../../../components/Notification";
 export default async function (req, res) {
 	const { destination } = req.body;
 
-	const {storeid,userid,privileges} = req.headers;
+	const { storeid, userid, privileges } = req.headers;
 
 	const executorId = userid;
 	const executor = await query("select name from user where id = ?", [
@@ -18,7 +18,10 @@ export default async function (req, res) {
 		destination
 	);
 	if (desResults.length == 0) {
-		res.status(202).json({ message: "Không tồn tại người dùng này" });
+		res.status(202).json({
+			error: true,
+			message: "Không tồn tại người dùng này",
+		});
 		return;
 	}
 
@@ -28,6 +31,7 @@ export default async function (req, res) {
 	);
 	if (desIsInStore.length > 0) {
 		res.status(202).json({
+			error: true,
 			message: "Người dùng này đã là thành viên của cửa hàng",
 		});
 		return;

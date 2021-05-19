@@ -4,7 +4,9 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports["default"] = _callee;
+exports.getStaffs = getStaffs;
 exports.getMenus = getMenus;
+exports.getFacilities = getFacilities;
 
 var _connection = _interopRequireDefault(require("../../const/connection"));
 

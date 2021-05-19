@@ -39,7 +39,7 @@ export default async function index(req, res) {
 	}
 
 	function rejected() {
-		res.status(401).send({ message: "Bạn không đủ quyền để thay đổi" });
+		res.status(202).send({error:true, message: "Bạn không đủ quyền để thay đổi" });
 		return;
 	}
 }

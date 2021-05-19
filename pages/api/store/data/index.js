@@ -89,7 +89,7 @@ async function getLastSeenMessage(storeid,userid) {
 	return null;
 }
 
-async function getStaffs(storeid) {
+export async function getStaffs(storeid) {
 	const staffs = await query(
 		"SELECT USER.id,USER.name,USER.avatar,USER.description,PRIVILEGES.value as privilege" +
 			" FROM privileges RIGHT JOIN USER ON USER.ID = privileges.USERID WHERE STOREID = ?",
@@ -112,7 +112,7 @@ export async function getMenus(storeid) {
 	return groups;
 }
 
-async function getFacilities(storeid) {
+export async function getFacilities(storeid) {
 	var groups = await query(
 		"SELECT * FROM `store-table-group` WHERE storeid = ?",
 		storeid
