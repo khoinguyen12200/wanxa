@@ -100,8 +100,6 @@ export default function create_staff_account() {
 		}
 
 		formdata.append("user", JSON.stringify(userjson));
-		formdata.append("storeId", storeId);
-		formdata.append("token", getSavedToken());
 
 		axios
 			.post("/api/store/staff/create-staff-profile", formdata, {

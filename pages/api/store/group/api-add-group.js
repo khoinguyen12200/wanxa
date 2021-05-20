@@ -15,10 +15,10 @@ export default async function (req, res) {
         if(addRes){
             res.status(200).json({message:"Thêm thành công"})
         }else{
-            res.status(202).json({message:"Lỗi không rõ xảy ra"})
+            res.status(202).json({error:true,message:"Lỗi không rõ xảy ra"})
         }
     }else{
-        res.status(202).json({message:"Yêu cầu quyền cơ sở vật chất hoặc cao hơn"})
+        res.status(202).json({error:true,message:"Yêu cầu quyền cơ sở vật chất hoặc cao hơn"})
     }
 
 }

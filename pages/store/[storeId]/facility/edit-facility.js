@@ -148,7 +148,7 @@ function GroupNameInput({ group }) {
 
 		const del = () => {
 			var data = {
-				groupid: id,
+				id: id,
 			};
 			axios
 				.post("/api/store/group/api-delete-group", data)
@@ -171,7 +171,7 @@ function GroupNameInput({ group }) {
 		if (value == name) {
 			toast.warning("Không tìm thấy sự thay đổi của tên");
 		} else {
-			var data = { newName: value, groupid: id };
+			var data = { name: value, id: id };
 			axios
 				.post("/api/store/group/api-change-group-name", data)
 				.then((res) => {
