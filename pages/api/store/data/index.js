@@ -59,7 +59,7 @@ async function getBills(storeid) {
 	bills.rows = rows;
 	return bills;
 }
-async function getNotifications(storeid) {
+export async function getNotifications(storeid) {
 	const resu = await query(
 		"select `internal-notification`.*,user.avatar,user.name as username" +
 			"  from `internal-notification` left join `user` on user.id = `internal-notification`.executor" +

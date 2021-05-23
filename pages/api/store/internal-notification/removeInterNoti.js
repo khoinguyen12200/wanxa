@@ -10,7 +10,7 @@ export default async function (req, res) {
         const resu = await query("DELETE FROM `internal-notification` WHERE id = ?",[id]);
         res.status(200).json({message:"Lưu lại thành công"});
     }else{
-        res.status(202).json({message:"Bạn không phải người tạo thông báo này"});
+        res.status(202).json({error:true,message:"Bạn không phải người tạo thông báo này"});
     }
 	
 	

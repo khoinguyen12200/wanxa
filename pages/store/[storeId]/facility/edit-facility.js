@@ -234,7 +234,7 @@ function Table({ table }) {
 		} else {
 			var data = {
 				name: name,
-				tableid: table.id,
+				id: table.id,
 			};
 
 			axios
@@ -252,7 +252,7 @@ function Table({ table }) {
 	function deleteTable() {
 		alertDialog("Bạn có chắc muốn xóa bàn này ?", () => doIt());
 		function doIt() {
-			var data = { tableid: table.id };
+			var data = { id: table.id };
 
 			axios
 				.post("/api/store/table/api-delete-table", data)

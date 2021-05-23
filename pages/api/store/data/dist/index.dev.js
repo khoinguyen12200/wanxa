@@ -4,6 +4,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports["default"] = _callee;
+exports.getNotifications = getNotifications;
 exports.getStaffs = getStaffs;
 exports.getMenus = getMenus;
 exports.getFacilities = getFacilities;

@@ -1,7 +1,7 @@
 import query from "../../const/connection";
 import Privileges from '../../../../components/Privileges';
 export default async function (req, res) {
-    const {tableid} = req.body;
+    const {id} = req.body;
     const { storeid, userid, privileges } = req.headers;
 
 
@@ -10,7 +10,7 @@ export default async function (req, res) {
     const accepted =Privileges.isValueIncluded(privileges,[Privileges.Content.OWNER,Privileges.Content.FACILITY]);
     
     if(accepted) {
-        const deleteRes = await query("delete from `store-table`  WHERE id=?",[tableid]);
+        const deleteRes = await query("delete from `store-table`  WHERE id=?",[id]);
 
         if(deleteRes){
             res.status(200).json({message:"Xóa bàn thành công"})
