@@ -40,7 +40,7 @@ export default async function (req, res) {
 		}
 		res.status(200).json({ message: "Thành công" });
 	} else {
-		res.status(202).json({
+		res.status(202).json({error:true,
 			message: "Bạn không đủ quyền để tạo thông báo",
 		});
 	}

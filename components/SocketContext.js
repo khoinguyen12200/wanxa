@@ -7,7 +7,12 @@ const getHostname = function () {
         typeof window !== "undefined" && window.location.hostname
             ? window.location.hostname
             : "";
-    return hostname + ":3000";
+       
+    var p = process.env.PORT || "3000";
+
+    console.log(hostname + ":" + p)
+    return hostname +":"+ p;
+  
 };
 export const socket = socketIOClient.connect(getHostname());
 const SocketContext = React.createContext();
