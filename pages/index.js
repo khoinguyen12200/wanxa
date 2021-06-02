@@ -1,64 +1,122 @@
-import React from 'react'
+import React from "react";
 
-import styles from '../styles/Home.module.css'
+import { motion } from "framer-motion";
 
+import styles from "../styles/Home.module.css";
 
 export default function Home() {
+	return (
+		<div className={styles.container}>
+			<div className={styles.header}>
+				<h1>
+					Chào mừng đến với{" "}
+					<span className={styles.headername}>WANXA</span>
+				</h1>
+			</div>
+			<div className={styles.select}>
+				<Option
+					title="Giới thiệu ứng dụng"
+					image="/picture/introduce.jpg"
+					url="./#introduce"
+				/>
+				<Option
+					title="Khởi đầu chỉ với 3 bước"
+					image="/picture/getting-started.jpg"
+					url="./#getting-started"
+				/>
+			</div>
+			<Space1 />
+			<Space2 />
+		</div>
+	);
+}
 
-  return (
-    <div className={styles.container}>
-      
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
+function Option({ title, image, url }) {
+	const [hover, setHover] = React.useState(false);
 
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
+	const variants = {
+		show: {
+			opacity: 1,
+			y: 0,
+		},
+		hide: {
+			opacity: 0,
+			y: 500,
+		},
+	};
+	return (
+		<a
+			href={url}
+			onMouseEnter={() => {
+				setHover(true);
+			}}
+			onMouseLeave={() => {
+				setHover(false);
+			}}
+			className={styles.optionItem}
+		>
+			<img className={styles.optionImage} src={image} />
+			<motion.div
+				transition={{ type: "spring", damping: 20 }}
+				variants={variants}
+				animate={hover ? "show" : "hide"}
+				initial={!hover ? "show" : "hide"}
+				className={styles.optionTitle}
+			>
+				<h3>{title}</h3>
+			</motion.div>
+		</a>
+	);
+}
 
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
+function Space1() {
+	return (
+		<div id="introduce" className={styles.space}>
+			<h1 className={styles.spaceTitle}>Giới thiệu về ứng dụng</h1>
+		</div>
+	);
+}
+function Space2() {
+	return (
+		<div id="getting-started" className={styles.space}>
+			<h1 className={styles.spaceTitle}>Bắt đầu thôi nào !</h1>
+			<p className={styles.spaceSubTitle}>
+				Bắt đầu xây dựng một doanh nghiệp cực kỳ đơn giản chỉ 3 bước
+			</p>
+			<div className={styles.timelineContainer}>
+				<TimeLine />
+			</div>
+		</div>
+	);
+}
 
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
+function TimeLine() {
+	const data = [
+		{ title: "Đăng ký tài khoản cá nhân", picture: "" },
+		{ title: "Tạo một cửa hàng mới", picture: "" },
+		{ title: "Tạo menu", picture: "" },
+		{ title: "Tạo cơ sở vật chất", picture: "" },
+		{ title: "Thêm nhân viên", picture: "" },
+		{ title: "Khởi động cửa hàng của bạn thôi nào", picture: "" },
+	];
+	return (
+		<div className={styles.timeline}>
+			<div className={styles.timedata}>
+				{data.map(
+					(item, index) =>
+						index % 2 == 0 ? <TimeLineItem position="left" item={item} /> : <TimeLineItem position="right" item={item} />
+				)}
+			</div>
+			<div className={styles.timeMid} />
+		</div>
+	);
+}
 
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
-        </a>
-      </footer>
+function TimeLineItem({item,position}){
+  const {title,picture} = item;
+  return(
+    <div className={styles.timelineItem+" "+styles[position]}>
+        <h3>{title}</h3>
     </div>
   )
 }

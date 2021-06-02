@@ -49,6 +49,7 @@ nextApp.prepare().then(async () => {
 				})
 			}
 		})
+		
 
 		socket.on('setInfo', function (data) {
 			clientsMap.set(socket.id,data)
