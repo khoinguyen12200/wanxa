@@ -19,3 +19,7 @@ body{
   --danger:rgb(255, 45, 45);
   --success:rgb(102, 255, 0);
 }
+@font-face {
+  font-family: roboto-light;
+  src: url(/public/font/Roboto-Light.ttf);
+}
